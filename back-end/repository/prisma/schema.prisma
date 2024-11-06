@@ -10,7 +10,7 @@ datasource db {
 model Cart {
     id                  Int      @id @default(autoincrement())
     totalPrice          Int
-    customerId          Int      @unique
+    customerId          Int      
     customer            Customer @relation(fields: [customerId], references: [id])
     order               Order?
     CartContainsProduct CartContainsProduct[]
@@ -24,7 +24,7 @@ model Customer {
     firstName           String
     lastName            String
     phone               Int       @unique
-    cart                Cart?
+    cart                Cart[]
     order               Order?
     }
 
