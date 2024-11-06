@@ -1,0 +1,20 @@
+ENDPOINTS
+
+See Products:
+GET     /products   ... returns all products
+
+Add to Cart:
+POST    /customer/{id}/cart/{product_name}  ... adds product to cart
+GET     /customer/{id}/cart                 ... returns the cart of a customer.
+GET     /products/{name}                    ... returns a product.
+PUT     /customer/{id}/cart/{product_name}  ... updates product in a cart.
+DELETE  /customer/{id}/cart/{product_name}  ... deletes product from a cart.
+
+Login:
+GET     /customer?username=matej123&password=car123     ... returns True or False.
+
+Place Order:
+GET     /customer/{id}          ... returns a customer.
+GET     /customer/{id}/cart     ... returns the cart of a customer.
+POST    /order/{cart_id}        ... returns an order that it created in the database. It also assigns a new empty cart to the customer.
+
