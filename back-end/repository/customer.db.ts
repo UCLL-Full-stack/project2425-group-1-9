@@ -25,6 +25,11 @@ const getCustomerById = (id: number | undefined): Customer | null => {
     return customers.find((customer) => customer.getId() === id) || null;
 }
 
+const getCustomerByUsername = (username: string | undefined): Customer | null => {
+    return customers.find((customer) => customer.getUsername() === username) || null;
+}
+
 export default {
-    getCustomerById
+    getCustomerById,
+    getCustomerByUsername
 };

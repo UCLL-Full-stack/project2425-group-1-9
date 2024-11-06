@@ -24,17 +24,20 @@ const getProductsByCartId = async (cartId: number): Promise<Product[]> => {
     return products;
 }
 
-const getCartItemsByCustomerId = async (customerId: number): Promise<Array<CartContainsProduct>> => {
-    if (!customerId) throw new Error("Customer ID is required.");
-    const cart: Cart | null = cartDb.getCartByCustomerId(customerId);
+const getCartItemsByCustomerUsername = async (customerUsername: string): Promise<Array<CartContainsProduct>> => {
+    if (!customerUsername) throw new Error("Customer's username is required.");
+    const customer: Customer | null = customerDb.getCustomerByUsername(customerUsername);
+    if (!customer) throw new Error("Customer does not exist"); // TODO add a test.
+
+    const cart: Cart | null = cartDb.getCartByCustomerId(customer.getId());
     if (!cart) throw new Error("Cart does not exist.");
 
     return cartContainsProductDb.returnAllItemsInCart(cart.getId());
 };
 
-const addProductToCart = async (customerId: number, productName: string): Promise<string> => {
-    if (!customerId) throw new Error("Customer ID is required.");
-    const customer: Customer | null = await customerDb.getCustomerById(customerId);
+const addProductToCart = async (customerUsername: string, productName: string): Promise<string> => {
+    if (!customerUsername) throw new Error("Customer's username is required.");
+    const customer: Customer | null = await customerDb.getCustomerByUsername(customerUsername);
     if (!customer) throw new Error("Customer does not exist.");
 
     const cart: Cart | null = await cartDb.getCartByCustomerId(customer.getId());
@@ -63,10 +66,10 @@ const addProductToCart = async (customerId: number, productName: string): Promis
     return "Product successfully added to cart.";
 }
 
-const deleteAllCartItems = async (customerId: number): Promise<string> => {
+const deleteCartItemsByCustomerUsername = async (customerUsername: string): Promise<string> => {
     // GET
-    if (!customerId) throw new Error("Customer ID is required.");
-    const customer: Customer | null = customerDb.getCustomerById(customerId);
+    if (!customerUsername) throw new Error("Customer's username is required.");
+    const customer: Customer | null = customerDb.getCustomerByUsername(customerUsername);
     if (!customer) throw new Error("Customer does not exist.");
 
     const cart: Cart | null = cartDb.getCartByCustomerId(customer.getId());
@@ -74,7 +77,7 @@ const deleteAllCartItems = async (customerId: number): Promise<string> => {
 
 
     // CONNECT & SAVE
-    return await cartContainsProductDb.deleteAllCartItems(cart.getId());
+    return await cartContainsProductDb.deleteCartItemsByCustomerUsername(cart.getId());
 };
 
 
@@ -91,4 +94,4 @@ const deleteAllCartItems = async (customerId: number): Promise<string> => {
 //     return `Cart item '${productName}' deleted successfully.`;
 // }
 
-export default { getProductsByCartId, getCartItemsByCustomerId, addProductToCart, deleteAllCartItems }
+export default { getProductsByCartId, getCartItemsByCustomerUsername, addProductToCart, deleteCartItemsByCustomerUsername }

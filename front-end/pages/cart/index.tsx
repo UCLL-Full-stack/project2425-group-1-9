@@ -11,8 +11,8 @@ const Cart: React.FC = () => {
     const [cartItems, setCartItems] = useState<Array<CartItem>>([]);
     const [products, setProducts] = useState<Array<Product>>([]);
 
-    const fetchCartByCustomerId = async (customerId: number) => {
-        const response = await CustomerService.fetchCartItemsByCustomerId(customerId);
+    const fetchCartByCustomerUsername = async (customerUsername: string) => {
+        const response = await CustomerService.fetchCartItemsByCustomerUsername(customerUsername);
         const cartItemss = await response.json();
         setCartItems(cartItemss);
     };
@@ -46,8 +46,8 @@ const Cart: React.FC = () => {
 
     const clearCart = () => {
         // setCartItems([]);
-        CustomerService.clearCart(1); // TODO: should not be hardcoded.
-        fetchCartByCustomerId(1); // TODO: Cart id should not be hardcoded!
+        CustomerService.clearCart("Matej333"); // TODO: should not be hardcoded.
+        fetchCartByCustomerUsername("Matej333"); // TODO: Cart id should not be hardcoded!
 
     };
 
@@ -59,7 +59,7 @@ const Cart: React.FC = () => {
 
     useEffect(() => {
       getProducts();
-      fetchCartByCustomerId(1); // TODO: Cart id should not be hardcoded!
+      fetchCartByCustomerUsername("Matej333"); // TODO: Cart id should not be hardcoded!
       highlightCurrentTabInMenu();
 
     }, []);

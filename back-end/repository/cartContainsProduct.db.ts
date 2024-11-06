@@ -70,7 +70,7 @@ const deleteCartItemByCartIdAndProductName = (cartId: number | undefined, name: 
     return null
 };
 
-const deleteAllCartItems = (cartId: number): string => {
+const deleteCartItemsByCustomerUsername = (cartId: number): string => {
     cartContainsProduct = cartContainsProduct.filter((item) => item.getCartId() !== cartId);
     return "Cart items deleted successfully."
 };
@@ -87,5 +87,5 @@ export default {
     getProductsByNameInCart,
     returnAllItemsInCart,
     addCartItem,
-    deleteAllCartItems
+    deleteCartItemsByCustomerUsername
 }

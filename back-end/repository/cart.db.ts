@@ -34,7 +34,6 @@ const getCartByCustomerId = (customerId: number | undefined): Cart | null => {
     return carts
         .sort((a: Cart, b: Cart) => b.getId() - a.getId()) // Sort by descending cart id.
         .find((cart) => cart.getCustomerId() === customerId) || null;
-
 }
 
 const getCartById = (cartId: number): Cart | null => {
