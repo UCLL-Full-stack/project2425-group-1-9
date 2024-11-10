@@ -1,3 +1,8 @@
+import {
+    Customer as CustomerPrisma,
+    Order as OrderPrisma,
+    Cart as CartPrisma
+} from '@prisma/client';
 export class Customer {
     id: number;
     private password: string;
@@ -35,6 +40,29 @@ export class Customer {
         if (!customer.lastName) throw new Error("Last name is required.");
         if (!customer.phone) throw new Error("Phone is required.");
     }
+    
+    static from({
+        id,
+        password,
+        securityQuestion,
+        username,
+        firstName,
+        lastName,
+        phone
+    }: CustomerPrisma) {
+    // }: CustomerPrisma & { order: OrderPrisma; cart: CartPrisma[] }) {
+        return new Customer({
+            id,
+            password,
+            securityQuestion,
+            username,
+            firstName,
+            lastName,
+            phone,
+            // order: Order.from(order),
+            // cart: Cart.from(cart)
+        });
+    };
 
     getId(): number {
         return this.id;

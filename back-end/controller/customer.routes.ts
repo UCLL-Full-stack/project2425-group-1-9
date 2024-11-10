@@ -32,7 +32,7 @@ const customerRouter = express.Router();
 //  * @swagger
 //  * /customers/{id}/cart/{productName}:
 //  *   delete:
-//  *     summary: Delete an item (product) from a cart using customer ID and product name.
+//  *     summary: Delete an item (product) from a cart using customer's username and product name.
 //  *     parameters:
 //  *          - in: path
 //  *            name: id
@@ -70,17 +70,17 @@ const customerRouter = express.Router();
 
 /**
  * @swagger
- * /customers/{id}/cart:
+ * /customers/{username}/cart:
  *   delete:
- *     summary: Delete all items (products) from a cart using customer ID.
+ *     summary: Delete all items (products) from a cart using customer's username.
  *     parameters:
  *          - in: path
- *            name: id
+ *            name: username
  *            schema:
  *              type: string
  *              required: true
- *              description: Customer's ID.
- *              example: 1
+ *              description: Customer's username.
+ *              example: Matej333
  *     responses:
  *       200:
  *         description: Message indicating success.
@@ -90,10 +90,10 @@ const customerRouter = express.Router();
  *               type: string
  *               example: Cart items deleted successfully.
  */
-customerRouter.delete('/:id/cart', async (req: Request, res: Response, next: NextFunction) => {
+customerRouter.delete('/:username/cart', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const customerId: number = Number(req.params.id);
-        const result: string = await cartService.deleteAllCartItems(customerId);
+        const customerUsername: string = String(req.params.username);
+        const result: string = await cartService.deleteCartItemsByCustomerUsername(customerUsername);
         res.json(result);
         // res.status(200).json(result);   // DOES NOT WORK!!!!!!!! Q&
     } catch (error) {
@@ -103,17 +103,17 @@ customerRouter.delete('/:id/cart', async (req: Request, res: Response, next: Nex
 
 /**
  * @swagger
- * /customers/{id}/cart/{productName}:
+ * /customers/{username}/cart/{productName}:
  *   post:
- *     summary: Add a product to a cart using customer ID and product name.
+ *     summary: Add a product to a cart using customer's username and product name.
  *     parameters:
  *          - in: path
- *            name: id
+ *            name: username
  *            schema:
- *              type: number
+ *              type: string
  *              required: true
- *              description: Customer's ID.
- *              example: 1
+ *              description: Customer's username
+ *              example: Matej333
  *          - in: path
  *            name: productName
  *            schema:
@@ -130,11 +130,11 @@ customerRouter.delete('/:id/cart', async (req: Request, res: Response, next: Nex
  *               type: string
  *               example: Product deleted successfully.
  */
-customerRouter.post('/:id/cart/:productName', async (req: Request, res: Response, next: NextFunction) => {
+customerRouter.post('/:username/cart/:productName', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const customerId: number = Number(req.params.id);
+        const customerUsername: string = String(req.params.username);
         const productName: string = String(req.params.productName);
-        const result = await cartService.addProductToCart(customerId, productName);
+        const result = await cartService.addProductToCart(customerUsername, productName);
         res.status(200).json(result);
     } catch (error) {
         next(error);
@@ -145,17 +145,17 @@ customerRouter.post('/:id/cart/:productName', async (req: Request, res: Response
 
 /**
  * @swagger
- * /customers/{id}/cart:
+ * /customers/{username}/cart:
  *   get:
- *     summary: Get CartContainsProduct objects using customer ID. (Get cart items of a customer).
+ *     summary: Get CartContainsProduct objects using customer's username. (Get cart items of a customer).
  *     parameters:
  *          - in: path
- *            name: id
+ *            name: username
  *            schema:
- *              type: number
+ *              type: string
  *              required: true
- *              description: Customer's ID.
- *              example: 1
+ *              description: Customer's username.
+ *              example: Matej333
  *     responses:
  *       200:
  *         description: A list of CartContainsProduct objects.
@@ -164,11 +164,10 @@ customerRouter.post('/:id/cart/:productName', async (req: Request, res: Response
  *             schema:
  *               $ref: '#/components/schemas/CartContainsProduct'
  */
-customerRouter.get("/:id/cart", async (req: Request, res: Response, next: NextFunction) => {
+customerRouter.get("/:username/cart", async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const customerId: number = Number(req.params.id)
-        const cart: CartContainsProduct[] = await cartService.getCartItemsByCustomerId(customerId);
-        res.status(202).json(cart);
+        const cart: CartContainsProduct[] = await cartService.getCartItemsByCustomerUsername(String(req.params.username));
+        res.status(200).json(cart);
     } catch (e) {
         next(e);
     }

@@ -15,11 +15,10 @@
 //     );
 // };
 
-import { CartItem } from "@/types";
 
-const clearCart = async (customerId: number) => {
+const clearCart = async (customerUsername: string) => {
     return await fetch(
-        process.env.NEXT_PUBLIC_API_URL + `/customers/${customerId}/cart`,
+        process.env.NEXT_PUBLIC_API_URL + `/customers/${customerUsername}/cart`,
         {
             method: "DELETE",
             headers: {
@@ -30,9 +29,9 @@ const clearCart = async (customerId: number) => {
     );
 };
 
-const addCartItem = async (customerId: number, productName: string) => {
+const addCartItem = async (customerUsername: string, productName: string) => {
     return await fetch(
-        process.env.NEXT_PUBLIC_API_URL + `/customers/${customerId}/cart/${productName}`,
+        process.env.NEXT_PUBLIC_API_URL + `/customers/${customerUsername}/cart/${productName}`,
         {
             method: "POST",
             headers: {
@@ -44,13 +43,14 @@ const addCartItem = async (customerId: number, productName: string) => {
 };
 
 
-const fetchCartItemsByCustomerId = async(id: number) => {
-    return fetch(
-        process.env.NEXT_PUBLIC_API_URL + `/customers/${id}/cart`,
+const getCartItemsByCustomerUsername = async (customerUsername: string) => {
+    return await fetch(
+        process.env.NEXT_PUBLIC_API_URL + `/customers/${customerUsername}/cart`,
         {
             method:"GET",
             headers:{
-                "content-type":"application/json"
+                'Content-Type': 'application/json',
+                Accept: 'application/json'
             }
         }
     );
@@ -59,7 +59,7 @@ const fetchCartItemsByCustomerId = async(id: number) => {
 const CustomerService = {
     clearCart,
     addCartItem,
-    fetchCartItemsByCustomerId
+    getCartItemsByCustomerUsername
 }
 
 export default CustomerService;

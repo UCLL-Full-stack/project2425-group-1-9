@@ -9,7 +9,7 @@ const getAllProducts = async () => {
         }
     );
 };
-const getProductByName = async(name:string|undefined)=>{
+const getProductByName = async(name: string )=>{
     return await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/products/${name}`,
         {

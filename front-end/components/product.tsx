@@ -12,21 +12,21 @@ type Props = {
 };
 
 const Product: React.FC<Props> = ({ products }: Props) => {
-    const [cartItems, setCartItems] = useState<Array<CartItem>>([]);
+    // const [cartItems, setCartItems] = useState<Array<CartItem>>([]);
     
-    const addToCart = (product: Product) => {
-        setCartItems(prevItems => {
-            const existingItem = prevItems.find(item => item.productName === product.name);
-            if (existingItem) {
-                return prevItems.map(item =>
-                    // Rather use if. If have no clue what is going on.
-                    item.productName === product.name ? { ...item, quantity: (item.quantity??0) + 1 } : item
-                );
-            } else {
-                return [...prevItems, { cartId: 1, productName: product.name, quantity: 1 }];
-            }
-        });
-    };
+    // const addToCart = (product: Product) => {
+    //     setCartItems(prevItems => {
+    //         const existingItem = prevItems.find(item => item.product.name === product.name);
+    //         if (existingItem) {
+    //             return prevItems.map(item =>
+    //                 // Rather use if. If have no clue what is going on.
+    //                 item.product.name === product.name ? { ...item, quantity: (item.quantity??0) + 1 } : item
+    //             );
+    //         } else {
+    //             return [...prevItems, { cartId: 1, productName: product.name, quantity: 1 }];
+    //         }
+    //     });
+    // };
 
     // Functions that is called on click of 'Add to cart' button.
     const addToCartBtn = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -65,41 +65,41 @@ const Product: React.FC<Props> = ({ products }: Props) => {
         const productName = e.currentTarget.parentElement?.children[0].textContent ?? '';
         // console.log("Fetching product:", productName);
     
-        // Get the product from the database. TODO: SHOULD BE IN THE SERVICE!
-        try {
-            const response = await ProductService.getProductByName(productName); // Q& Is this uppercase?
-            if (!response.ok) {
-                throw new Error(`Error fetching product: ${response.statusText}`);
-            }
-            const product: Product = await response.json();
-            // Add the product to cart.
-            addToCart(product);
-        } catch (error) {
-            console.error("Failed to fetch product:", error);
-        }
+        // // Get the product from the database. TODO: SHOULD BE IN THE SERVICE!
+        // try {
+        //     const response = await ProductService.getProductByName(productName); // Q& Is this uppercase?
+        //     if (!response.ok) {
+        //         throw new Error(`Error fetching product: ${response.statusText}`);
+        //     }
+        //     const product: Product = await response.json();
+        //     // Add the product to cart.
+        //     addToCart(product);
+        // } catch (error) {
+        //     console.error("Failed to fetch product:", error);
+        // }
 
-        const customerId: number = 1; // TODO: should not be hardcoded.
-        CustomerService.addCartItem(customerId, productName);
-    };
-
-    const incrementQuantity = (productName: string) => {
-        setCartItems(prevItems =>
-            prevItems.map(item =>
-                item.productName === productName ? { ...item, quantity: (item.quantity ?? 0) + 1 } : item
-            )
-        );
-    };
-    const decrementQuantity = (name: string) => {
-        setCartItems(prevItems =>
-            prevItems.map(item =>
-                item.productName === name ? { ...item, quantity: Math.max(item.quantity? - 1: 1) } : item
-            )
-        );
+        const customerUsername: string = "Matej333"; // TODO: should not be hardcoded.
+        CustomerService.addCartItem(customerUsername, productName);
     };
 
-    const clearCart = () => {
-        setCartItems([]);
-    };
+    // const incrementQuantity = (productName: string) => {
+    //     // setCartItems(prevItems =>
+    //     //     prevItems.map(item =>
+    //     //         item.productName === productName ? { ...item, quantity: (item.quantity ?? 0) + 1 } : item
+    //     //     )
+    //     // );
+    // };
+    // const decrementQuantity = (name: string) => {
+    //     // setCartItems(prevItems =>
+    //     //     prevItems.map(item =>
+    //     //         item.productName === name ? { ...item, quantity: Math.max(item.quantity? - 1: 1) } : item
+    //     //     )
+    //     // );
+    // };
+
+    // const clearCart = () => {
+    //     setCartItems([]);
+    // };
         
     
     
@@ -124,13 +124,6 @@ const Product: React.FC<Props> = ({ products }: Props) => {
                     </div>
                 </article>
             ))}
-            <CartItem 
-            cartItems={cartItems}
-            products={products}
-            incrementQuantity={incrementQuantity}
-            decrementQuantity={decrementQuantity}
-            clearCart={clearCart}
-            />
         </>
     );
 };

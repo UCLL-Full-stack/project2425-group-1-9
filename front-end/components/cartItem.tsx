@@ -1,46 +1,57 @@
-import React from 'react';
-import type {  CartItem, Product } from '../types';
+import React, { useEffect } from 'react';
+import type {  CartItem } from '../types';
 import Image from 'next/image'
 
-type CartProps = {
+type Props = {
     cartItems: Array<CartItem>;
-    products: Array<Product>;
-    incrementQuantity: (productName: string) => void;
-    decrementQuantity: (productName: string) => void;
-    clearCart: () => void;
+    // products: Array<Product>;
+    // incrementQuantity: (productName: string) => void;
+    // decrementQuantity: (productName: string) => void;
+    // clearCart: () => void;
 };
 
-const CartItem: React.FC<CartProps> = ({ cartItems, products, incrementQuantity, decrementQuantity, clearCart }: CartProps) => {
-    const getProduct = (name:string) => products.find(product => product.name === name);
+// const CartItem: React.FC<Props> = ({ cartItems, products, incrementQuantity, decrementQuantity, clearCart }: Props) => {
+// const CartItem: React.FC<Props> = ({ cartItems, incrementQuantity, decrementQuantity, clearCart }: Props) => {
+const CartItem: React.FC<Props> = ({ cartItems }: Props) => {
+    // const getProduct = (name:string) => products.find(product => product.name === name);
     // console.log(products);
+
+    // const print = () => {
+    //     // console.log(cartItems[0]);
+    // }
+
+    // useEffect(() => {
+    //     print();      
+    //   });
+    
 
     return (
         <>
-            {cartItems.map((item, index) => {
-            // Assume that item refers to product in the cart, meanwhile product refers to product in the product database.
-                // console.log(item);
-                // console.log(item.productName);
-                const product = getProduct(item.productName);
+            {cartItems.map((cartItem, index) => (
+            // Assume that cartItem refers to product in the cart, meanwhile product refers to product in the product database.
+                // console.log(cartItem);
+                // console.log(cartItem.productName);
+                // const product = getProduct(cartItem.product.name);
                 // console.log(product);
-                return product ? (
+                // return product ? (
                     <article key={index}>
                         <Image
-                            src={product.imagePath}
+                            src={cartItem.product.imagePath}
                             width={150} // this is changed in product.module.css
                             height={150}
-                            alt={product.name}
+                            alt={cartItem.product.name}
                         />
                         <div>
-                            <p>{product.name}</p>
-                            <p>{product.price} $ / {product.unit}</p>
-                            <p>Quantity: {item.quantity}</p>
-                            <button onClick={() => incrementQuantity(item.productName)}>+</button>
-                            <button onClick={() => decrementQuantity(item.productName)}>-</button>
+                            <p>{cartItem.product.name}</p>
+                            <p>{cartItem.product.price} $ / {cartItem.product.unit}</p>
+                            <p>Quantity: {cartItem.quantity}</p>
+                            {/* <button onClick={() => incrementQuantity(item.product.name)}>+</button> */}
+                            {/* <button onClick={() => decrementQuantity(item.product.name)}>-</button> */}
                         </div>       
                     </article>
 
-                ) : null;
-            })}
+                // ) : null;
+            ))}
         </>
     );
 };
