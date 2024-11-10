@@ -1,3 +1,8 @@
+import {
+    Product as ProductPrisma,
+    CartContainsProduct as CartContainsProductPrisma,
+} from '@prisma/client';
+
 export class Product {
     private name: string;
     private price: number;
@@ -26,6 +31,24 @@ export class Product {
         if (product.price <= 0) throw new Error("Price must be positive.");
         if (product.stock < 0) throw new Error("Stock must be non-negative.");
     }
+
+    static from({ 
+            name,
+            price,
+            unit,
+            stock,
+            description,
+            imagePath
+        }: ProductPrisma) {
+        return new Product({ 
+            name,
+            price,
+            unit,
+            stock,
+            description,
+            imagePath
+         });
+    };
 
     getName(): string {
         return this.name
