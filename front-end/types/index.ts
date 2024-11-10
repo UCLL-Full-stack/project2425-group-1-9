@@ -1,32 +1,17 @@
-export type Course = {
+export type Customer = {
   id: number;
-  name: string;
-  description: string;
-  phase: number;
-  credits: number;
-};
-
-export type Lecturer = {
-  id: number;
-  user: User;
-  expertise: string;
-  courses: Course[];
-};
-
-export type User = {
-  firstName?: string;
-  lastName?: string;
-  fullname?: string;
-  email?: string;
-  username?: string;
-  password?: string;
-  role?: string;
-};
+  password: string;
+  securityQuestion: string;
+  username: string;
+  firstName: string;
+  lastName: string;
+  phone: number;
+}
 
 export type Cart = {
-  cartId?: number | undefined
-  customerId?: number | undefined
-  totalPrice?: number
+  id: number
+  customer: Customer
+  totalPrice: number
   active: boolean;
 }
 
@@ -42,6 +27,6 @@ export type Product = {
 export type CartItem = {
   cart: Cart,
   product: Product,
-  quantity?: number | undefined
+  quantity: number
 }
 

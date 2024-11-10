@@ -27,7 +27,7 @@ const CartItem: React.FC<Props> = ({ cartItems }: Props) => {
 
     return (
         <>
-            {cartItems.map((cartItem, index) => {
+            {cartItems.map((cartItem, index) => (
             // Assume that cartItem refers to product in the cart, meanwhile product refers to product in the product database.
                 // console.log(cartItem);
                 // console.log(cartItem.productName);
@@ -51,7 +51,7 @@ const CartItem: React.FC<Props> = ({ cartItems }: Props) => {
                     </article>
 
                 // ) : null;
-            })}
+            ))}
         </>
     );
 };
