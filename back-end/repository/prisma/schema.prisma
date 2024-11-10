@@ -10,6 +10,7 @@ datasource db {
 model Cart {
     id                  Int      @id @default(autoincrement())
     totalPrice          Int
+    active              Boolean
     customerId          Int      
     customer            Customer @relation(fields: [customerId], references: [id])
     order               Order?

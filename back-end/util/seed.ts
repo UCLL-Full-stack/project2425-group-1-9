@@ -42,6 +42,7 @@ const main = async () => {
     const cartMatej1 = await prisma.cart.create({
         data: {
             totalPrice: 50,
+            active: false,
             customer: {
                 connect: { id: matej.id }
             }
@@ -51,6 +52,7 @@ const main = async () => {
     const cartMatej2 = await prisma.cart.create({
         data: {
             totalPrice: 0,
+            active: true,
             customer: {
                 connect: { id: matej.id }
             }

@@ -118,7 +118,8 @@ const getProductByName = async (name: string): Promise<Product | null> => {
                 name: name
             }
         });
-        return productPrisma ? Product.from(productPrisma) : null
+        return productPrisma ? Product.from(productPrisma) : null;
+
     } catch (error) {
         console.log(error);
         throw new Error('Database error. See server logs for details.');

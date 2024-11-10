@@ -20,23 +20,24 @@ const customer: Customer = new Customer({
     phone: 333444555666
 })
 
-const customerWithoutCart: Customer = new Customer({
-    id: 2,
-    password: "r0l@nd/nd1m3/s0n3",
-    securityQuestion: "What is the name of the best friend from childhood?", // TODO: We also need security answer. It may also be a list.
-    username: "Roland333",
-    firstName: "Roland",
-    lastName: "Ndime Sone",
-    phone: 444555666777
-})
+// const customerWithoutCart: Customer = new Customer({
+//     id: 2,
+//     password: "r0l@nd/nd1m3/s0n3",
+//     securityQuestion: "What is the name of the best friend from childhood?", // TODO: We also need security answer. It may also be a list.
+//     username: "Roland333",
+//     firstName: "Roland",
+//     lastName: "Ndime Sone",
+//     phone: 444555666777
+// })
 
 const cart: Cart = new Cart({
     id: 1,
     totalPrice: 30,
-    customerId: 1,
+    active: true,
+    customer
 })
 
-const customerId: number = 1;
+// const customerId: number = 1;
 const productName: string = "Bananas";
 const cartId: number = 3;
 
@@ -55,7 +56,7 @@ let mockCartContainsProductDb_returnAllItemsInCart: jest.Mock;
 let mockCartContainsProductDb_addCartItem: jest.Mock;
 let mockCartContainsProductDb_deleteCartItemsByCustomerId: jest.Mock;
 let mockProductDb_getProductByName: jest.Mock;
-let mockCartDb_getCartByCustomerId: jest.Mock;
+let mockCartDb_getActiveCartByCustomerId: jest.Mock;
 let mockCustomerDb_getCustomerByUsername: jest.Mock;
 
 beforeEach(() => {
@@ -70,7 +71,7 @@ beforeEach(() => {
     mockCartContainsProductDb_addCartItem = jest.fn();
     mockCartContainsProductDb_deleteCartItemsByCustomerId = jest.fn();
     mockProductDb_getProductByName = jest.fn();
-    mockCartDb_getCartByCustomerId = jest.fn();
+    mockCartDb_getActiveCartByCustomerId = jest.fn();
     mockCustomerDb_getCustomerByUsername = jest.fn();
 });
 
@@ -162,10 +163,11 @@ test('Given product name does not exist in the product database; When calling ge
     expect(mockCartContainsProductDb_getCartItemNamesByCartId).toHaveBeenCalledWith(cartId);
 });
 
-test("Given customer's username; When calling getCartItemsByCustomerId; Then cart items of that customer are returned.", async () => {
+test("Given customer's username; When calling getCartItemsByCustomerUsername; Then cart items of that customer are returned.", async () => {
     // GIVEN
     // Variables at the top of the file.
-    cartDb.getCartByCustomerId = mockCartDb_getCartByCustomerId.mockReturnValue(cart);
+    cartDb.getActiveCartByCustomerId = mockCartDb_getActiveCartByCustomerId.mockReturnValue(cart);
+    customerDb.getCustomerByUsername = mockCustomerDb_getCustomerByUsername.mockReturnValue(customer);
 
     cartContainsProductDb.returnAllItemsInCart = mockCartContainsProductDb_returnAllItemsInCart.mockReturnValue([
         new CartContainsProduct({ cartId: 3, productName: "Mouse", quantity: 5 }),
@@ -181,8 +183,8 @@ test("Given customer's username; When calling getCartItemsByCustomerId; Then car
     expect(result[0].getProductName()).toEqual("Mouse");
     expect(result[1].getProductName()).toEqual("Bananas");
 
-    expect(mockCartDb_getCartByCustomerId).toHaveBeenCalledTimes(1);
-    expect(mockCartDb_getCartByCustomerId).toHaveBeenCalledWith(1);
+    expect(mockCartDb_getActiveCartByCustomerId).toHaveBeenCalledTimes(1);
+    expect(mockCartDb_getActiveCartByCustomerId).toHaveBeenCalledWith(customer.getId());
 
     expect(mockCartContainsProductDb_returnAllItemsInCart).toHaveBeenCalledTimes(1);
     expect(mockCartContainsProductDb_returnAllItemsInCart).toHaveBeenCalledWith(customer.getId());
@@ -204,7 +206,7 @@ test("Given no customer's username; When calling getCartItemsByCustomerId; Then 
 test('Given customer without a cart; When calling getCartItemsByCustomerId; Then error is thrown.', async () => {
     // GIVEN
     // Variables at the top of the file.
-    cartDb.getCartByCustomerId = mockCartDb_getCartByCustomerId.mockReturnValue(null);
+    cartDb.getActiveCartByCustomerId = mockCartDb_getActiveCartByCustomerId.mockReturnValue(null);
 
     // WHEN
     const getCartItemsByCustomerId = () => cartService.getCartItemsByCustomerUsername(customer.getUsername());
@@ -217,7 +219,7 @@ test("Given customer's username and product name; When calling addProductToCart;
     // GIVEN
     // Variables at the top of the file.
     customerDb.getCustomerByUsername = mockCustomerDb_getCustomerByUsername.mockReturnValue(customer);
-    cartDb.getCartByCustomerId = mockCartDb_getCartByCustomerId.mockReturnValue(cart);
+    cartDb.getActiveCartByCustomerId = mockCartDb_getActiveCartByCustomerId.mockReturnValue(cart);
     productDb.getProductByName = mockProductDb_getProductByName.mockReturnValue(new Product({
         name: "Bananas",
         price: 5,
@@ -239,8 +241,8 @@ test("Given customer's username and product name; When calling addProductToCart;
     expect(mockCustomerDb_getCustomerByUsername).toHaveBeenCalledTimes(1);
     expect(mockCustomerDb_getCustomerByUsername).toHaveBeenCalledWith(customer.getUsername());
 
-    expect(mockCartDb_getCartByCustomerId).toHaveBeenCalledTimes(1);
-    expect(mockCartDb_getCartByCustomerId).toHaveBeenCalledWith(customer.getId());
+    expect(mockCartDb_getActiveCartByCustomerId).toHaveBeenCalledTimes(1);
+    expect(mockCartDb_getActiveCartByCustomerId).toHaveBeenCalledWith(customer.getId());
 
     expect(mockProductDb_getProductByName).toHaveBeenCalledTimes(1);
 
@@ -277,7 +279,7 @@ test('Given customer without a cart; When calling addProductToCart; Then error i
     // GIVEN
     // Variables at the top of the file.
     customerDb.getCustomerByUsername = mockCustomerDb_getCustomerByUsername.mockReturnValue(customer);
-    cartDb.getCartByCustomerId = mockCartDb_getCartByCustomerId.mockReturnValue(null);
+    cartDb.getActiveCartByCustomerId = mockCartDb_getActiveCartByCustomerId.mockReturnValue(null);
 
 
     // WHEN
@@ -293,7 +295,7 @@ test('Given no product name; When calling addProductToCart; Then error is thrown
     // Variables at the top of the file.
     const productName: string = "Bananas";
     customerDb.getCustomerByUsername = mockCustomerDb_getCustomerByUsername.mockReturnValue(customer);
-    cartDb.getCartByCustomerId = mockCartDb_getCartByCustomerId.mockReturnValue(cart);
+    cartDb.getActiveCartByCustomerId = mockCartDb_getActiveCartByCustomerId.mockReturnValue(cart);
 
 
     // WHEN
@@ -309,7 +311,7 @@ test('Given product does not exist in the database; When calling addProductToCar
     // Variables at the top of the file.
     const productName: string = "Bananas";
     customerDb.getCustomerByUsername = mockCustomerDb_getCustomerByUsername.mockReturnValue(customer);
-    cartDb.getCartByCustomerId = mockCartDb_getCartByCustomerId.mockReturnValue(cart);
+    cartDb.getActiveCartByCustomerId = mockCartDb_getActiveCartByCustomerId.mockReturnValue(cart);
     productDb.getProductByName = mockProductDb_getProductByName.mockReturnValue(null);
 
     // WHEN
@@ -324,7 +326,7 @@ test("Given customer's username; When calling deleteCartItemsByCustomerUsername;
     // GIVEN
     // Variables at the top of the file.
     customerDb.getCustomerByUsername = mockCustomerDb_getCustomerByUsername.mockReturnValue(customer);
-    cartDb.getCartByCustomerId = mockCartDb_getCartByCustomerId.mockReturnValue(cart);
+    cartDb.getActiveCartByCustomerId = mockCartDb_getActiveCartByCustomerId.mockReturnValue(cart);
     cartContainsProductDb.deleteCartItemsByCustomerUsername = mockCartContainsProductDb_deleteCartItemsByCustomerId.mockReturnValue("Cart items deleted successfully.");
 
     // WHEN
@@ -336,11 +338,11 @@ test("Given customer's username; When calling deleteCartItemsByCustomerUsername;
     expect(mockCustomerDb_getCustomerByUsername).toHaveBeenCalledTimes(1);
     expect(mockCustomerDb_getCustomerByUsername).toHaveBeenCalledWith(customer.getUsername());
 
-    expect(mockCartDb_getCartByCustomerId).toHaveBeenCalledTimes(1);
-    expect(mockCartDb_getCartByCustomerId).toHaveBeenCalledWith(customer.getId());
+    expect(mockCartDb_getActiveCartByCustomerId).toHaveBeenCalledTimes(1);
+    expect(mockCartDb_getActiveCartByCustomerId).toHaveBeenCalledWith(customer.getId());
 
-    expect(mockCartDb_getCartByCustomerId).toHaveBeenCalledTimes(1);
-    expect(mockCartDb_getCartByCustomerId).toHaveBeenCalledWith(cart.getId());
+    expect(mockCartDb_getActiveCartByCustomerId).toHaveBeenCalledTimes(1);
+    expect(mockCartDb_getActiveCartByCustomerId).toHaveBeenCalledWith(cart.getId());
 
 });
 
@@ -373,7 +375,7 @@ test('Given a customer without a cart; When calling deleteCartItemsByCustomerUse
     // GIVEN
     // Variables at the top of the file.
     customerDb.getCustomerByUsername = mockCustomerDb_getCustomerByUsername.mockReturnValue(customer);
-    cartDb.getCartByCustomerId = mockCartDb_getCartByCustomerId.mockReturnValue(null);
+    cartDb.getActiveCartByCustomerId = mockCartDb_getActiveCartByCustomerId.mockReturnValue(null);
 
     // WHEN
     const deleteCartItemsByCustomerUsername = () => cartService.deleteCartItemsByCustomerUsername(customer.getUsername());

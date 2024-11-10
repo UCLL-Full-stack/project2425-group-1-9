@@ -46,7 +46,8 @@ export class Product {
             unit,
             stock,
             description,
-            imagePath
+            imagePath,
+            // cartContainsProduct: CartContainsProduct.from(cartContainsProduct)
          });
     };
 
