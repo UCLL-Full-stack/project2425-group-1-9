@@ -27,6 +27,7 @@ export type Cart = {
   cartId?: number | undefined
   customerId?: number | undefined
   totalPrice?: number
+  active: boolean;
 }
 
 export type Product = {
@@ -39,8 +40,8 @@ export type Product = {
 };
 
 export type CartItem = {
-  cartId: number,
-  productName: string,
+  cart: Cart,
+  product: Product,
   quantity?: number | undefined
 }
 

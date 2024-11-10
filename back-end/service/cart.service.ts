@@ -11,7 +11,10 @@ import productDb from "../repository/product.db";
 const getProductsByCartId = async (cartId: number): Promise<Product[]> => {
     if (!cartId) throw new Error("Cart ID is required.");
 
-    const cartItemNames: string[] = await cartContainsProductDb.getCartItemNamesByCartId(cartId);
+
+    const cartItems: CartContainsProduct[] | null = await cartContainsProductDb.getAllCartItemsByCartId(cartId);
+    if (!cartItems) throw new Error("Cart is empty.");  // TODO add a test for this.
+    const cartItemNames: string[] = cartItems.map((cartItem) => cartItem.getProduct().getName());
 
     const products: Product[] = [];
     for (let name of cartItemNames) {
@@ -32,7 +35,7 @@ const getCartItemsByCustomerUsername = async (customerUsername: string): Promise
     const cart: Cart | null = await cartDb.getActiveCartByCustomerId(customer.getId());
     if (!cart) throw new Error("Cart does not exist.");
 
-    return cartContainsProductDb.returnAllItemsInCart(cart.getId());
+    return await cartContainsProductDb.getAllCartItemsByCartId(cart.getId());
 };
 
 const addProductToCart = async (customerUsername: string, productName: string): Promise<string> => {
@@ -47,21 +50,19 @@ const addProductToCart = async (customerUsername: string, productName: string): 
     const product: Product | null = await productDb.getProductByName(productName);
     if (!product) throw new Error("Product does not exist.");
 
-    let cartItem: CartContainsProduct | null = await cartContainsProductDb.getCartByCartIdAndProductName(cart.getId(), product.getName());
+    let cartItem: CartContainsProduct | null = await cartContainsProductDb.getCartItemByCartIdAndProductName(cart.getId(), product.getName());
     // if (!cartItem) throw new Error("Cart does not contains the product.");
 
     // CONNECT & SAVE
     // If cart does not contain the item, create the first one.
     if (!cartItem) {
-        cartItem = new CartContainsProduct({
-            cartId: cart.getId(),
-            productName: product.getName(),
-            quantity: 0
-        });
-        cartContainsProductDb.addCartItem(cartItem); // TODO: This should the only function of a POST request! Updating should be PUT!
+        cartItem = new CartContainsProduct({ cart, product, quantity: 1 });
+        await cartContainsProductDb.createCartItem(cartItem); // TODO: This should the only function of a POST request! Updating should be PUT!
     };
 
-    cartItem.quantity = Number(cartItem.getQuantity) + 1; // TODO: This should be a PUT?!\
+    // cartItem.quantity = Number(cartItem.getQuantity) + 1; // connect    TODO: This should be a PUT?!\
+    cartItem.setQuantity(cartItem.getQuantity() + 1); // connect    TODO: This should be a PUT?!\
+    await cartContainsProductDb.updateCartItem(cartItem); // save
 
     return "Product successfully added to cart.";
 }
@@ -77,7 +78,7 @@ const deleteCartItemsByCustomerUsername = async (customerUsername: string): Prom
 
 
     // CONNECT & SAVE
-    return await cartContainsProductDb.deleteCartItemsByCustomerUsername(cart.getId());
+    return await cartContainsProductDb.deleteCartItemsByCartId(cart.getId());
 };
 
 

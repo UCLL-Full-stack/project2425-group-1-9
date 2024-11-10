@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import ProductService from "@/services/ProductService";
 
 const Home: React.FC = () => {
-  const [products, setProducts] = useState<Array<Product>>([]);
+  const [products, setProducts] = useState<Product[]>([]);
 
   const getProducts = async () => {
     const response = await ProductService.getAllProducts();

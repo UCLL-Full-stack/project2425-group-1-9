@@ -1,32 +1,57 @@
+import { Cart } from "./cart";
+import { Product } from "./product";
+import {
+    Cart as CartPrisma,
+    Product as ProductPrisma,
+    Customer as CustomerPrisma,
+    CartContainsProduct as CartContainsProductPrisma
+} from '@prisma/client';
 
 export class CartContainsProduct {
-    private cartId: number;
-    private productName: string;
-    quantity: number = 0;
+    readonly cart: Cart;
+    readonly product: Product;
+    quantity: number; // Do not change the default value!
 
-    constructor(cartContainsProduct: { cartId: number, productName: string, quantity: number }) {
+    constructor(cartContainsProduct: { cart: Cart, product: Product, quantity: number }) {
         this.validate(cartContainsProduct);
 
-        this.cartId = cartContainsProduct.cartId;
-        this.productName = cartContainsProduct.productName;
+        this.cart = cartContainsProduct.cart;
+        this.product = cartContainsProduct.product;
         this.quantity = cartContainsProduct.quantity;
     }
 
-    validate(cartContainsProduct: { productName: string, quantity: number }) {
-        if (!cartContainsProduct.productName) throw new Error('Product name is required.');
+    validate(cartContainsProduct: { cart: Cart, product: Product, quantity: number }) {
+        if (!cartContainsProduct.cart) throw new Error("Cart is required."); 
+        if (!cartContainsProduct.product) throw new Error('Product name is required.');
         if (cartContainsProduct.quantity < 0) throw new Error("Quantity must be non-negative.");
     }
 
-    getCartId(): number {
-        return this.cartId
+    static from({
+        cart,
+        product,
+        quantity
+    // }: CartContainsProductPrisma & { cart: CartPrisma & { customer: CustomerPrisma }; product: ProductPrisma }) {
+    }: CartContainsProductPrisma & { cart: CartPrisma & { customer: CustomerPrisma }; product: ProductPrisma }) {
+        return new CartContainsProduct({
+            cart: Cart.from(cart),
+            product: Product.from(product),
+            quantity
+        });
+    };
+
+    getCart(): Cart {
+        return this.cart;
     }
-    getProductName(): string {
-        return this.productName
+
+    getProduct(): Product {
+        return this.product
     }
+
     getQuantity(): number {
-        if (this.quantity === undefined) {
-            throw new Error("Quantity is undefined");
-        }
         return this.quantity;
+    }
+
+    setQuantity(quantity: number): void {
+        this.quantity = quantity;
     }
 }

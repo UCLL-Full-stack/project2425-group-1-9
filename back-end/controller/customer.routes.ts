@@ -80,7 +80,7 @@ const customerRouter = express.Router();
  *              type: string
  *              required: true
  *              description: Customer's username.
- *              example: 1
+ *              example: Matej333
  *     responses:
  *       200:
  *         description: Message indicating success.
@@ -166,9 +166,8 @@ customerRouter.post('/:username/cart/:productName', async (req: Request, res: Re
  */
 customerRouter.get("/:username/cart", async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const getCustomerByUsername: string = String(req.params.username)
-        const cart: CartContainsProduct[] = await cartService.getCartItemsByCustomerUsername(getCustomerByUsername);
-        res.status(202).json(cart);
+        const cart: CartContainsProduct[] = await cartService.getCartItemsByCustomerUsername(String(req.params.username));
+        res.status(200).json(cart);
     } catch (e) {
         next(e);
     }

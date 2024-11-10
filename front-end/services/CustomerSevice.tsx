@@ -15,7 +15,6 @@
 //     );
 // };
 
-import { CartItem } from "@/types";
 
 const clearCart = async (customerUsername: string) => {
     return await fetch(
@@ -44,13 +43,14 @@ const addCartItem = async (customerUsername: string, productName: string) => {
 };
 
 
-const fetchCartItemsByCustomerUsername = async(username: string) => {
-    return fetch(
-        process.env.NEXT_PUBLIC_API_URL + `/customers/${username}/cart`,
+const getCartItemsByCustomerUsername = async (customerUsername: string) => {
+    return await fetch(
+        process.env.NEXT_PUBLIC_API_URL + `/customers/${customerUsername}/cart`,
         {
             method:"GET",
             headers:{
-                "content-type":"application/json"
+                'Content-Type': 'application/json',
+                Accept: 'application/json'
             }
         }
     );
@@ -59,7 +59,7 @@ const fetchCartItemsByCustomerUsername = async(username: string) => {
 const CustomerService = {
     clearCart,
     addCartItem,
-    fetchCartItemsByCustomerUsername
+    getCartItemsByCustomerUsername
 }
 
 export default CustomerService;
