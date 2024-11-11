@@ -5,53 +5,32 @@ import styles from "../../styles/home.module.css";
 import { useState, useEffect } from "react";
 // import CartService from "@/services/CartService";
 import CartItem from "@/components/cartItem";
-import CustomerService from "@/services/CustomerSevice";
+import CustomerService from "@/services/CustomerService";
 
 const Cart: React.FC = () => {
     const [cartItems, setCartItems] = useState<CartItem[]>([]);
-    // const [products, setProducts] = useState<Array<Product>>([]);
 
     const getCartItemsByCustomerUsername = async (customerUsername: string) => {
         const response = await CustomerService.getCartItemsByCustomerUsername(customerUsername);
-        // console.log(response);
-        const cartItemss = await response.json();
+        const cartItemss: CartItem[] = await response.json();
+        cartItemss.sort((a: CartItem, b: CartItem) => a.product.name < b.product.name ? -1 : 1) // Sort items based on descending product name.
         setCartItems(cartItemss);
-        // console.log(cartItems); // Q& return empty array, why?
-        // console.log(cartItems ? true : false)
     };
 
-    // const getProducts = async () => {
-    //   const response = await ProductService.getAllProducts();
-    //   const productss = await response.json();
-    //   setProducts(productss);
-    // };
-
-    // const updateProduct = async () => {
-    //     // CartService.updateOrAddCartItem();
-    // };
-  
-    // const incrementQuantity = (productName: string) => {
-    //     // setCartItems(prevItems =>
-    //     //     prevItems.map(item =>
-    //     //         item.productName === productName ? { ...item, quantity: (item.quantity ?? 0) + 1 } : item
-    //     //     )
-    //     // );
-    //     // updateProduct();
-    // };
-
-    // const decrementQuantity = (name: string) => {
-    //     // setCartItems(prevItems =>
-    //     //     prevItems.map(item =>
-    //     //         item.productName === name ? { ...item, quantity: (item.quantity ? item.quantity - 1: 0) } : item
-    //     //     )
-    //     // );
-    // };
-
-    const clearCart = () => {
+    const clearCart = async () => {
         // setCartItems([]);
-        CustomerService.clearCart("Matej333"); // TODO: should not be hardcoded.
-        getCartItemsByCustomerUsername("Matej333"); // TODO: Cart id should not be hardcoded!
+        await CustomerService.clearCart("Matej333"); // TODO: should not be hardcoded.
+        await getCartItemsByCustomerUsername("Matej333"); // TODO: Cart id should not be hardcoded!
+    };
 
+    const deleteCartItem = async (cartItem: CartItem) => {
+        await CustomerService.deleteCartItem("Matej333", cartItem.product.name);
+        await getCartItemsByCustomerUsername("Matej333");
+    }
+
+    const changeQuantity = async (cartItem: CartItem, change: string) => {
+        await CustomerService.createOrUpdateCartItem(cartItem.cart.customer.username, cartItem.product.name, change);
+        await getCartItemsByCustomerUsername("Matej333"); // TODO: Cart id should not be hardcoded!
     };
 
     // Highlight current tab in header.
@@ -61,12 +40,10 @@ const Cart: React.FC = () => {
     };
 
     useEffect(() => {
-    //   getProducts();
       getCartItemsByCustomerUsername("Matej333"); // TODO: Cart id should not be hardcoded!
       highlightCurrentTabInMenu();
 
     }, []);
-
 
     return (
         <>
@@ -77,12 +54,9 @@ const Cart: React.FC = () => {
                 {
                     cartItems &&
                     (<CartItem 
-                    cartItems={cartItems}
-                    // products={products}
-                    // incrementQuantity={incrementQuantity}
-                    // decrementQuantity={decrementQuantity}
-                    // clearCart={clearCart}
-                    />)
+                        cartItems={cartItems}
+                        changeQuantity={changeQuantity}
+                        deleteCartItem={deleteCartItem}/>)
                 }
                 </section>
             </main>  

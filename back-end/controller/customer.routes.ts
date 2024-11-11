@@ -28,51 +28,51 @@ import cartService from '../service/cart.service';
 
 const customerRouter = express.Router();
 
-// /**
-//  * @swagger
-//  * /customers/{id}/cart/{productName}:
-//  *   delete:
-//  *     summary: Delete an item (product) from a cart using customer's username and product name.
-//  *     parameters:
-//  *          - in: path
-//  *            name: id
-//  *            schema:
-//  *              type: string
-//  *              required: true
-//  *              description: Customer's ID.
-//  *              example: 1
-//  *          - in: path
-//  *            name: productName
-//  *            schema:
-//  *              type: string
-//  *              required: true
-//  *              description: Product's name.
-//  *              example: Bananas
-//  *     responses:
-//  *       200:
-//  *         description: Message indicating success.
-//  *         content:
-//  *           application/json:
-//  *             schema:
-//  *               type: string
-//  */
-// customerRouter.delete('/:id/cart/:productName', async (req: Request, res: Response, next: NextFunction) => {
-//     try {
-//         const customerId: number = Number(req.params.id);
-//         const productName: string = String(req.params.productName);
-//         const result: string = await customerService.deleteCartItem({ customerId, productName });
-//         res.json(result);
-//         // res.status(200).json(result);   // DOES NOT WORK!!!!!!!! Q&
-//     } catch (error) {
-//         next(error);
-//     }
-// });
+/**
+ * @swagger
+ * /customers/{username}/cart/{productName}:
+ *   delete:
+ *     summary: Delete an item from a cart.
+ *     parameters:
+ *          - in: path
+ *            name: username
+ *            schema:
+ *              type: string
+ *              required: true
+ *              description: Customer's username
+ *              example: Matej333
+ *          - in: path
+ *            name: productName
+ *            schema:
+ *              type: string
+ *              required: true
+ *              description: Product's name.
+ *              example: Bananas
+ *     responses:
+ *       200:
+ *         description: Message indicating success.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: string
+ */
+customerRouter.delete('/:username/cart/:productName', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const customerUsername: string = String(req.params.username);
+        const productName: string = String(req.params.productName);
+        const result: string = await cartService.deleteCartItemByCustomerUsernameAndProductName(customerUsername, productName);
+        res.json(result);
+        // res.status(200).json(result);   // DOES NOT WORK!!!!!!!! Q&
+    } catch (error) {
+        next(error);
+    }
+});
 
 /**
  * @swagger
  * /customers/{username}/cart:
  *   delete:
- *     summary: Delete all items (products) from a cart using customer's username.
+ *     summary: Delete all items (products) from a cart.
  *     parameters:
  *          - in: path
  *            name: username
@@ -103,9 +103,9 @@ customerRouter.delete('/:username/cart', async (req: Request, res: Response, nex
 
 /**
  * @swagger
- * /customers/{username}/cart/{productName}:
- *   post:
- *     summary: Add a product to a cart using customer's username and product name.
+ * /customers/{username}/cart/{productName}?change:
+ *   put:
+ *     summary: Add a product to cart or change it's quantity.
  *     parameters:
  *          - in: path
  *            name: username
@@ -121,6 +121,13 @@ customerRouter.delete('/:username/cart', async (req: Request, res: Response, nex
  *              required: true
  *              description: Product's name.
  *              example: Bananas 
+ *          - in: query
+ *            name: change
+ *            schema:
+ *              type: string
+ *              required: false
+ *              description: Specify whether to 'increase' or 'decrease' the cart item.
+ *              example: decrease
  *     responses:
  *       200:
  *         description: Message indicating success.
@@ -130,16 +137,20 @@ customerRouter.delete('/:username/cart', async (req: Request, res: Response, nex
  *               type: string
  *               example: Product deleted successfully.
  */
-customerRouter.post('/:username/cart/:productName', async (req: Request, res: Response, next: NextFunction) => {
+customerRouter.put('/:username/cart/:productName', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const customerUsername: string = String(req.params.username);
         const productName: string = String(req.params.productName);
-        const result = await cartService.addProductToCart(customerUsername, productName);
+        const change: string = String(req.query.change) || "increase";
+        const result = await cartService.createOrUpdateCartItem(customerUsername, productName, change);
         res.status(200).json(result);
     } catch (error) {
         next(error);
     }
 })
+// https://www.baeldung.com/rest-http-put-vs-post
+
+
 
 
 
@@ -147,7 +158,7 @@ customerRouter.post('/:username/cart/:productName', async (req: Request, res: Re
  * @swagger
  * /customers/{username}/cart:
  *   get:
- *     summary: Get CartContainsProduct objects using customer's username. (Get cart items of a customer).
+ *     summary: Get cart items of a customer. (Get CartContainsProduct objects using customer's username.)
  *     parameters:
  *          - in: path
  *            name: username

@@ -4,12 +4,12 @@ import {
 } from '@prisma/client';
 
 export class Product {
-    private name: string;
-    private price: number;
-    private unit: string;
-    private stock: number;
-    private description: string;
-    private imagePath: string;
+    readonly name: string;
+    readonly price: number;
+    readonly unit: string;
+    stock: number;
+    readonly description: string;
+    readonly imagePath: string;
 
     constructor(product: { name: string, price: number, unit: string, stock: number, description: string, imagePath: string }) {
         this.validate(product);
@@ -65,6 +65,10 @@ export class Product {
 
     getStock(): number {
         return this.stock;
+    }
+    setStock(stock: number): void {
+        if (stock < 0) throw new Error("Out of stock.");
+        this.stock = stock;
     }
 
     getDescription(): string {

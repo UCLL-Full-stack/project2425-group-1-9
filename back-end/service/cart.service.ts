@@ -38,7 +38,7 @@ const getCartItemsByCustomerUsername = async (customerUsername: string): Promise
     return await cartContainsProductDb.getAllCartItemsByCartId(cart.getId());
 };
 
-const addProductToCart = async (customerUsername: string, productName: string): Promise<string> => {
+const createOrUpdateCartItem = async (customerUsername: string, productName: string, change?: string): Promise<string> => {
     if (!customerUsername) throw new Error("Customer's username is required.");
     const customer: Customer | null = await customerDb.getCustomerByUsername(customerUsername);
     if (!customer) throw new Error("Customer does not exist.");
@@ -51,20 +51,27 @@ const addProductToCart = async (customerUsername: string, productName: string): 
     if (!product) throw new Error("Product does not exist.");
 
     let cartItem: CartContainsProduct | null = await cartContainsProductDb.getCartItemByCartIdAndProductName(cart.getId(), product.getName());
-    // if (!cartItem) throw new Error("Cart does not contains the product.");
 
     // CONNECT & SAVE
-    // If cart does not contain the item, create the first one.
+    // Create or Update
     if (!cartItem) {
-        cartItem = new CartContainsProduct({ cart, product, quantity: 1 });
-        await cartContainsProductDb.createCartItem(cartItem); // TODO: This should the only function of a POST request! Updating should be PUT!
-    };
+        cartItem = new CartContainsProduct({ cart, product, quantity: 1 }); // connect
+        product.setStock(cartItem.product.getStock() - 1); // connect
+        await productDb.updateProductStockByName(product.getName(), product.getStock()); // save
+        return await cartContainsProductDb.createOrUpdateCartItem(cartItem); // save
+    } else {
+        if (change === "increase") {
+            product.setStock(cartItem.product.getStock() - 1); // connect
+            cartItem.setQuantity(cartItem.getQuantity() + 1); // connect
+        }
+        if (change === "decrease") {
+            product.setStock(cartItem.product.getStock() + 1); // connect
+            cartItem.setQuantity(cartItem.getQuantity() - 1); // connect
+        }
+        await productDb.updateProductStockByName(product.getName(), product.getStock()); // save
+        return await cartContainsProductDb.updateCartItem(cartItem); // save
+    }
 
-    // cartItem.quantity = Number(cartItem.getQuantity) + 1; // connect    TODO: This should be a PUT?!\
-    cartItem.setQuantity(cartItem.getQuantity() + 1); // connect    TODO: This should be a PUT?!\
-    await cartContainsProductDb.updateCartItem(cartItem); // save
-
-    return "Product successfully added to cart.";
 }
 
 const deleteCartItemsByCustomerUsername = async (customerUsername: string): Promise<string> => {
@@ -82,17 +89,30 @@ const deleteCartItemsByCustomerUsername = async (customerUsername: string): Prom
 };
 
 
-// const deleteCartItem = async ({ customerId, productName }: { customerId: number, productName: string }): Promise<string> => {
+const deleteCartItemByCustomerUsernameAndProductName = async (customerUsername: string, productName: string): Promise<string> => {
+    // GET
+    if (!customerUsername) throw new Error("Customer's username is required.");
+    const customer: Customer | null = await customerDb.getCustomerByUsername(customerUsername);
+    if (!customer) throw new Error("Customer does not exist.");
 
-//     // GET
-//     const customer: Customer | null = customerDb.getCustomerById(customerId);
-//     if (!customer) throw new Error(`Customer with id ${customerId} does not exist.`);
-//     const cart: Cart | null = cartDb.getActiveCartByCustomerId(customer.getId());
-//     if (!cart) throw new Error(`Customer ${customer.getUsername()} does not have a cart.`);
+    const cart: Cart | null = await cartDb.getActiveCartByCustomerId(customer.getId());
+    if (!cart) throw new Error("Cart does not exist.");
 
-//     // CONNECT & SAVE
-//     cartContainsProductDb.deleteCartItemByCartIdAndProductName(cart.getId(), productName);
-//     return `Cart item '${productName}' deleted successfully.`;
-// }
+    if (!productName) throw new Error("Product name is required.");
+    const product: Product | null = await productDb.getProductByName(productName);
+    if (!product) throw new Error("Product does not exist.");
 
-export default { getProductsByCartId, getCartItemsByCustomerUsername, addProductToCart, deleteCartItemsByCustomerUsername }
+    const cartItem: CartContainsProduct | null = await cartContainsProductDb.getCartItemByCartIdAndProductName(cart.getId(), product.getName());
+    if (!cartItem) throw new Error("Item not in cart.");
+
+    // CONNECT & SAVE
+    return cartContainsProductDb.deleteCartItemByCartIdAndProductName(cart.getId(), product.getName());
+}
+
+export default {
+    getProductsByCartId,
+    getCartItemsByCustomerUsername,
+    createOrUpdateCartItem,
+    deleteCartItemsByCustomerUsername,
+    deleteCartItemByCustomerUsernameAndProductName
+}

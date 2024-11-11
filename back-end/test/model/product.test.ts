@@ -90,3 +90,15 @@ test("Given no image path; When creating product; Then error is thrown.", () => 
     // THEN
     expect(createProduct).toThrow("Image path is required.");
 });
+
+test("Given non-positive stock; When calling setStock; Then error is thrown.", () => {
+    // GIVEN
+    // Values at the top of this file.
+    const product = new Product({ name, price, unit, stock: 0, description, imagePath });
+
+    // WHEN
+    const setStock = () => product.setStock(product.getStock() - 1)
+
+    // THEN
+    expect(setStock).toThrow("Out of stock.");
+});
