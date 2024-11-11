@@ -1,5 +1,6 @@
 import type {  CartItem } from '../types';
 import Image from 'next/image'
+import styles from "../styles/Home.module.css";
 
 type Props = {
     cartItems: Array<CartItem>;
@@ -23,9 +24,11 @@ const CartItem: React.FC<Props> = ({ cartItems, changeQuantity, deleteCartItem }
                         <p>{cartItem.product.name}</p>
                         <p>{cartItem.product.price} $ / {cartItem.product.unit}</p>
                         <p>Stock: {cartItem.product.stock}</p>
-                        <button onClick={() => changeQuantity(cartItem, "increase")}>+</button>
-                        <button onClick={() => changeQuantity(cartItem, "decrease")}>-</button>
-                        <button onClick={() => deleteCartItem(cartItem)}>DEL</button>
+                        <div className={styles.changeQuantityDiv}>
+                            <button onClick={() => changeQuantity(cartItem, "increase")}>+</button>
+                            <button onClick={() => changeQuantity(cartItem, "decrease")}>-</button>
+                        </div>
+                        <button onClick={() => deleteCartItem(cartItem)}>DELETE</button>
                         <p>Price: {cartItem.product.price * cartItem.quantity} $</p>
                         <p>Quantity: {cartItem.quantity}</p>
                     </div>       
