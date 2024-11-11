@@ -33,6 +33,15 @@ const Cart: React.FC = () => {
         await getCartItemsByCustomerUsername("Matej333"); // TODO: Cart id should not be hardcoded!
     };
 
+    const getTotalCartPrice = (): number => {
+        let totalCartPrice: number = 0;
+        for (let cartItem of cartItems) {
+            const cartItemTotalPrice: number = cartItem.product.price * cartItem.quantity;
+            totalCartPrice = totalCartPrice + cartItemTotalPrice;
+        };
+        return totalCartPrice;
+    };
+
     // Highlight current tab in header.
     const highlightCurrentTabInMenu = () => {
         const cartTabElement = document.querySelector("header nav a:nth-child(2)");
@@ -50,6 +59,7 @@ const Cart: React.FC = () => {
             <Header />
             <main className={styles.main}>
                 <button onClick={clearCart} >Clear Cart</button>
+                <p>Total price: {String(getTotalCartPrice())} $</p>
                 <section className={styles.products}>
                 {
                     cartItems &&

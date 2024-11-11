@@ -26,6 +26,7 @@ const CartItem: React.FC<Props> = ({ cartItems, changeQuantity, deleteCartItem }
                         <button onClick={() => changeQuantity(cartItem, "increase")}>+</button>
                         <button onClick={() => changeQuantity(cartItem, "decrease")}>-</button>
                         <button onClick={() => deleteCartItem(cartItem)}>DEL</button>
+                        <p>Price: {cartItem.product.price * cartItem.quantity} $</p>
                         <p>Quantity: {cartItem.quantity}</p>
                     </div>       
                 </article>

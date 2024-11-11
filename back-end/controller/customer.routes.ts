@@ -182,10 +182,6 @@ customerRouter.get("/:username/cart", async (req: Request, res: Response, next: 
     } catch (e) {
         next(e);
     }
-
-
 })
-
-
 
 export { customerRouter };

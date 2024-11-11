@@ -114,5 +114,5 @@ export default {
     getCartItemsByCustomerUsername,
     createOrUpdateCartItem,
     deleteCartItemsByCustomerUsername,
-    deleteCartItemByCustomerUsernameAndProductName
+    deleteCartItemByCustomerUsernameAndProductName,
 }

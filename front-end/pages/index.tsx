@@ -32,6 +32,7 @@ const Home: React.FC = () => {
 
   const addToCart = async (productName: string) => {
     await CustomerService.createOrUpdateCartItem("Matej333", productName, "increase");
+    await getCartItemsByCustomerUsername("Matej333");
     await getProducts();
   }
 
