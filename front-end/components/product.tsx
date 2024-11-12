@@ -27,10 +27,10 @@ const Product: React.FC<Props> = ({ products, cartItems, addToCart }: Props) => 
                     <div>
                         <p>{product.name}</p>
                         <p>{product.price} $ / {product.unit}</p>
-                        <button onClick={() => addToCart(product.name)}>Add to cart</button>
+                        {sessionStorage.getItem("loggedInUser") && <button onClick={() => addToCart(product.name)}>Add to cart</button>}
                         <p>Stock: {product.stock}</p>
                         {/* Quantity Increases without accessing actual value in the database. */}
-                        <p>Quantity: {getQuantity(product.name)}</p>
+                        {sessionStorage.getItem("loggedInUser") && <p>Quantity: {getQuantity(product.name)}</p>}
                     </div>
                 </article>
             ))}

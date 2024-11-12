@@ -30,3 +30,8 @@ export type CartItem = {
   quantity: number
 }
 
+export type StatusMessage = {
+  message: string;
+  type: "error" | "success";
+};
+
