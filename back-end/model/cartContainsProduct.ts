@@ -23,7 +23,7 @@ export class CartContainsProduct {
     validate(cartContainsProduct: { cart: Cart, product: Product, quantity: number }) {
         if (!cartContainsProduct.cart) throw new Error("Cart is required."); 
         if (!cartContainsProduct.product) throw new Error('Product name is required.');
-        if (cartContainsProduct.quantity < 0) throw new Error("Quantity must be non-negative.");
+        if (cartContainsProduct.quantity <= 0) throw new Error("Quantity must be positive.");
     }
 
     static from({
@@ -52,6 +52,7 @@ export class CartContainsProduct {
     }
 
     setQuantity(quantity: number): void {
+        if (quantity <= 0) throw new Error("Quantity must be positive."); // Q& Validation is done twice!?
         this.quantity = quantity;
     }
 }

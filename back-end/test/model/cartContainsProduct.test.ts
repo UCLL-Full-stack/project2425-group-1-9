@@ -29,7 +29,7 @@ const product = new Product({
     description: "A banana is an elongated, edible fruit -- botanically a berry[1] -- produced by several kinds of large herbaceous flowering plants in the genus Musa. In some countries, cooking bananas are called plantains, distinguishing them from dessert bananas. The fruit is variable in size, color and firmness, but is usually elongated and curved, with soft flesh rich in, starch covered with a peel, which may have a variety of colors when ripe. It grows upward in clusters near the top of the plant. Almost all modern edible seedless (parthenocarp) cultivated bananas come from two wild species -- Musa acuminata and Musa balbisiana, or hybrids of them.",
     imagePath: resourceImagePath + "bananas.png"
 })
-const quantity: number = 0;
+const quantity: number = 1;
 
 test('Given valid values; When creating CartContainsProduct object; Then object is created with those values.', () => {
     // GIVEN 
@@ -44,14 +44,26 @@ test('Given valid values; When creating CartContainsProduct object; Then object 
     expect(cartContainsProduct.getQuantity()).toBe(quantity);
 });
 
-test('Given negative quantity; When creating CartContainsProduct object; Then error is thrown.', () => {
+test('Given non-positive quantity; When creating CartContainsProduct object; Then error is thrown.', () => {
     // GIVEN 
     // Values at the top of this file.
 
     // WHEN
-    const createCartContainsProduct = () => new CartContainsProduct({ cart, product, quantity: -10 });
+    const createCartContainsProduct = () => new CartContainsProduct({ cart, product, quantity: 0 });
 
     // THEN
-    expect(createCartContainsProduct).toThrow("Quantity must be non-negative.");
+    expect(createCartContainsProduct).toThrow("Quantity must be positive.");
+});
+
+test('Given non-positive quantity; When calling setQuantity; Then error is thrown.', () => {
+    // GIVEN 
+    // Values at the top of this file.
+    const cartContainsProduct: CartContainsProduct = new CartContainsProduct({ cart, product, quantity });
+
+    // WHEN
+    const setQuantity = () => cartContainsProduct.setQuantity(0);
+
+    // THEN
+    expect(setQuantity).toThrow("Quantity must be positive.");
 });
 
