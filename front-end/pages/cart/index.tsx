@@ -8,8 +8,10 @@ import CartItem from "@/components/cartItem";
 import CustomerService from "@/services/CustomerService";
 import useSWR, { mutate } from "swr";
 import useInterval from "use-interval";
+import { useRouter } from "next/router";
 
 const Cart: React.FC = () => {
+    const router = useRouter();
     // const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
     // const getCartItemsByCustomerUsername = async (customerUsername: string) => {
@@ -76,6 +78,7 @@ const Cart: React.FC = () => {
     // Highlight current tab in header.
     const highlightCurrentTabInMenu = () => {
         const cartTabElement = document.querySelector("header nav a:nth-child(2)");
+        console.log(cartTabElement);
         if (cartTabElement) cartTabElement.setAttribute("style", "background-color: green;");
     };
 
@@ -94,6 +97,7 @@ const Cart: React.FC = () => {
                     {isLoading && <p>Loading...</p>}
 
                     <button onClick={clearCart} >Clear Cart</button>
+                    <button onClick={() => {router.push(`/cart/order/50`)}}>Place Order</button>
                     {/* <p>Total price: {String(getTotalCartPrice())} $</p> */}
 
                     <section className={styles.products}>
