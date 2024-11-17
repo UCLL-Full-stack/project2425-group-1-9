@@ -34,10 +34,8 @@
 
 import express, { NextFunction, Request, Response } from 'express';
 import { CartContainsProduct } from '../model/cartContainsProduct';
+import cartItemService from '../service/cartItem.service';
 import cartService from '../service/cart.service';
-import { OrderInput } from '../types';
-import orderService from '../service/order.service';
-// import cartService from '../service/cart.service';
 
 const customerRouter = express.Router();
 
@@ -73,7 +71,7 @@ customerRouter.delete('/:username/cart/:productName', async (req: Request, res: 
     try {
         const customerUsername: string = String(req.params.username);
         const productName: string = String(req.params.productName);
-        const result: string = await cartService.deleteCartItemByCustomerUsernameAndProductName(customerUsername, productName);
+        const result: string = await cartItemService.deleteCartItemByCustomerUsernameAndProductName(customerUsername, productName);
         res.json(result);
         // res.status(200).json(result);   // DOES NOT WORK!!!!!!!! Q&
     } catch (error) {
@@ -106,7 +104,7 @@ customerRouter.delete('/:username/cart/:productName', async (req: Request, res: 
 customerRouter.delete('/:username/cart', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const customerUsername: string = String(req.params.username);
-        const result: string = await cartService.deleteCartItemsByCustomerUsername(customerUsername);
+        const result: string = await cartItemService.deleteCartItemsByCustomerUsername(customerUsername);
         res.json(result);
         // res.status(200).json(result);   // DOES NOT WORK!!!!!!!! Q&
     } catch (error) {
@@ -155,7 +153,7 @@ customerRouter.put('/:username/cart/:productName', async (req: Request, res: Res
         const customerUsername: string = String(req.params.username);
         const productName: string = String(req.params.productName);
         const change: string = String(req.query.change) || "increase";
-        const result = await cartService.createOrUpdateCartItem(customerUsername, productName, change);
+        const result = await cartItemService.createOrUpdateCartItem(customerUsername, productName, change);
         res.status(200).json(result);
     } catch (error) {
         next(error);
@@ -190,7 +188,7 @@ customerRouter.put('/:username/cart/:productName', async (req: Request, res: Res
  */
 customerRouter.get("/:username/cart", async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const cart: CartContainsProduct[] = await cartService.getCartItemsByCustomerUsername(String(req.params.username));
+        const cart: CartContainsProduct[] = await cartItemService.getCartItemsByCustomerUsername(String(req.params.username));
         res.status(200).json(cart);
     } catch (e) {
         next(e);
