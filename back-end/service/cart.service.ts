@@ -110,12 +110,12 @@ const deleteCartItemByCustomerUsernameAndProductName = async (customerUsername: 
 }
 
 // TODO: This should be in another service.
-const getTotalCartPriceByCartId = async (cartId: number) => {
+const getTotalCartPriceByCustomerUsername = async (customerUsername: string) => {
     let totalPrice: number = 0;
 
-    const cartItems: CartContainsProduct[] = await cartContainsProductDb.getAllCartItemsByCartId(cartId);
+    const cartItems: CartContainsProduct[] = await getCartItemsByCustomerUsername(customerUsername);
     for (let cartItem of cartItems) {
-        totalPrice += cartItem.getProduct().getPrice();
+        totalPrice += cartItem.getProduct().getPrice() * cartItem.getQuantity();
     };
 
     return totalPrice;
@@ -125,7 +125,7 @@ const getTotalCartPriceByCartId = async (cartId: number) => {
 const createNewActiveCartAndDeactivateTheCurrentOne = async (currentCart: Cart) => {
     // GET
     // The method is called from another service, so validation is not needed.
-    const totalPrice: number = await getTotalCartPriceByCartId(currentCart.getId());
+    const totalPrice: number = await getTotalCartPriceByCustomerUsername(currentCart.getCustomer().getUsername());
 
     // CONNECT
     currentCart.setActive(false);
@@ -143,5 +143,5 @@ export default {
     deleteCartItemsByCustomerUsername,
     deleteCartItemByCustomerUsernameAndProductName,
     createNewActiveCartAndDeactivateTheCurrentOne,
-    getTotalCartPriceByCartId
+    getTotalCartPriceByCustomerUsername
 }

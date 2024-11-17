@@ -4,6 +4,8 @@ import OrderService from "@/services/OrderService";
 import { Customer, Orderr } from "@/types";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import useSWR, { mutate } from "swr";
+import useInterval from "use-interval";
 
 const Order: React.FC = () => {
     const [firstName, setFirstName] = useState("Matej");
@@ -18,9 +20,30 @@ const Order: React.FC = () => {
     const [statusMessage, setStatusMessage] = useState("");
 
     const router = useRouter();
-    const { totalPrice } = router.query;
 
-    
+    const getTotalCartPrice = async () => {
+        const responses = Promise.all([
+            CustomerService.getTotalCartPriceByCustomerUsername("Matej333")
+        ]);
+
+        const [totalCartPriceResponse] = await responses;
+
+        const totalCartPrice = await totalCartPriceResponse.json();
+
+        return {
+            totalCartPrice
+        };
+    };
+
+    const { data, isLoading, error } = useSWR(
+        "getTotalCartPrice",
+        getTotalCartPrice
+    );
+
+    useInterval(() => {
+        mutate("getTotalCartPrice", getTotalCartPrice());
+    }, 5000);
+
 
     const clearErrors = () => {
         setFirstNameError("");
@@ -69,6 +92,8 @@ const Order: React.FC = () => {
         const response = await OrderService.placeOrder(order);
         const { message } = await response.json();
         setStatusMessage(message);
+        
+        mutate("getTotalCartPrice", getTotalCartPrice());
 
     };
 
@@ -107,7 +132,7 @@ const Order: React.FC = () => {
                     </div>
 
                     <div>
-                        <p>Total price: {totalPrice}</p>
+                        {data && <p>Total price: {data.totalCartPrice}</p>}
                     </div>
 
                     <div>

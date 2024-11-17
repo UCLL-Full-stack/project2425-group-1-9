@@ -21,48 +21,51 @@ const Cart: React.FC = () => {
     //     setCartItems(cartItemss);
     // };
 
-    const getCartItems = async () => {
+    const getCartItemsAndTotalCartPrice = async () => {
         const responses = Promise.all([
-            CustomerService.getCartItemsByCustomerUsername("Matej333")
+            CustomerService.getCartItemsByCustomerUsername("Matej333"),
+            CustomerService.getTotalCartPriceByCustomerUsername("Matej333")
         ]);
 
-        const [cartItemsResponse] = await responses;
+        const [cartItemsResponse, totalCartPriceResponse] = await responses;
 
         const cartItems = await cartItemsResponse.json();
+        const totalCartPrice = await totalCartPriceResponse.json();
 
         cartItems.sort((a: CartItem, b: CartItem) => a.product.name < b.product.name ? -1 : 1) // Sort items based on descending product name.
 
         return {
-            cartItems
+            cartItems,
+            totalCartPrice
         };
     };
 
     const { data, isLoading, error } = useSWR(
-        "getCartItems",
-        getCartItems
+        "getCartItemsAndTotalCartPrice",
+        getCartItemsAndTotalCartPrice
     );
 
     useInterval(() => {
-        mutate("getCartItems", getCartItems());
+        mutate("getCartItems", getCartItemsAndTotalCartPrice());
     }, 5000);
 
 
     const clearCart = async () => {
         // setCartItems([]);
         await CustomerService.clearCart("Matej333"); // TODO: should not be hardcoded.
-        mutate("getCartItems", getCartItems()); // Q& Is it okay to do mutate here? Or should I make a useState and change it to trigger render?
+        mutate("getCartItemsAndTotalCartPrice", getCartItemsAndTotalCartPrice()); // Q& Is it okay to do mutate here? Or should I make a useState and change it to trigger render?
         // await getCartItemsByCustomerUsername("Matej333"); // TODO: Cart id should not be hardcoded!
     };
 
     const deleteCartItem = async (cartItem: CartItem) => {
         await CustomerService.deleteCartItem("Matej333", cartItem.product.name);
-        mutate("getCartItems", getCartItems());
+        mutate("getCartItemsAndTotalCartPrice", getCartItemsAndTotalCartPrice());
         // await getCartItemsByCustomerUsername("Matej333");
     }
 
     const changeQuantity = async (cartItem: CartItem, change: string) => {
         await CustomerService.createOrUpdateCartItem(cartItem.cart.customer.username, cartItem.product.name, change);
-        mutate("getCartItems", getCartItems());
+        mutate("getCartItemsAndTotalCartPrice", getCartItemsAndTotalCartPrice());
         // await getCartItemsByCustomerUsername("Matej333"); // TODO: Cart id should not be hardcoded!
     };
 
@@ -97,8 +100,8 @@ const Cart: React.FC = () => {
                     {isLoading && <p>Loading...</p>}
 
                     <button onClick={clearCart} >Clear Cart</button>
-                    <button onClick={() => {router.push(`/cart/order/50`)}}>Place Order</button>
-                    {/* <p>Total price: {String(getTotalCartPrice())} $</p> */}
+                    <button onClick={() => {router.push(`/cart/order`)}}>Place Order</button>
+                    {data && <p>Total price: {String(data.totalCartPrice)} $</p>}
 
                     <section className={styles.products}>
                     {data &&

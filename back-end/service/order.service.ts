@@ -20,7 +20,7 @@ const createOrder = async ({date, customer: customerInput}: OrderInput) => {
     const cart: Cart | null = await cartDb.getActiveCartByCustomerId(customer.getId());
     if (!cart) throw new Error("Cart does not exist.");
     
-    const totalCartPrice: number = await cartService.getTotalCartPriceByCartId(cart.getId());
+    const totalCartPrice: number = await cartService.getTotalCartPriceByCustomerUsername(cart.getCustomer().getUsername());
     if (!totalCartPrice) throw new Error("Cart is empty.");
 
     const orderWithSameCart: Order | null = await orderDb.getOrderByCartId(cart.getId());

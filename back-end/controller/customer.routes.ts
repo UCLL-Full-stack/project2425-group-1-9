@@ -197,6 +197,36 @@ customerRouter.get("/:username/cart", async (req: Request, res: Response, next: 
     }
 });
 
+/**
+ * @swagger
+ * /customers/{username}/cart/totalPrice:
+ *   get:
+ *     summary: Get total price of a cart.
+ *     parameters:
+ *          - in: path
+ *            name: username
+ *            schema:
+ *              type: string
+ *              required: true
+ *              description: Customer's username.
+ *              example: Matej333
+ *     responses:
+ *       200:
+ *         description: Total price of the cart.
+ *         content:
+ *           application/json:
+ *             type: number
+ *             example: 500
+ */
+customerRouter.get("/:username/cart/totalPrice", async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const totalCartPrice: number = await cartService.getTotalCartPriceByCustomerUsername(String(req.params.username));
+        res.status(200).json(totalCartPrice);
+    } catch (e) {
+        next(e);
+    }
+});
+
 
 // /**
 //  * @swagger

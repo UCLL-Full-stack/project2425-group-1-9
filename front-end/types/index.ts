@@ -2,7 +2,7 @@ export type Customer = {
   id?: number;
   password?: string;
   securityQuestion?: string;
-  username?: string;
+  username: string;
   firstName?: string;
   lastName?: string;
   phone?: number;
