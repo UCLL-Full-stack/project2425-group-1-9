@@ -51,16 +51,11 @@ const getCartItemsByCustomerUsername = async (customerUsername: string) => {
     );
 }
 
-const placeOrder = async () => {
-    return "Order successfully placed.";
-};
-
 const CustomerService = {
     clearCart,
     createOrUpdateCartItem,
     getCartItemsByCustomerUsername,
     deleteCartItem,
-    placeOrder
 }
 
 export default CustomerService;

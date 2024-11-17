@@ -1,16 +1,18 @@
 import Header from "@/components/header";
 import CustomerService from "@/services/CustomerService";
+import OrderService from "@/services/OrderService";
+import { Customer, Orderr } from "@/types";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 const Order: React.FC = () => {
-    const [firstName, setFirstName] = useState("");
+    const [firstName, setFirstName] = useState("Matej");
     const [firstNameError, setFirstNameError] = useState("");
 
-    const [lastName, setLastName] = useState("");
+    const [lastName, setLastName] = useState("Vesel");
     const [lastNameError, setLastNameError] = useState("");
 
-    const [phone, setPhone] = useState("");
+    const [phone, setPhone] = useState("00 32 455 23 532");
     const [phoneError, setPhoneError] = useState("");
 
     const [statusMessage, setStatusMessage] = useState("");
@@ -60,7 +62,13 @@ const Order: React.FC = () => {
             return;
         };
 
-        setStatusMessage(await CustomerService.placeOrder());
+        // const date: Date = new Date(Date.now());
+        const date: Date = new Date("2024-01-19 14:00:12");
+        const customer: Customer = { username: "Matej333" };
+        const order: Orderr = { date, customer };
+        const response = await OrderService.placeOrder(order);
+        const { message } = await response.json();
+        setStatusMessage(message);
 
     };
 

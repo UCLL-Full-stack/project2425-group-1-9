@@ -1,11 +1,11 @@
 export type Customer = {
-  id: number;
-  password: string;
-  securityQuestion: string;
-  username: string;
-  firstName: string;
-  lastName: string;
-  phone: number;
+  id?: number;
+  password?: string;
+  securityQuestion?: string;
+  username?: string;
+  firstName?: string;
+  lastName?: string;
+  phone?: number;
 }
 
 export type Cart = {
@@ -35,3 +35,7 @@ export type StatusMessage = {
   type: "error" | "success";
 };
 
+export type Orderr = {
+  date: Date;
+  customer: Customer;
+};
