@@ -8,6 +8,7 @@ const prisma = new PrismaClient();
 
 const main = async () => {
     // Order matters!
+    await prisma.order.deleteMany();
     await prisma.cartContainsProduct.deleteMany();
     await prisma.cart.deleteMany();
     await prisma.customer.deleteMany();
@@ -39,6 +40,16 @@ const main = async () => {
 
 
     // CART DATA ----------------------------------------
+    const cartMatej0 = await prisma.cart.create({
+        data: {
+            totalPrice: 540,
+            active: false,
+            customer: {
+                connect: { id: matej.id }
+            }
+        }
+    });
+
     const cartMatej1 = await prisma.cart.create({
         data: {
             totalPrice: 50,
@@ -227,6 +238,34 @@ const main = async () => {
                 connect: { name: bananas.name }
             },
             quantity: 5
+        }
+    });
+
+
+
+    // ORDER DATA --------------------------
+
+    const orderMatejCart0 = await prisma.order.create({
+        data: {
+            cart: {
+                connect: { id: cartMatej0.id }
+            },
+            date: new Date("2017-01-19 14:00:12"),
+            customer: {
+                connect: { id: matej.id }
+            }
+        }
+    });
+
+    const orderMatejCart1 = await prisma.order.create({
+        data: {
+            cart: {
+                connect: { id: cartMatej1.id }
+            },
+            date: new Date("2019-01-19 14:00:12"),
+            customer: {
+                connect: { id: matej.id }
+            }
         }
     });
 

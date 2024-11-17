@@ -26,14 +26,14 @@ model Customer {
     lastName            String
     phone               Int       @unique
     cart                Cart[]
-    order               Order?
+    order               Order[]
     }
 
 model Order {
     cartId      Int        @id
     cart        Cart       @relation(fields: [cartId], references: [id])
     date        DateTime
-    customerId  Int        @unique
+    customerId  Int        
     customer    Customer   @relation(fields: [customerId], references: [id]) 
 }
 

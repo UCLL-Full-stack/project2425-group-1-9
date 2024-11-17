@@ -19,11 +19,24 @@
  *            cartId:
  *              type: number
  *              format: int64
+ *      OrderInput:
+ *          type: object
+ *          properties:
+ *              date:
+ *                  type: date-time
+ *                  format: date-time
+ *              customer:
+ *                  type: object
+ *                  properties:
+ *                      username:
+ *                          type: string            
  */
 
 import express, { NextFunction, Request, Response } from 'express';
 import { CartContainsProduct } from '../model/cartContainsProduct';
 import cartService from '../service/cart.service';
+import { OrderInput } from '../types';
+import orderService from '../service/order.service';
 // import cartService from '../service/cart.service';
 
 const customerRouter = express.Router();
@@ -182,6 +195,56 @@ customerRouter.get("/:username/cart", async (req: Request, res: Response, next: 
     } catch (e) {
         next(e);
     }
-})
+});
+
+
+// /**
+//  * @swagger
+//  * /customers/{username}/cart/order/{date}:
+//  *   post:
+//  *     summary: Create (place) an order. Better alternative to /order.
+//  *     parameters:
+//  *          - in: path
+//  *            name: username
+//  *            schema:
+//  *              type: string
+//  *              required: true
+//  *              description: Customer's username
+//  *              example: Matej333
+//  *          - in: path
+//  *            name: date
+//  *            schema:
+//  *              type: string
+//  *              format: date-time
+//  *              required: true
+//  *              description: Order's date.
+//  *              example: 2019-01-19 14:00:12
+//  *     responses:
+//  *       200:
+//  *         description: Message indicating success.
+//  *         content:
+//  *           application/json:
+//  *             schema:
+//  *               type: string
+//  *               example: Order placed successfully.
+//  */
+// customerRouter.post('/:username/cart/order/:date', async (req: Request, res: Response, next: NextFunction) => {
+//     try {
+//         const customerUsername: string = String(req.params.username);
+//         const date: string = String(req.params.date);
+
+//         const order: OrderInput = { 
+//             customer: { username: customerUsername },
+//             date: new Date(date)
+//         };
+
+//         const result = await orderService.createOrder(order);
+//         res.status(200).json(result);
+
+//     } catch (error) {
+//         next(error);
+//     }
+// })
+
 
 export { customerRouter };

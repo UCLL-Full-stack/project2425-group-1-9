@@ -6,6 +6,7 @@ import swaggerUi from 'swagger-ui-express';
 import { productRouter } from './controller/product.routes';
 import express, { Request, Response, NextFunction } from 'express';
 import { customerRouter } from './controller/customer.routes';
+import { orderRouter } from './controller/order.routes';
 // import { cartRouter } from './controller/cart.routes';
 
 const app = express();
@@ -18,8 +19,7 @@ app.use(bodyParser.json());
 
 app.use('/products', productRouter);
 app.use('/customers', customerRouter);
-// app.use('/carts/create',cartRouter)
-// app.use('/carts', cartRouter)
+app.use('/orders', orderRouter);
 
 
 app.get('/status', (req, res) => {
