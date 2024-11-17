@@ -7,7 +7,7 @@ import cartContainsProductDb from "../repository/cartContainsProduct.db";
 import customerDb from "../repository/customer.db";
 import productDb from "../repository/product.db";
 
-
+// TODO this should be in another service.
 const getProductsByCartId = async (cartId: number): Promise<Product[]> => {
     if (!cartId) throw new Error("Cart ID is required.");
 
@@ -88,7 +88,7 @@ const deleteCartItemsByCustomerUsername = async (customerUsername: string): Prom
     return await cartContainsProductDb.deleteCartItemsByCartId(cart.getId());
 };
 
-
+// TODO total cart price is not updated.
 const deleteCartItemByCustomerUsernameAndProductName = async (customerUsername: string, productName: string): Promise<string> => {
     // GET
     if (!customerUsername) throw new Error("Customer's username is required.");
@@ -109,10 +109,39 @@ const deleteCartItemByCustomerUsernameAndProductName = async (customerUsername: 
     return cartContainsProductDb.deleteCartItemByCartIdAndProductName(cart.getId(), product.getName());
 }
 
+// TODO: This should be in another service.
+const getTotalCartPriceByCartId = async (cartId: number) => {
+    let totalPrice: number = 0;
+
+    const cartItems: CartContainsProduct[] = await cartContainsProductDb.getAllCartItemsByCartId(cartId);
+    for (let cartItem of cartItems) {
+        totalPrice += cartItem.getProduct().getPrice();
+    };
+
+    return totalPrice;
+};
+
+// TODO: This should be in another service.
+const createNewActiveCartAndDeactivateTheCurrentOne = async (currentCart: Cart) => {
+    // GET
+    // The method is called from another service, so validation is not needed.
+    const totalPrice: number = await getTotalCartPriceByCartId(currentCart.getId());
+
+    // CONNECT
+    currentCart.setActive(false);
+    currentCart.setTotalPrice(totalPrice);
+
+    // SAVE
+    cartDb.updateCart(currentCart);
+    cartDb.createActiveCartByCustomerId(currentCart.getCustomer().getId());
+};
+
 export default {
     getProductsByCartId,
     getCartItemsByCustomerUsername,
     createOrUpdateCartItem,
     deleteCartItemsByCustomerUsername,
     deleteCartItemByCustomerUsernameAndProductName,
+    createNewActiveCartAndDeactivateTheCurrentOne,
+    getTotalCartPriceByCartId
 }

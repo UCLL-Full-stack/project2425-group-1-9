@@ -51,7 +51,7 @@ orderRouter.post('/', async (req: Request, res: Response, next: NextFunction) =>
     try {
         const order = <OrderInput>req.body;
         const result = await orderService.createOrder(order);
-        res.status(200).json(result);
+        res.status(200).json({ message: result });
     } catch (error) {
         next(error);
     }

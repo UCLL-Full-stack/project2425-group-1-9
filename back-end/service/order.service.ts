@@ -5,6 +5,7 @@ import cartDb from "../repository/cart.db";
 import customerDb from "../repository/customer.db";
 import orderDb from "../repository/order.db";
 import { OrderInput } from "../types";
+import cartService from "./cart.service";
 
 const createOrder = async ({date, customer: customerInput}: OrderInput) => {
     // GET
@@ -18,6 +19,9 @@ const createOrder = async ({date, customer: customerInput}: OrderInput) => {
 
     const cart: Cart | null = await cartDb.getActiveCartByCustomerId(customer.getId());
     if (!cart) throw new Error("Cart does not exist.");
+    
+    const totalCartPrice: number = await cartService.getTotalCartPriceByCartId(cart.getId());
+    if (!totalCartPrice) throw new Error("Cart is empty.");
 
     const orderWithSameCart: Order | null = await orderDb.getOrderByCartId(cart.getId());
     if (orderWithSameCart) throw new Error("Order with this cart has already been made.");
@@ -27,9 +31,8 @@ const createOrder = async ({date, customer: customerInput}: OrderInput) => {
     const order = new Order({cart, date, customer});
 
     // SAVE
+    await cartService.createNewActiveCartAndDeactivateTheCurrentOne(cart);
     return await orderDb.createOrder(order);
-
-    // Create new active cart for the customer.
 };
 
 export default {

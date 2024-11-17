@@ -35,7 +35,50 @@ const getCartById = async (id: number): Promise<Cart | null>  => {
     }
 };
 
+const updateCart = async ({ id, totalPrice, active }: Cart): Promise<string> => {
+    try {
+        await database.cart.update({
+            where: {
+                id: id
+            },
+            data: {
+                totalPrice: totalPrice,
+                active: active,
+                // customer: {
+                //     connect: { id: customer.getId() }
+                // }
+            }
+        });
+
+        return "Cart updated successfully.";
+    } catch (error) {
+        console.log(error);
+        throw new Error('Database error. See server logs for details.');
+    }
+};
+
+const createActiveCartByCustomerId = async (customerId: number) => {
+    try {
+        await database.cart.create({
+            data: {
+                totalPrice: 0,
+                active: true,
+                customer: {
+                    connect: { id: customerId }
+                }
+            }
+        });
+
+        return "Cart created successfully."
+    } catch (error) {
+        console.log(error);
+        throw new Error('Database error. See server logs for details.'); 
+    }
+};
+
 export default {
     getActiveCartByCustomerId,
-    getCartById
+    getCartById,
+    updateCart,
+    createActiveCartByCustomerId
 };

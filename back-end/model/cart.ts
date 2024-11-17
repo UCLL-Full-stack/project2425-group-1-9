@@ -4,10 +4,11 @@ import {
 } from '@prisma/client';
 import { Customer } from './customer';
 export class Cart {
-    private id: number;
-    private totalPrice: number;
-    private active: boolean;
-    private customer: Customer;
+    // TODO: Should be private fields.
+    id: number;
+    totalPrice: number;
+    active: boolean;
+    customer: Customer;
 
     // Q& Is it not better to use setters immediately in the constructor?
     //I also thought of the same thing. I thing we could
@@ -50,9 +51,17 @@ export class Cart {
         return this.active;
     }
 
+    setActive(active: boolean): void {
+        this.active = active;
+    };
+
     getTotalPrice(): number {
         return this.totalPrice
     }
+
+    setTotalPrice(totalPrice: number): void {
+        this.totalPrice = totalPrice;
+    };
 
     getCustomer(): Customer {
         return this.customer;
