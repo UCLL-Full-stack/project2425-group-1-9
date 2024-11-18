@@ -38,8 +38,38 @@ const main = async () => {
         }
     });
 
+    const guest = await prisma.customer.create({
+        data: {
+            password: "guest",
+            securityQuestion: "What is the name of the best friend from childhood?", // TODO: We also need security answer. It may also be a list.
+            username: "guest",
+            firstName: "guest",
+            lastName: "guest",
+            phone: 111111
+        }
+    });
 
     // CART DATA ----------------------------------------
+    const cartGuest = await prisma.cart.create({
+        data: {
+            totalPrice: 0,
+            active: true,
+            customer: {
+                connect: { id: guest.id }
+            }
+        }
+    });
+
+    const cartRoland = await prisma.cart.create({
+        data: {
+            totalPrice: 0,
+            active: true,
+            customer: {
+                connect: { id: roland.id }
+            }
+        }
+    });
+    
     const cartMatej0 = await prisma.cart.create({
         data: {
             totalPrice: 540,

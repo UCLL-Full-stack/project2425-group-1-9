@@ -12,11 +12,13 @@ import useInterval from "use-interval";
 const Home: React.FC = () => {
   // const [products, setProducts] = useState<Product[]>([]);
   // const [cartItems, setCartItems] = useState<CartItem[]>([]); // Cart items required only to get the quantity of the product.
+  // const [getCustomerUsername(), setCustomerUsername] = useState(sessionStorage.getItem("loggedInUser") || "guest");
+  const getCustomerUsername = () => sessionStorage.getItem("loggedInUser") || "guest";
 
   const getProductsAndCartItems = async () => {
     const responses = await Promise.all([
       ProductService.getAllProducts(),
-      CustomerService.getCartItemsByCustomerUsername("Matej333"),
+      CustomerService.getCartItemsByCustomerUsername(getCustomerUsername()),
     ]);
     const [productsResponse, cartItemsResponse] = responses;
     const products = await productsResponse.json();
@@ -37,6 +39,7 @@ const Home: React.FC = () => {
 
   useInterval(() => {
     mutate("productsAndCartItems", getProductsAndCartItems())
+    console.log(getCustomerUsername());
   }, 5000);
 
   // const getProducts = async () => {
@@ -46,8 +49,8 @@ const Home: React.FC = () => {
   //   setProducts(productss);
   // };
 
-  // const getCartItemsByCustomerUsername = async (customerUsername: string) => {
-  //     const response = await CustomerService.getCartItemsByCustomerUsername(customerUsername);
+  // const getCartItemsByCustomerUsername = async (getCustomerUsername(): string) => {
+  //     const response = await CustomerService.getCartItemsByCustomerUsername(getCustomerUsername());
   //     const cartItemss: CartItem[] = await response.json();
   //     setCartItems(cartItemss);
   // };
@@ -59,15 +62,15 @@ const Home: React.FC = () => {
   };
 
   const addToCart = async (productName: string) => {
-    await CustomerService.createOrUpdateCartItem("Matej333", productName, "increase");
+    await CustomerService.createOrUpdateCartItem(getCustomerUsername(), productName, "increase");
     mutate("productsAndCartItems", getProductsAndCartItems());
-    // await getCartItemsByCustomerUsername("Matej333");
+    // await getCartItemsByCustomerUsername(getCustomerUsername());
     // await getProducts();
   }
 
   useEffect(() => {
     // getProducts();
-    // getCartItemsByCustomerUsername("Matej333");
+    // getCartItemsByCustomerUsername(getCustomerUsername());
     highlightCurrentTabInMenu();
   }, []);
 

@@ -11,6 +11,8 @@ import useInterval from "use-interval";
 import { useRouter } from "next/router";
 
 const Cart: React.FC = () => {
+    const getCustomerUsername = () => sessionStorage.getItem("loggedInUser") || "guest";
+
     const router = useRouter();
     // const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
@@ -23,8 +25,8 @@ const Cart: React.FC = () => {
 
     const getCartItemsAndTotalCartPrice = async () => {
         const responses = Promise.all([
-            CustomerService.getCartItemsByCustomerUsername("Matej333"),
-            CustomerService.getTotalCartPriceByCustomerUsername("Matej333")
+            CustomerService.getCartItemsByCustomerUsername(getCustomerUsername()),
+            CustomerService.getTotalCartPriceByCustomerUsername(getCustomerUsername())
         ]);
 
         const [cartItemsResponse, totalCartPriceResponse] = await responses;
@@ -52,21 +54,21 @@ const Cart: React.FC = () => {
 
     const clearCart = async () => {
         // setCartItems([]);
-        await CustomerService.clearCart("Matej333"); // TODO: should not be hardcoded.
+        await CustomerService.clearCart(getCustomerUsername()); // TODO: should not be hardcoded.
         mutate("getCartItemsAndTotalCartPrice", getCartItemsAndTotalCartPrice()); // Q& Is it okay to do mutate here? Or should I make a useState and change it to trigger render?
-        // await getCartItemsByCustomerUsername("Matej333"); // TODO: Cart id should not be hardcoded!
+        // await getCartItemsByCustomerUsername(getCustomerUsername()); // TODO: Cart id should not be hardcoded!
     };
 
     const deleteCartItem = async (cartItem: CartItem) => {
-        await CustomerService.deleteCartItem("Matej333", cartItem.product.name);
+        await CustomerService.deleteCartItem(getCustomerUsername(), cartItem.product.name);
         mutate("getCartItemsAndTotalCartPrice", getCartItemsAndTotalCartPrice());
-        // await getCartItemsByCustomerUsername("Matej333");
+        // await getCartItemsByCustomerUsername(getCustomerUsername());
     }
 
     const changeQuantity = async (cartItem: CartItem, change: string) => {
         await CustomerService.createOrUpdateCartItem(cartItem.cart.customer.username, cartItem.product.name, change);
         mutate("getCartItemsAndTotalCartPrice", getCartItemsAndTotalCartPrice());
-        // await getCartItemsByCustomerUsername("Matej333"); // TODO: Cart id should not be hardcoded!
+        // await getCartItemsByCustomerUsername(getCustomerUsername()); // TODO: Cart id should not be hardcoded!
     };
 
     // const getTotalCartPrice = (): number => {
@@ -86,7 +88,7 @@ const Cart: React.FC = () => {
     };
 
     useEffect(() => {
-    //   getCartItemsByCustomerUsername("Matej333"); // TODO: Cart id should not be hardcoded!
+    //   getCartItemsByCustomerUsername(getCustomerUsername()); // TODO: Cart id should not be hardcoded!
       highlightCurrentTabInMenu();
 
     }, []);

@@ -8,6 +8,8 @@ import useSWR, { mutate } from "swr";
 import useInterval from "use-interval";
 
 const Order: React.FC = () => {
+    const getCustomerUsername = () => sessionStorage.getItem("loggedInUser") || "guest";
+
     const [firstName, setFirstName] = useState("Matej");
     const [firstNameError, setFirstNameError] = useState("");
 
@@ -23,7 +25,7 @@ const Order: React.FC = () => {
 
     const getTotalCartPrice = async () => {
         const responses = Promise.all([
-            CustomerService.getTotalCartPriceByCustomerUsername("Matej333")
+            CustomerService.getTotalCartPriceByCustomerUsername(getCustomerUsername())
         ]);
 
         const [totalCartPriceResponse] = await responses;
@@ -87,7 +89,7 @@ const Order: React.FC = () => {
 
         // const date: Date = new Date(Date.now());
         const date: Date = new Date("2024-01-19 14:00:12");
-        const customer: Customer = { username: "Matej333" };
+        const customer: Customer = { username: getCustomerUsername() };
         const order: Orderr = { date, customer };
         const response = await OrderService.placeOrder(order);
         const { message } = await response.json();
