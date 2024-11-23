@@ -23,7 +23,8 @@ const main = async () => {
             username: "Matej333",
             firstName: "Matej",
             lastName: "Vesel",
-            phone: 123456
+            phone: 123456,
+            role: "customer"
         }
     });
 
@@ -34,7 +35,8 @@ const main = async () => {
             username: "Roland333",
             firstName: "Roland",
             lastName: "Ndime Sone",
-            phone: 1234567
+            phone: 1234567,
+            role: "customer"
         }
     });
 
@@ -45,7 +47,8 @@ const main = async () => {
             username: "guest",
             firstName: "guest",
             lastName: "guest",
-            phone: 111111
+            phone: 111111,
+            role: "guest"
         }
     });
 

@@ -10,7 +10,8 @@ const customer = new Customer({
     username: "Matej333",
     firstName: "Matej",
     lastName: "Vesel",
-    phone: 333444555666
+    phone: 333444555666,
+    role: "customer"
 });
 
 const cart = new Cart({

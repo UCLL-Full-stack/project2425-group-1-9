@@ -1,3 +1,4 @@
+import { UnauthorizedError } from "express-jwt";
 import { Cart } from "../model/cart";
 import { CartContainsProduct } from "../model/cartContainsProduct";
 import { Customer } from "../model/customer";
@@ -18,6 +19,19 @@ const getCartItemsByCustomerUsername = async (customerUsername: string): Promise
 
     return await cartContainsProductDb.getAllCartItemsByCartId(cart.getId());
 };
+
+// FINAL code:
+// const getCartItemsByCustomerUsername = async ({ customerUsername, role }): Promise<Array<CartContainsProduct>> => {
+//     if (role === "admin") {
+//         return ...;
+//     } else if (role === "customer") {
+//         return ...;
+//     } else if (role === "guest") {
+//         throw new UnauthorizedError("credentials_required", {
+//             message: "You are not authorized to access this resource."
+//         })
+//     }
+// };
 
 const createOrUpdateCartItem = async (customerUsername: string, productName: string, change?: string): Promise<string> => {
     if (!customerUsername) throw new Error("Customer's username is required.");

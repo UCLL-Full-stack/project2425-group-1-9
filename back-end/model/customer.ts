@@ -3,6 +3,7 @@ import {
     Order as OrderPrisma,
     Cart as CartPrisma
 } from '@prisma/client';
+import { Role } from '../types';
 export class Customer {
     id?: number;
     readonly password: string;
@@ -11,6 +12,7 @@ export class Customer {
     readonly firstName: string;
     readonly lastName: string;
     readonly phone: number;
+    readonly role: Role;
 
     constructor(customer: {
         id?: number;
@@ -20,6 +22,7 @@ export class Customer {
         firstName: string;
         lastName: string;
         phone: number;
+        role: Role;
     }) {
         this.validate(customer);
 
@@ -30,16 +33,20 @@ export class Customer {
         this.firstName = customer.firstName;
         this.lastName = customer.lastName;
         this.phone = customer.phone;
+        this.role = customer.role;
     }
 
-    validate(customer: { password: string, securityQuestion: string, username: string, firstName: string, lastName: string, phone: number }) {
+    validate(customer: { password: string, securityQuestion: string, username: string, firstName: string, lastName: string, phone: number, role: Role }) {
         if (!customer.password?.trim()) throw new Error("Password is required.");
         if (!customer.securityQuestion?.trim()) throw new Error("Security question is required.");
         if (!customer.username?.trim()) throw new Error("Username is required.");
         if (!customer.firstName?.trim()) throw new Error("First name is required.");
         if (!customer.lastName?.trim()) throw new Error("Last name is required.");
         if (!customer.phone) throw new Error("Phone is required.");
+        if (!customer.role?.trim()) throw new Error("Role is required.");
     }
+
+    // Q& Are equal methods required in the models?
     
     static from({
         id,
@@ -48,7 +55,8 @@ export class Customer {
         username,
         firstName,
         lastName,
-        phone
+        phone,
+        role
     }: CustomerPrisma) {
     // }: CustomerPrisma & { order: OrderPrisma; cart: CartPrisma[] }) {
         return new Customer({
@@ -59,6 +67,7 @@ export class Customer {
             firstName,
             lastName,
             phone,
+            role: role as Role
             // order: Order.from(order),
             // cart: Cart.from(cart)
         });

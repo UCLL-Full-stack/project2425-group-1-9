@@ -57,6 +57,10 @@
  *                  type: number
  *                  format: int64
  *                  example: 12345678
+ *              role:
+ *                  type: string
+ *                  description: Customer's role. Can be either 'customer', 'admin' or 'guest'.
+ *                  example: customer
  *      Customer:
  *          type: object
  *          properties:
@@ -81,6 +85,10 @@
  *              phone:
  *                  type: number
  *                  format: int64
+*              role:
+ *                  type: string
+ *                  description: Customer's role. Can be either 'customer', 'admin' or 'guest'.
+ *                  example: customer
  *      AuthenticationRequest:
  *          type: object
  *          properties:
@@ -270,6 +278,7 @@ customerRouter.put('/:username/cart/:productName', async (req: Request, res: Res
  *               $ref: '#/components/schemas/CartContainsProduct'
  */
 customerRouter.get("/:username/cart", async (req: Request, res: Response, next: NextFunction) => {
+// customerRouter.get("/:username/cart", async (req: Request & { auth: any }, res: Response, next: NextFunction) => {
     try {
         // With Authentication. Q& Code below is showed in the video but does not work.
         // const { username } = req.auth;
@@ -280,6 +289,10 @@ customerRouter.get("/:username/cart", async (req: Request, res: Response, next: 
         const username = String(req.params.username);
         const cart: CartContainsProduct[] = await cartItemService.getCartItemsByCustomerUsername(username);
         res.status(200).json(cart);
+
+        // FINAL code:
+        // const { username, role } = req.auth;
+        // const cart: CartContainsProduct[] = await cartItemService.getCartItemsByCustomerUsername({username , role});
     } catch (e) {
         next(e);
     }

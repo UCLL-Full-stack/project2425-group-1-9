@@ -19,7 +19,7 @@ const authenticate = async ({ username, password }: CustomerInput): Promise<Auth
     if (!isValidPassword) throw new Error("Incorrect password.");
 
     return {
-        token: generateJwtToken({ username }),
+        token: generateJwtToken({ username, role: customer.role }),
         username,
         fullname: `${customer.firstName} ${customer.lastName}`,
     };
@@ -32,7 +32,8 @@ const createCustomer = async ({
     username,
     firstName,
     lastName,
-    phone
+    phone,
+    role
 }: CustomerInput):  Promise<Customer> => {
     const existingCustomer = await customerDb.getCustomerByUsername(username); // TODO he uses types. { username }
     if (existingCustomer) throw new Error("Customer is already registered.");
@@ -47,7 +48,8 @@ const createCustomer = async ({
         username,
         firstName,
         lastName,
-        phone
+        phone,
+        role
      });
 
      return await customerDb.createCustomer(customer);

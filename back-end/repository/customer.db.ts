@@ -22,11 +22,12 @@ const createCustomer = async ({
     username,
     firstName,
     lastName,
-    phone 
+    phone,
+    role
 }: Customer): Promise<Customer> => {
     try {
         const customerPrisma = await database.customer.create({
-            data: { password, securityQuestion, username, firstName, lastName, phone }
+            data: { password, securityQuestion, username, firstName, lastName, phone, role }
         });
         return Customer.from(customerPrisma);
     } catch (error) {

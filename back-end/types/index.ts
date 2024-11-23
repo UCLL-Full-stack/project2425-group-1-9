@@ -13,6 +13,7 @@ type CustomerInput = {
     firstName: string;
     lastName: string;
     phone: number;
+    role: Role;
 };
 
 type OrderInput= {
@@ -27,9 +28,12 @@ type AuthenticationResponse = {
     fullname: string;
 };
 
+type Role = 'admin' | 'customer' | 'guest';
+
 export {
     OrderInput,
     CustomerInput,
     CartInput,
-    AuthenticationResponse
+    AuthenticationResponse,
+    Role
 }

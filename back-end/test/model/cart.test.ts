@@ -12,7 +12,8 @@ const customer = new Customer({
     username: "Matej333",
     firstName: "Matej",
     lastName: "Vesel",
-    phone: 333444555666
+    phone: 333444555666,
+    role: "customer"
 });
 
 // Q&A Do we have to write given when then with colons and semi-colons? A: Doesn't matter as long as it's clear.
