@@ -55,7 +55,7 @@ const Cart: React.FC = () => {
     const clearCart = async () => {
         // setCartItems([]);
         await CustomerService.clearCart(getCustomerUsername()); // TODO: should not be hardcoded.
-        mutate("getCartItemsAndTotalCartPrice", getCartItemsAndTotalCartPrice()); // Q& Is it okay to do mutate here? Or should I make a useState and change it to trigger render?
+        mutate("getCartItemsAndTotalCartPrice", getCartItemsAndTotalCartPrice()); // Q&A Is it okay to do mutate here? Or should I make a useState and change it to trigger render? A: Fake it or just keep pulling. In a real life application they will fake it.
         // await getCartItemsByCustomerUsername(getCustomerUsername()); // TODO: Cart id should not be hardcoded!
     };
 

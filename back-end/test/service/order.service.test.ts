@@ -85,8 +85,6 @@ const orderInput = { cart: cartInput, date, customer: customerInput };
 
 // SETUP -----------------------------------
 
-// Q& Is this correct way to do it?
-
 // let mock_orderService_createOrder: jest.Mock;
 
 let mock_customerDb_getCustomerByUsername: jest.Mock;
@@ -141,7 +139,7 @@ test("Given date and customer username in OrderInput; When calling createOrder; 
 
 });
 
-// Q& How to test this?
+// Q&A How to test this? A: dont test it.
 // test("Given no date in OrderInput; When calling createOrder; Then error is thrown.", () => {
 //     // GIVEN
 //     // Variables at the top of this file.

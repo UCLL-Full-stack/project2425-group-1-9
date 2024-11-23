@@ -52,7 +52,7 @@ export class CartContainsProduct {
     }
 
     setQuantity(quantity: number): void {
-        if (quantity <= 0) throw new Error("Quantity must be positive."); // Q& Validation is done twice!?
+        if (quantity <= 0) throw new Error("Quantity must be positive."); // Q&A Validation is done twice!? A: Create another function to call in validate and also call it here.
         this.quantity = quantity;
     }
 }
