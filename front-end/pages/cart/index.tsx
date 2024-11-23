@@ -8,8 +8,12 @@ import CartItem from "@/components/cartItem";
 import CustomerService from "@/services/CustomerService";
 import useSWR, { mutate } from "swr";
 import useInterval from "use-interval";
+import { useRouter } from "next/router";
 
 const Cart: React.FC = () => {
+    const getCustomerUsername = () => sessionStorage.getItem("loggedInUser") || "guest";
+
+    const router = useRouter();
     // const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
     // const getCartItemsByCustomerUsername = async (customerUsername: string) => {
@@ -19,49 +23,52 @@ const Cart: React.FC = () => {
     //     setCartItems(cartItemss);
     // };
 
-    const getCartItems = async () => {
+    const getCartItemsAndTotalCartPrice = async () => {
         const responses = Promise.all([
-            CustomerService.getCartItemsByCustomerUsername("Matej333")
+            CustomerService.getCartItemsByCustomerUsername(getCustomerUsername()),
+            CustomerService.getTotalCartPriceByCustomerUsername(getCustomerUsername())
         ]);
 
-        const [cartItemsResponse] = await responses;
+        const [cartItemsResponse, totalCartPriceResponse] = await responses;
 
         const cartItems = await cartItemsResponse.json();
+        const totalCartPrice = await totalCartPriceResponse.json();
 
         cartItems.sort((a: CartItem, b: CartItem) => a.product.name < b.product.name ? -1 : 1) // Sort items based on descending product name.
 
         return {
-            cartItems
+            cartItems,
+            totalCartPrice
         };
     };
 
     const { data, isLoading, error } = useSWR(
-        "getCartItems",
-        getCartItems
+        "getCartItemsAndTotalCartPrice",
+        getCartItemsAndTotalCartPrice
     );
 
     useInterval(() => {
-        mutate("getCartItems", getCartItems());
+        mutate("getCartItems", getCartItemsAndTotalCartPrice());
     }, 5000);
 
 
     const clearCart = async () => {
         // setCartItems([]);
-        await CustomerService.clearCart("Matej333"); // TODO: should not be hardcoded.
-        mutate("getCartItems", getCartItems()); // Q& Is it okay to do mutate here? Or should I make a useState and change it to trigger render?
-        // await getCartItemsByCustomerUsername("Matej333"); // TODO: Cart id should not be hardcoded!
+        await CustomerService.clearCart(getCustomerUsername()); // TODO: should not be hardcoded.
+        mutate("getCartItemsAndTotalCartPrice", getCartItemsAndTotalCartPrice()); // Q& Is it okay to do mutate here? Or should I make a useState and change it to trigger render?
+        // await getCartItemsByCustomerUsername(getCustomerUsername()); // TODO: Cart id should not be hardcoded!
     };
 
     const deleteCartItem = async (cartItem: CartItem) => {
-        await CustomerService.deleteCartItem("Matej333", cartItem.product.name);
-        mutate("getCartItems", getCartItems());
-        // await getCartItemsByCustomerUsername("Matej333");
+        await CustomerService.deleteCartItem(getCustomerUsername(), cartItem.product.name);
+        mutate("getCartItemsAndTotalCartPrice", getCartItemsAndTotalCartPrice());
+        // await getCartItemsByCustomerUsername(getCustomerUsername());
     }
 
     const changeQuantity = async (cartItem: CartItem, change: string) => {
         await CustomerService.createOrUpdateCartItem(cartItem.cart.customer.username, cartItem.product.name, change);
-        mutate("getCartItems", getCartItems());
-        // await getCartItemsByCustomerUsername("Matej333"); // TODO: Cart id should not be hardcoded!
+        mutate("getCartItemsAndTotalCartPrice", getCartItemsAndTotalCartPrice());
+        // await getCartItemsByCustomerUsername(getCustomerUsername()); // TODO: Cart id should not be hardcoded!
     };
 
     // const getTotalCartPrice = (): number => {
@@ -76,11 +83,12 @@ const Cart: React.FC = () => {
     // Highlight current tab in header.
     const highlightCurrentTabInMenu = () => {
         const cartTabElement = document.querySelector("header nav a:nth-child(2)");
+        console.log(cartTabElement);
         if (cartTabElement) cartTabElement.setAttribute("style", "background-color: green;");
     };
 
     useEffect(() => {
-    //   getCartItemsByCustomerUsername("Matej333"); // TODO: Cart id should not be hardcoded!
+    //   getCartItemsByCustomerUsername(getCustomerUsername()); // TODO: Cart id should not be hardcoded!
       highlightCurrentTabInMenu();
 
     }, []);
@@ -94,7 +102,8 @@ const Cart: React.FC = () => {
                     {isLoading && <p>Loading...</p>}
 
                     <button onClick={clearCart} >Clear Cart</button>
-                    {/* <p>Total price: {String(getTotalCartPrice())} $</p> */}
+                    <button onClick={() => {router.push(`/cart/order`)}}>Place Order</button>
+                    {data && <p>Total price: {String(data.totalCartPrice)} $</p>}
 
                     <section className={styles.products}>
                     {data &&

@@ -1,14 +1,28 @@
+type CartInput = {
+    id?: number;
+    totalPrice?: number;
+    active?: boolean;
+    customer?: CustomerInput;
+};
 
-// interface CustomerInput {
-//     id: number;
-//     password?: string;
-//     securityQuestion?: string;
-//     username?: string;
-//     firstName?: string;
-//     lastName?: string;
-//     phone?: number;
-// }
+type CustomerInput = {
+    id?: number;
+    password?: string;
+    securityQuestion?: string;
+    username?: string;
+    firstName?: string;
+    lastName?: string;
+    phone?: number;
+};
 
-// export {
-//     CustomerInput,
-// }
+type OrderInput= {
+    cart?: CartInput;
+    date?: Date;
+    customer?: CustomerInput;
+};
+
+export {
+    OrderInput,
+    CustomerInput,
+    CartInput
+}

@@ -19,12 +19,23 @@
  *            cartId:
  *              type: number
  *              format: int64
+ *      OrderInput:
+ *          type: object
+ *          properties:
+ *              date:
+ *                  type: date-time
+ *                  format: date-time
+ *              customer:
+ *                  type: object
+ *                  properties:
+ *                      username:
+ *                          type: string            
  */
 
 import express, { NextFunction, Request, Response } from 'express';
 import { CartContainsProduct } from '../model/cartContainsProduct';
+import cartItemService from '../service/cartItem.service';
 import cartService from '../service/cart.service';
-// import cartService from '../service/cart.service';
 
 const customerRouter = express.Router();
 
@@ -60,7 +71,7 @@ customerRouter.delete('/:username/cart/:productName', async (req: Request, res: 
     try {
         const customerUsername: string = String(req.params.username);
         const productName: string = String(req.params.productName);
-        const result: string = await cartService.deleteCartItemByCustomerUsernameAndProductName(customerUsername, productName);
+        const result: string = await cartItemService.deleteCartItemByCustomerUsernameAndProductName(customerUsername, productName);
         res.json(result);
         // res.status(200).json(result);   // DOES NOT WORK!!!!!!!! Q&
     } catch (error) {
@@ -93,7 +104,7 @@ customerRouter.delete('/:username/cart/:productName', async (req: Request, res: 
 customerRouter.delete('/:username/cart', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const customerUsername: string = String(req.params.username);
-        const result: string = await cartService.deleteCartItemsByCustomerUsername(customerUsername);
+        const result: string = await cartItemService.deleteCartItemsByCustomerUsername(customerUsername);
         res.json(result);
         // res.status(200).json(result);   // DOES NOT WORK!!!!!!!! Q&
     } catch (error) {
@@ -142,7 +153,7 @@ customerRouter.put('/:username/cart/:productName', async (req: Request, res: Res
         const customerUsername: string = String(req.params.username);
         const productName: string = String(req.params.productName);
         const change: string = String(req.query.change) || "increase";
-        const result = await cartService.createOrUpdateCartItem(customerUsername, productName, change);
+        const result = await cartItemService.createOrUpdateCartItem(customerUsername, productName, change);
         res.status(200).json(result);
     } catch (error) {
         next(error);
@@ -177,11 +188,91 @@ customerRouter.put('/:username/cart/:productName', async (req: Request, res: Res
  */
 customerRouter.get("/:username/cart", async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const cart: CartContainsProduct[] = await cartService.getCartItemsByCustomerUsername(String(req.params.username));
+        const cart: CartContainsProduct[] = await cartItemService.getCartItemsByCustomerUsername(String(req.params.username));
         res.status(200).json(cart);
     } catch (e) {
         next(e);
     }
-})
+});
+
+/**
+ * @swagger
+ * /customers/{username}/cart/totalPrice:
+ *   get:
+ *     summary: Get total price of a cart.
+ *     parameters:
+ *          - in: path
+ *            name: username
+ *            schema:
+ *              type: string
+ *              required: true
+ *              description: Customer's username.
+ *              example: Matej333
+ *     responses:
+ *       200:
+ *         description: Total price of the cart.
+ *         content:
+ *           application/json:
+ *             type: number
+ *             example: 500
+ */
+customerRouter.get("/:username/cart/totalPrice", async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const totalCartPrice: number = await cartService.getTotalCartPriceByCustomerUsername(String(req.params.username));
+        res.status(200).json(totalCartPrice);
+    } catch (e) {
+        next(e);
+    }
+});
+
+
+// /**
+//  * @swagger
+//  * /customers/{username}/cart/order/{date}:
+//  *   post:
+//  *     summary: Create (place) an order. Better alternative to /order.
+//  *     parameters:
+//  *          - in: path
+//  *            name: username
+//  *            schema:
+//  *              type: string
+//  *              required: true
+//  *              description: Customer's username
+//  *              example: Matej333
+//  *          - in: path
+//  *            name: date
+//  *            schema:
+//  *              type: string
+//  *              format: date-time
+//  *              required: true
+//  *              description: Order's date.
+//  *              example: 2019-01-19 14:00:12
+//  *     responses:
+//  *       200:
+//  *         description: Message indicating success.
+//  *         content:
+//  *           application/json:
+//  *             schema:
+//  *               type: string
+//  *               example: Order placed successfully.
+//  */
+// customerRouter.post('/:username/cart/order/:date', async (req: Request, res: Response, next: NextFunction) => {
+//     try {
+//         const customerUsername: string = String(req.params.username);
+//         const date: string = String(req.params.date);
+
+//         const order: OrderInput = { 
+//             customer: { username: customerUsername },
+//             date: new Date(date)
+//         };
+
+//         const result = await orderService.createOrder(order);
+//         res.status(200).json(result);
+
+//     } catch (error) {
+//         next(error);
+//     }
+// })
+
 
 export { customerRouter };
