@@ -11,7 +11,7 @@ const createOrder = async ({date, customer: customerInput}: OrderInput) => {
     // GET
     if (!date) throw new Error("Date is required.");
 
-    // Q& Is this the way of using Input types?
+    // Q&A Is this the way of using Input types? A: Modify the ORderINput just to satisfy these needs.
     if (!customerInput) throw new Error("Customer's username is required.");
     if (!customerInput.username) throw new Error("Customer's username is required.");
     const customer: Customer | null = await customerDb.getCustomerByUsername(customerInput.username);

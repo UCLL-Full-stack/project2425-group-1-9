@@ -56,7 +56,7 @@ orderRouter.post('/', async (req: Request, res: Response, next: NextFunction) =>
         next(error);
     }
 })
-// Q& Do we have to always return an object in result. Is just a plain string okay?
+// Q&A Do we have to always return an object in result. Is just a plain string okay? A: Don't return string. 
 // TODO This endpoint should be under customer and not using request body.
 
 export { orderRouter };

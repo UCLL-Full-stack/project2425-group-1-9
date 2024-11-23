@@ -57,7 +57,7 @@ const createOrUpdateCartItem = async ({ cart, product, quantity }: CartContainsP
                 product: true
             }
          });
-        return "Cart item added successfully." // Q& Should we instead return the newly created object?
+        return "Cart item added successfully."
 
     } catch (error) {
         console.log(error);
@@ -82,7 +82,7 @@ const updateCartItem = async ({ cart, product, quantity }: CartContainsProduct):
                 product: true
             }
          });
-        return "Cart item updated successfully." // Q& Should we instead return the newly created object? TODO: more descriptive return message.
+        return "Cart item updated successfully."
 
     } catch (error) {
         console.log(error);

@@ -86,7 +86,7 @@ const Home: React.FC = () => {
       </Head>
       <Header />
       <main className={styles.main}>
-        {/* Q& Why fragments here? In the video, he also does it. */}
+        {/* Q&A Why fragments here? In the video, he also does it.  A: That's for fun. */}
         <>
           {error && <p>Error: {error}</p>}
           {isLoading && <p>Loading...</p>}

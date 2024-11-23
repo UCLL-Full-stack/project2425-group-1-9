@@ -10,7 +10,7 @@ const getActiveCartByCustomerId = async (customerId: number): Promise<Cart | nul
                 active: true
             }
          });
-         if (cartPrisma.length > 1) throw new Error("More than one cart is active in the database."); // Q& Exceptionally throwing errors here, because it fits most.
+         if (cartPrisma.length > 1) throw new Error("More than one cart is active in the database."); // Q&A Exceptionally throwing errors here, because it fits most. A: its fine
          return cartPrisma ? Cart.from(cartPrisma[0]) : null;
          
     } catch (error) {

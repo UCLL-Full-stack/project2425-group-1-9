@@ -70,8 +70,6 @@ const change: string = "increase";
 
 // SETUP -----------------------------------
 
-// Q& Is this correct way to do it?
-
 let mockGetProductsByCartId: jest.Mock;
 let mockGetCartItemsByCustomerUsername: jest.Mock;
 let mockAddProductToCart: jest.Mock;
