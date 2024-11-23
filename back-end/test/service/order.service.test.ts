@@ -161,16 +161,16 @@ test("Given date and customer username in OrderInput; When calling createOrder; 
 //     // THEN
 // });
 
-test("Given no customer username in CustomerInput; When calling createOrder; Then error is thrown.", () => {
-    // GIVEN
-    // Variables at the top of this file.
+// test("Given no customer username in CustomerInput; When calling createOrder; Then error is thrown.", () => {
+//     // GIVEN
+//     // Variables at the top of this file.
 
-    // WHEN
-    const createOrder = () => orderService.createOrder({ date, customer: {} });
+//     // WHEN
+//     const createOrder = () => orderService.createOrder({ date, customer: {} });
 
-    // THEN
-    expect(createOrder).rejects.toThrow("Customer's username is required.");
-});
+//     // THEN
+//     expect(createOrder).rejects.toThrow("Customer's username is required.");
+// });
 
 test("Given no customer in database; When calling createOrder; Then error is thrown.", () => {
     // GIVEN

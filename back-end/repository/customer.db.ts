@@ -16,6 +16,26 @@ const getCustomerByUsername = async (username: string): Promise<Customer | null>
     }
 };
 
+const createCustomer = async ({
+    password,
+    securityQuestion,
+    username,
+    firstName,
+    lastName,
+    phone 
+}: Customer): Promise<Customer> => {
+    try {
+        const customerPrisma = await database.customer.create({
+            data: { password, securityQuestion, username, firstName, lastName, phone }
+        });
+        return Customer.from(customerPrisma);
+    } catch (error) {
+        console.log(error);
+        throw new Error('Database error. See server logs for details.');
+    }
+};
+
 export default {
-    getCustomerByUsername
+    getCustomerByUsername,
+    createCustomer
 };

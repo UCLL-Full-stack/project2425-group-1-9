@@ -7,12 +7,12 @@ type CartInput = {
 
 type CustomerInput = {
     id?: number;
-    password?: string;
-    securityQuestion?: string;
-    username?: string;
-    firstName?: string;
-    lastName?: string;
-    phone?: number;
+    password: string;
+    securityQuestion: string;
+    username: string;
+    firstName: string;
+    lastName: string;
+    phone: number;
 };
 
 type OrderInput= {

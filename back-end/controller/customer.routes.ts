@@ -29,13 +29,67 @@
  *                  type: object
  *                  properties:
  *                      username:
- *                          type: string            
+ *                          type: string     
+ *      CustomerInput:
+ *          type: object
+ *          properties:
+ *              password:
+ *                  type: string
+ *                  description: Customer's password.
+ *                  example: m@t3j-v3s3l
+ *              securityQuestion:
+ *                  type: string
+ *                  description: Customer's security question.
+ *                  example: What is the name of the best friend from childhood?
+ *              username:
+ *                  type: string
+ *                  description: Customer's username.
+ *                  example: Matej444
+ *              firstName:
+ *                  type: string
+ *                  description: Customer's first name.
+ *                  example: Matej
+ *              lastName:
+ *                  type: string
+ *                  description: Customer's last name.
+ *                  example: Vesel
+ *              phone:
+ *                  type: number
+ *                  format: int64
+ *                  example: 12345678
+ *      Customer:
+ *          type: object
+ *          properties:
+ *              id:
+ *                  type: number
+ *                  format: int64
+ *              password:
+ *                  type: string
+ *                  description: Customer's password.
+ *              securityQuestion:
+ *                  type: string
+ *                  description: Customer's security question.
+ *              username:
+ *                  type: string
+ *                  description: Customer's username.
+ *              firstName:
+ *                  type: string
+ *                  description: Customer's first name.
+ *              lastName:
+ *                  type: string
+ *                  description: Customer's last name.
+ *              phone:
+ *                  type: number
+ *                  format: int64
+ *              
  */
 
 import express, { NextFunction, Request, Response } from 'express';
 import { CartContainsProduct } from '../model/cartContainsProduct';
 import cartItemService from '../service/cartItem.service';
 import cartService from '../service/cart.service';
+import { CustomerInput } from '../types';
+import customerService from '../service/customer.service';
 
 const customerRouter = express.Router();
 
@@ -274,5 +328,34 @@ customerRouter.get("/:username/cart/totalPrice", async (req: Request, res: Respo
 //     }
 // })
 
+
+/**
+ * @swagger
+ * /customers/signup:
+ *  post:
+ *      summary: Create a customer.
+ *      requestBody:
+ *          required: true
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      $ref: '#/components/schemas/CustomerInput'
+ *      responses:
+ *          200:
+ *              description: The created customer object.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/Customer'
+ */
+customerRouter.post('/signup', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const customerInput = <CustomerInput>req.body;
+        const customer = await customerService.createCustomer(customerInput);
+        res.status(200).json(customer);
+    } catch (error) {
+        next(error);
+    }
+});
 
 export { customerRouter };

@@ -4,16 +4,16 @@ import {
     Cart as CartPrisma
 } from '@prisma/client';
 export class Customer {
-    id: number;
-    private password: string;
-    private securityQuestion: string;
-    private username: string;
-    private firstName: string;
-    private lastName: string;
-    private phone: number;
+    id?: number;
+    readonly password: string;
+    readonly securityQuestion: string;
+    readonly username: string;
+    readonly firstName: string;
+    readonly lastName: string;
+    readonly phone: number;
 
     constructor(customer: {
-        id: number;
+        id?: number;
         password: string;
         securityQuestion: string;
         username: string;
@@ -33,11 +33,11 @@ export class Customer {
     }
 
     validate(customer: { password: string, securityQuestion: string, username: string, firstName: string, lastName: string, phone: number }) {
-        if (!customer.password) throw new Error("Password is required.");
-        if (!customer.securityQuestion) throw new Error("Security question is required.");
-        if (!customer.username) throw new Error("Username is required.");
-        if (!customer.firstName) throw new Error("First name is required.");
-        if (!customer.lastName) throw new Error("Last name is required.");
+        if (!customer.password?.trim()) throw new Error("Password is required.");
+        if (!customer.securityQuestion?.trim()) throw new Error("Security question is required.");
+        if (!customer.username?.trim()) throw new Error("Username is required.");
+        if (!customer.firstName?.trim()) throw new Error("First name is required.");
+        if (!customer.lastName?.trim()) throw new Error("Last name is required.");
         if (!customer.phone) throw new Error("Phone is required.");
     }
     
@@ -65,7 +65,7 @@ export class Customer {
     };
 
     getId(): number {
-        return this.id;
+        return this.id || 1;
     }
 
     getPassword(): string {
