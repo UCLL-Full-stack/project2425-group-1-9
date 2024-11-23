@@ -9,7 +9,7 @@ import productDb from "../repository/product.db";
 
 
 const getCartItemsByCustomerUsername = async (customerUsername: string): Promise<Array<CartContainsProduct>> => {
-    if (!customerUsername) throw new Error("Customer's username is required.");
+    if (!customerUsername) throw new Error("Customer's username is required." + customerUsername);
     const customer: Customer | null = await customerDb.getCustomerByUsername(customerUsername);
     if (!customer) throw new Error("Customer does not exist"); // TODO add a test.
 

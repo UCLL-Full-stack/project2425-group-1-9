@@ -81,8 +81,35 @@
  *              phone:
  *                  type: number
  *                  format: int64
+ *      AuthenticationRequest:
+ *          type: object
+ *          properties:
+ *              username:
+ *                  type: string
+ *                  description: Customer's username
+ *                  example: Matej333
+ *              password:
+ *                  type: string
+ *                  description: Customer's password
+ *                  example: m@t3j-v3s3l
+ *      AuthenticationResponse:
+ *          type: object
+ *          properties:
+ *              token:
+ *                  type: string
+ *                  description: Customer's token.
+ *              username:
+ *                  type: string
+ *                  description: Customer's username.
+ *              fullname:
+ *                  type: string
+ *                  description: Customer's fullname.
+ *              
+ *              
+ *          
  *              
  */
+
 
 import express, { NextFunction, Request, Response } from 'express';
 import { CartContainsProduct } from '../model/cartContainsProduct';
@@ -223,6 +250,8 @@ customerRouter.put('/:username/cart/:productName', async (req: Request, res: Res
  * @swagger
  * /customers/{username}/cart:
  *   get:
+ *     security:
+ *      - bearerAuth: []
  *     summary: Get cart items of a customer. (Get CartContainsProduct objects using customer's username.)
  *     parameters:
  *          - in: path
@@ -242,7 +271,14 @@ customerRouter.put('/:username/cart/:productName', async (req: Request, res: Res
  */
 customerRouter.get("/:username/cart", async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const cart: CartContainsProduct[] = await cartItemService.getCartItemsByCustomerUsername(String(req.params.username));
+        // With Authentication. Q& Code below is showed in the video but does not work.
+        // const { username } = req.auth;
+        // const username = req.auth;
+        // const username = req.params.auth;
+        
+        // ORIGINAL code:
+        const username = String(req.params.username);
+        const cart: CartContainsProduct[] = await cartItemService.getCartItemsByCustomerUsername(username);
         res.status(200).json(cart);
     } catch (e) {
         next(e);
@@ -353,6 +389,35 @@ customerRouter.post('/signup', async (req: Request, res: Response, next: NextFun
         const customerInput = <CustomerInput>req.body;
         const customer = await customerService.createCustomer(customerInput);
         res.status(200).json(customer);
+    } catch (error) {
+        next(error);
+    }
+});
+
+/**
+ * @swagger
+ * /customers/login:
+ *  post:
+ *      summary: Login using username and password. Returns an object with JWT token and user name when successful.
+ *      requestBody:
+ *          required: true
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      $ref: '#/components/schemas/AuthenticationRequest'
+ *      responses:
+ *          200:
+ *              description: The created customer object.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/AuthenticationResponse'
+ */
+customerRouter.post('/login', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const customerInput = <CustomerInput>req.body;
+        const response = await customerService.authenticate(customerInput);
+        res.status(200).json({ message: "Authentication successful.", ...response});
     } catch (error) {
         next(error);
     }

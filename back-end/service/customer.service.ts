@@ -2,8 +2,30 @@
 // import * as bcrypt from 'bcrypt';
 import { Customer } from "../model/customer";
 import customerDb from "../repository/customer.db";
-import { CustomerInput } from "../types";
+import { AuthenticationResponse, CustomerInput } from "../types";
+import { generateJwtToken } from "../util/jwt";
 
+const getCustomerByUsername = async (username: string): Promise<Customer> => {
+    const customer = await customerDb.getCustomerByUsername(username);
+    if (!customer) throw new Error("Customer does not exist.");
+    return customer;
+};
+
+const authenticate = async ({ username, password }: CustomerInput): Promise<AuthenticationResponse> => {
+    const customer = await getCustomerByUsername(username);
+
+    // const isValidPassword = await bcrypt.compare(password, user.password); // Q& 
+    const isValidPassword = true;
+    if (!isValidPassword) throw new Error("Incorrect password.");
+
+    return {
+        token: generateJwtToken({ username }),
+        username,
+        fullname: `${customer.firstName} ${customer.lastName}`,
+    };
+};
+
+// TODO test.
 const createCustomer = async ({
     password,
     securityQuestion,
@@ -33,5 +55,6 @@ const createCustomer = async ({
 };
 
 export default {
-    createCustomer
+    createCustomer,
+    authenticate
 };

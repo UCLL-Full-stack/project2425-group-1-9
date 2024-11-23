@@ -21,8 +21,15 @@ type OrderInput= {
     customer?: CustomerInput;
 };
 
+type AuthenticationResponse = {
+    token: string;
+    username: string;
+    fullname: string;
+};
+
 export {
     OrderInput,
     CustomerInput,
-    CartInput
+    CartInput,
+    AuthenticationResponse
 }

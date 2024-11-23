@@ -7,6 +7,7 @@ import { productRouter } from './controller/product.routes';
 import express, { Request, Response, NextFunction } from 'express';
 import { customerRouter } from './controller/customer.routes';
 import { orderRouter } from './controller/order.routes';
+import { expressjwt } from 'express-jwt';
 // import { cartRouter } from './controller/cart.routes';
 
 const app = express();
@@ -16,6 +17,17 @@ const port = process.env.APP_PORT || 3000;
 
 app.use(cors({ origin: 'http://localhost:8080' }));
 app.use(bodyParser.json());
+
+app.use(
+    expressjwt({
+        // secret: process.env.JWT_SECRET, // Q& This is shown in the video, but does not work.
+        secret: `${process.env.JWT_SECRET}`,
+        algorithms: ['HS256']
+    }).unless({
+        path: ['/api-docs', /^\/api-docs\/.*/, '/customers/login', '/customers/signup', '/status'],
+        // path: ['/customers/login', '/customers/signup', '/status'],
+    })
+);
 
 app.use('/products', productRouter);
 app.use('/customers', customerRouter);
@@ -42,7 +54,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     if (err.name === 'UnauthorizedError') {
-        res.status(400).json({ status: 'unauthorized', message: err.message });
+        res.status(401).json({ status: 'unauthorized', message: err.message });
     } else if (err.name === 'CoursesError') {
         res.status(400).json({ status: 'domain error', message: err.message });
     } else {
