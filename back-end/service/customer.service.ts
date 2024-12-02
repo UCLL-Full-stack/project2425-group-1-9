@@ -1,4 +1,4 @@
-// import bcrypt from 'bcrypt';
+import bcrypt from 'bcrypt';
 // import * as bcrypt from 'bcrypt';
 import { Customer } from "../model/customer";
 import customerDb from "../repository/customer.db";
@@ -14,14 +14,15 @@ const getCustomerByUsername = async (username: string): Promise<Customer> => {
 const authenticate = async ({ username, password }: CustomerInput): Promise<AuthenticationResponse> => {
     const customer = await getCustomerByUsername(username);
 
-    // const isValidPassword = await bcrypt.compare(password, user.password); // Q& 
-    const isValidPassword = true;
+    const isValidPassword = await bcrypt.compare(password, customer.password); // Q& 
+    // const isValidPassword = true;
     if (!isValidPassword) throw new Error("Incorrect password.");
 
     return {
         token: generateJwtToken({ username, role: customer.role }),
         username,
         fullname: `${customer.firstName} ${customer.lastName}`,
+        role: customer.role
     };
 };
 
@@ -40,8 +41,8 @@ const createCustomer = async ({
 
     // TODO add phone field validation.
 
-    // const hashedPassword = await bcrypt.hash(password, 12); // Q& 
-    const hashedPassword = "123";
+    const hashedPassword = await bcrypt.hash(password, 12); // Q& 
+    // const hashedPassword = "123";
     const customer = new Customer({ 
         password: hashedPassword,
         securityQuestion,

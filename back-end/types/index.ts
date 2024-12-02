@@ -26,6 +26,7 @@ type AuthenticationResponse = {
     token: string;
     username: string;
     fullname: string;
+    role: Role;
 };
 
 type Role = 'admin' | 'customer' | 'guest';

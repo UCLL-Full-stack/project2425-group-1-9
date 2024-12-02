@@ -277,8 +277,8 @@ customerRouter.put('/:username/cart/:productName', async (req: Request, res: Res
  *             schema:
  *               $ref: '#/components/schemas/CartContainsProduct'
  */
-customerRouter.get("/:username/cart", async (req: Request, res: Response, next: NextFunction) => {
-// customerRouter.get("/:username/cart", async (req: Request & { auth: any }, res: Response, next: NextFunction) => {
+// customerRouter.get("/:username/cart", async (req: Request, res: Response, next: NextFunction) => {
+customerRouter.get('/:username/cart', async (req: Request & { auth: any }, res: Response, next: NextFunction) => {
     try {
         // With Authentication. Q& Code below is showed in the video but does not work.
         // const { username } = req.auth;
@@ -286,13 +286,13 @@ customerRouter.get("/:username/cart", async (req: Request, res: Response, next: 
         // const username = req.params.auth;
         
         // ORIGINAL code:
-        const username = String(req.params.username);
+        // const username = String(req.params.username);
+        // const cart: CartContainsProduct[] = await cartItemService.getCartItemsByCustomerUsername(username);
+        
+        // FINAL code:
+        const { username, role } = req.auth;
         const cart: CartContainsProduct[] = await cartItemService.getCartItemsByCustomerUsername(username);
         res.status(200).json(cart);
-
-        // FINAL code:
-        // const { username, role } = req.auth;
-        // const cart: CartContainsProduct[] = await cartItemService.getCartItemsByCustomerUsername({username , role});
     } catch (e) {
         next(e);
     }
