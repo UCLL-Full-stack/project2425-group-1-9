@@ -120,10 +120,11 @@
 
 
 import express, { NextFunction, Request, Response } from 'express';
+import { expressjwt, Request as JWTRequest } from "express-jwt";
 import { CartContainsProduct } from '../model/cartContainsProduct';
 import cartItemService from '../service/cartItem.service';
 import cartService from '../service/cart.service';
-import { CustomerInput } from '../types';
+import { CustomerInput, Role } from '../types';
 import customerService from '../service/customer.service';
 
 const customerRouter = express.Router();
@@ -132,6 +133,8 @@ const customerRouter = express.Router();
  * @swagger
  * /customers/{username}/cart/{productName}:
  *   delete:
+ *     security:
+ *      - bearerAuth: []
  *     summary: Delete an item from a cart.
  *     parameters:
  *          - in: path
@@ -158,8 +161,13 @@ const customerRouter = express.Router();
  */
 customerRouter.delete('/:username/cart/:productName', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const customerUsername: string = String(req.params.username);
+        // AUTHENTICATION. Q& Because I get username from the authentication token, is the username request parameter redundant?
+        const request = req as Request & { auth: { username: string; role: Role } };
+        const { username: customerUsername, role } = request.auth;
+
+        // const customerUsername: string = String(req.params.username);
         const productName: string = String(req.params.productName);
+        
         const result: string = await cartItemService.deleteCartItemByCustomerUsernameAndProductName(customerUsername, productName);
         res.json(result);
         // res.status(200).json(result);   // DOES NOT WORK!!!!!!!! Q&
@@ -172,6 +180,8 @@ customerRouter.delete('/:username/cart/:productName', async (req: Request, res: 
  * @swagger
  * /customers/{username}/cart:
  *   delete:
+ *     security:
+ *      - bearerAuth: []
  *     summary: Delete all items (products) from a cart.
  *     parameters:
  *          - in: path
@@ -192,7 +202,9 @@ customerRouter.delete('/:username/cart/:productName', async (req: Request, res: 
  */
 customerRouter.delete('/:username/cart', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const customerUsername: string = String(req.params.username);
+        const request = req as Request & { auth: { username: string; role: Role } };
+        const { username: customerUsername, role } = request.auth;
+
         const result: string = await cartItemService.deleteCartItemsByCustomerUsername(customerUsername);
         res.json(result);
         // res.status(200).json(result);   // DOES NOT WORK!!!!!!!! Q&
@@ -205,6 +217,8 @@ customerRouter.delete('/:username/cart', async (req: Request, res: Response, nex
  * @swagger
  * /customers/{username}/cart/{productName}?change:
  *   put:
+ *     security:
+ *      - bearerAuth: []
  *     summary: Add a product to cart or change it's quantity.
  *     parameters:
  *          - in: path
@@ -239,9 +253,14 @@ customerRouter.delete('/:username/cart', async (req: Request, res: Response, nex
  */
 customerRouter.put('/:username/cart/:productName', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const customerUsername: string = String(req.params.username);
+        // const customerUsername: string = String(req.params.username);
+
+        const request = req as Request & { auth: { username: string; role: Role } };
+        const { username: customerUsername, role } = request.auth;
+
         const productName: string = String(req.params.productName);
         const change: string = String(req.query.change) || "increase";
+
         const result = await cartItemService.createOrUpdateCartItem(customerUsername, productName, change);
         res.status(200).json(result);
     } catch (error) {
@@ -278,19 +297,12 @@ customerRouter.put('/:username/cart/:productName', async (req: Request, res: Res
  *               $ref: '#/components/schemas/CartContainsProduct'
  */
 // customerRouter.get("/:username/cart", async (req: Request, res: Response, next: NextFunction) => {
-customerRouter.get('/:username/cart', async (req: Request & { auth: any }, res: Response, next: NextFunction) => {
-    try {
-        // With Authentication. Q& Code below is showed in the video but does not work.
-        // const { username } = req.auth;
-        // const username = req.auth;
-        // const username = req.params.auth;
-        
-        // ORIGINAL code:
-        // const username = String(req.params.username);
-        // const cart: CartContainsProduct[] = await cartItemService.getCartItemsByCustomerUsername(username);
-        
-        // FINAL code:
-        const { username, role } = req.auth;
+// customerRouter.get('/:username/cart', async (req: JWTRequest, res: Response, next: NextFunction) => {
+customerRouter.get('/:username/cart', async (req: Request, res: Response, next: NextFunction) => {
+    try {    
+        const request = req as Request & { auth: { username: string; role: Role } };
+        const { username, role } = request.auth;
+
         const cart: CartContainsProduct[] = await cartItemService.getCartItemsByCustomerUsername(username);
         res.status(200).json(cart);
     } catch (e) {
@@ -302,6 +314,8 @@ customerRouter.get('/:username/cart', async (req: Request & { auth: any }, res: 
  * @swagger
  * /customers/{username}/cart/totalPrice:
  *   get:
+ *     security:
+ *      - bearerAuth: []
  *     summary: Get total price of a cart.
  *     parameters:
  *          - in: path
@@ -321,7 +335,10 @@ customerRouter.get('/:username/cart', async (req: Request & { auth: any }, res: 
  */
 customerRouter.get("/:username/cart/totalPrice", async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const totalCartPrice: number = await cartService.getTotalCartPriceByCustomerUsername(String(req.params.username));
+        const request = req as Request & { auth: { username: string; role: Role } };
+        const { username, role } = request.auth;
+
+        const totalCartPrice: number = await cartService.getTotalCartPriceByCustomerUsername(username);
         res.status(200).json(totalCartPrice);
     } catch (e) {
         next(e);
@@ -333,6 +350,8 @@ customerRouter.get("/:username/cart/totalPrice", async (req: Request, res: Respo
 //  * @swagger
 //  * /customers/{username}/cart/order/{date}:
 //  *   post:
+//  *     security:
+//  *      - bearerAuth: []
 //  *     summary: Create (place) an order. Better alternative to /order.
 //  *     parameters:
 //  *          - in: path
@@ -382,6 +401,8 @@ customerRouter.get("/:username/cart/totalPrice", async (req: Request, res: Respo
  * @swagger
  * /customers/signup:
  *  post:
+ *      security:
+ *      - bearerAuth: []
  *      summary: Create a customer.
  *      requestBody:
  *          required: true
@@ -411,6 +432,8 @@ customerRouter.post('/signup', async (req: Request, res: Response, next: NextFun
  * @swagger
  * /customers/login:
  *  post:
+ *      security:
+ *      - bearerAuth: []
  *      summary: Login using username and password. Returns an object with JWT token and user name when successful.
  *      requestBody:
  *          required: true

@@ -23,7 +23,7 @@
 
 import express, { NextFunction, Request, Response } from 'express';
 import orderService from '../service/order.service';
-import { OrderInput } from '../types';
+import { OrderInput, Role } from '../types';
 
 const orderRouter = express.Router();
 
@@ -31,6 +31,8 @@ const orderRouter = express.Router();
  * @swagger
  * /orders:
  *   post:
+ *     security:
+ *      - bearerAuth: []
  *     summary: Create (place) an order.
  *     requestBody:
  *          required: true
@@ -49,8 +51,19 @@ const orderRouter = express.Router();
  */
 orderRouter.post('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
+        // AUTHENTICATE. Q& What happens here? User input: JWT (contains username and role) and username. Backend takes the given username and corresponding password in the database, generates another token and sees if the tokens match?
+        const request = req as Request & { auth: { username: string; role: Role } };
+        const { username, role } = request.auth;
+
+        // Add authentication info to the request body. Q& Is this the correct way? Authorization.pptx slide 4.
         const order = <OrderInput>req.body;
+        if (order.customer) {
+            order.customer.username = username;
+        }
+
+        // Delegate the request.
         const result = await orderService.createOrder(order);
+
         res.status(200).json({ message: result });
     } catch (error) {
         next(error);
