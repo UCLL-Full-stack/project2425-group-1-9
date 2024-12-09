@@ -41,12 +41,38 @@ const Header: React.FC<HeaderProps> = ({ highlightedTitle }) => {
     <header className={styles.header}>
       <p className={styles.veso}>VESO</p>
       <nav className={styles.nav}>
-        <Link href="/">Home</Link>
-        {loggedInUser !== 'guest' && <Link href="/cart">Cart</Link>}
-        {loggedInUser !== 'guest' && <Link href="/profile">Profile</Link>}
-        {loggedInUser === 'guest'  && <Link href="/login">Login</Link>}
-        {loggedInUser !== 'guest' && <Link href="#"><p onClick={logout}>Logout</p></Link>}
-        {/* <p style={{color: "black"}}>test</p> */}
+        <Link 
+          className={highlightedTitle === "Home" ? "bg-[#008000]" : ""}
+          href="/">Home
+        </Link>
+
+        {loggedInUser !== 'guest' && 
+          <Link 
+            className={highlightedTitle === "Cart" ? "bg-[#008000]" : ""}
+            href="/cart" >Cart
+          </Link>}
+
+        {loggedInUser !== 'guest' && 
+          <Link 
+            className={highlightedTitle === "Profile" ? "bg-[#008000]" : ""}
+            href="/profile">Profile
+          </Link>}
+
+        {loggedInUser === 'guest'  && 
+          <Link 
+            className={highlightedTitle === "Login" ? "bg-[#008000]" : ""}
+            href="/login">Login
+            </Link>}
+
+        {loggedInUser !== 'guest' && 
+          <Link 
+            className={highlightedTitle === "Logout" ? "bg-[#008000]" : ""}
+            href="#"><p onClick={logout}>Logout</p>
+          </Link>}
+        {/* <p 
+          className={highlightedTitle === "cart" ? "text-black" : ""}>
+          test
+        </p> */}
       </nav>
     </header>
   );

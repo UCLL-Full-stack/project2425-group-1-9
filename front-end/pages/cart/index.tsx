@@ -80,21 +80,21 @@ const Cart: React.FC = () => {
     //     return totalCartPrice;
     // };
 
-    // Highlight current tab in header.
-    const highlightCurrentTabInMenu = () => {
-        const cartTabElement = document.querySelector("header nav a:nth-child(2)");
-        if (cartTabElement) cartTabElement.setAttribute("style", "background-color: green;");
-    };
+    // // Highlight current tab in header.
+    // const highlightCurrentTabInMenu = () => {
+    //     const cartTabElement = document.querySelector("header nav a:nth-child(2)");
+    //     if (cartTabElement) cartTabElement.setAttribute("style", "background-color: green;");
+    // };
 
-    useEffect(() => {
-    //   getCartItemsByCustomerUsername(util.getLoggedInCustomer().username); // TODO: Cart id should not be hardcoded!
-      highlightCurrentTabInMenu();
+    // useEffect(() => {
+    // //   getCartItemsByCustomerUsername(util.getLoggedInCustomer().username); // TODO: Cart id should not be hardcoded!
+    // //   highlightCurrentTabInMenu();
 
-    }, []);
+    // }, []);
 
     return (
         <>
-            <Header />
+            <Header highlightedTitle="Cart" />
             <main className={styles.main}>
                 <>
                     {/* {error && <p>Error: {error}</p>} */}

@@ -43,4 +43,4 @@ export type Orderr = {
   customer: Customer;
 };
 
-export type HighlightedTitle = "home" | "profile" | "login" | "cart" | "logout";
+export type HighlightedTitle = "Home" | "Profile" | "Login" | "Cart" | "Logout";

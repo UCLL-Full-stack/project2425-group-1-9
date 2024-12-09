@@ -66,11 +66,11 @@ const Home: React.FC = () => {
   //     setCartItems(cartItemss);
   // };
 
-  // Highlight current tab in header.
-  const highlightCurrentTabInMenu = () => {
-    const cartTabElement = document.querySelector("header nav a:nth-child(1)");
-    if (cartTabElement) cartTabElement.setAttribute("style", "background-color: green;");
-  };
+  // // Highlight current tab in header.
+  // const highlightCurrentTabInMenu = () => {
+  //   const cartTabElement = document.querySelector("header nav a:nth-child(1)");
+  //   if (cartTabElement) cartTabElement.setAttribute("style", "background-color: green;");
+  // };
 
   const addToCart = async (productName: string) => {
     await CustomerService.createOrUpdateCartItem(util.getLoggedInCustomer().username, productName, "increase");
@@ -79,11 +79,11 @@ const Home: React.FC = () => {
     // await getProducts();
   }
 
-  useEffect(() => {
-    // getProducts();
-    // getCartItemsByCustomerUsername(getCustomerUsername());
-    highlightCurrentTabInMenu();
-  }, []);
+  // useEffect(() => {
+  //   // getProducts();
+  //   // getCartItemsByCustomerUsername(getCustomerUsername());
+  //   // highlightCurrentTabInMenu();
+  // }, []);
 
 
 
@@ -95,7 +95,7 @@ const Home: React.FC = () => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         {/* <link rel="icon" href="/logo.ico" /> */}
       </Head>
-      <Header />
+      <Header highlightedTitle="Home"/>
       <main className={styles.main}>
         {/* Q&A Why fragments here? In the video, he also does it.  A: That's for fun. */}
         <>
