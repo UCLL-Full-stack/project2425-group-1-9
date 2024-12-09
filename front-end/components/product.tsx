@@ -13,10 +13,16 @@ const Product: React.FC<Props> = ({ products, cartItems, addToCart }: Props) => 
 
     const getQuantity = (productName: string) => {
         // console.log("Cart items", cartItems);
-        if (util.getLoggedInCustomer().username !== 'guest') {
-            return cartItems.find((cartItem) => cartItem.product.name === productName)?.quantity || 0;
+
+        try {
+            // if (util.getLoggedInCustomer().username !== 'guest') {
+            return cartItems.find((cartItem) => cartItem.product.name === productName)?.quantity || 0; // Q& Hydration failed
+            // }
+            // return null;
+        } catch (error) {
+            return null;
         }
-        return null;
+
     };
 
     return (

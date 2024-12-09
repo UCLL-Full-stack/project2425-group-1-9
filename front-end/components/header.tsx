@@ -2,12 +2,17 @@
 import Link from "next/link";
 import styles from "../styles/header.module.css";
 import { useEffect, useState } from "react";
-import { Customer } from "@/types";
+import { Customer, HighlightedTitle } from "@/types";
 import util from "@/util/util";
 
 
+type HeaderProps = {
+  highlightedTitle: HighlightedTitle;
+};
 
-const Header: React.FC = () => {
+// const Product: React.FC<Props> = ({ products, cartItems, addToCart }: Props) => {
+
+const Header: React.FC<HeaderProps> = ({ highlightedTitle }) => {
   const [loggedInUser, setLoggedInUser] = useState<String>('guest');
 
 //   const getLoggedInCustomer = (): Customer => {
@@ -41,6 +46,7 @@ const Header: React.FC = () => {
         {loggedInUser !== 'guest' && <Link href="/profile">Profile</Link>}
         {loggedInUser === 'guest'  && <Link href="/login">Login</Link>}
         {loggedInUser !== 'guest' && <Link href="#"><p onClick={logout}>Logout</p></Link>}
+        {/* <p style={{color: "black"}}>test</p> */}
       </nav>
     </header>
   );

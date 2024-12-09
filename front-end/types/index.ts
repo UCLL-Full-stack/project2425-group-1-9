@@ -42,3 +42,5 @@ export type Orderr = {
   date: Date;
   customer: Customer;
 };
+
+export type HighlightedTitle = "home" | "profile" | "login" | "cart" | "logout";
