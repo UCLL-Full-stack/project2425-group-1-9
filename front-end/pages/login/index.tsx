@@ -1,25 +1,34 @@
 import Header from "@/components/header";
+import CustomerService from "@/services/CustomerService";
 import { StatusMessage } from "@/types";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import useInterval from "use-interval";
 
 const Login: React.FC = () => {
-    const [username, setUsername] = useState("");
+    const [username, setUsername] = useState("Matej333");
     const [usernameError, setUsernameError] = useState("");
+    const [password, setPassword] = useState("m@t3j-v3s3l");
+    const [passwordError, setPasswordError] = useState("");
     const [statusMessages, setStatusMessages] = useState<StatusMessage[]>([]);
     const router = useRouter();
 
     const clearErrors  = () => {
         setUsernameError("");
+        setPasswordError("");
         setStatusMessages([]);
     };
 
-    const validate = (): boolean => {
-        let result = false;
+    const valid = (): boolean => {
+        let result = true;
 
-        if (!username && username.trim() === "") {
+        if (!username || username.trim() === "") {
             setUsernameError("Username is required.");
+            result = false;
+        }
+
+        if (!password || password.trim() === "") {
+            setPasswordError("Password is required.");
             result = false;
         }
 
@@ -31,17 +40,45 @@ const Login: React.FC = () => {
 
         clearErrors();
 
-        if (!validate) {
+        if (!valid()) {
             return;
         }
 
-        setStatusMessages([{message: `Redirecting...`, type: "success"}]);
+        const customer = { username, password };
+        const response = await CustomerService.loginCustomer(customer);
 
-        sessionStorage.setItem("loggedInUser", username);
+        if (response.status === 200) {
+            setStatusMessages([{message: `Redirecting...`, type: "success"}]);
 
-        setTimeout(() => {
-            router.push("/");
-        }, 500);
+            const customer = await response.json();
+            sessionStorage.setItem(
+                'loggedInCustomer',
+                JSON.stringify({
+                    token: customer.token,
+                    fullname: customer.fullname,
+                    username: customer.username,
+                    role: customer.role
+                })
+            );
+
+            setTimeout(() => {
+                router.push("/");
+            }, 500);
+        }
+
+        else if (response.status === 401) {
+            const { status, message } = await response.json();
+            setStatusMessages([{ message, type: 'error' }]);
+        }
+
+        else {
+            setStatusMessages([
+                {
+                    message: 'An error has occurred. Please try again later.',
+                    type: 'error'
+                }
+            ]);            
+        }
     };
 
     // Highlight current tab in header.
@@ -85,13 +122,19 @@ const Login: React.FC = () => {
                             id="nameInput" 
                             value={username}
                             onChange={(event) => setUsername(event.target.value)}
-                            required />
+                            />
                         {usernameError && <p>Error: {usernameError}</p>}
                     </div>
-                    {/* <div>
+                    <div>
                         <label htmlFor="passwordInput">Password: </label>
-                        <input type="password" id="passwordInput" required />
-                    </div> */}
+                        <input 
+                            type="password"
+                            id="passwordInput" 
+                            value={password}
+                            onChange={(event) => setPassword(event.target.value)}
+                            />
+                        {passwordError && <p>Error: {passwordError}</p>}
+                    </div>
                     <div>
                         <input type="submit" value="Login!" />
                     </div>

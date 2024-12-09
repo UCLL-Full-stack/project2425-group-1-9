@@ -1,4 +1,7 @@
 import Header from "@/components/header";
+import { Customer } from "@/types";
+import util from "@/util/util";
+
 import { useEffect } from "react";
 
 const Profile: React.FC = () => {
@@ -8,6 +11,7 @@ const Profile: React.FC = () => {
         if (cartTabElement) cartTabElement.setAttribute("style", "background-color: green;");
     };
 
+
     useEffect(() => {
         highlightCurrentTabInMenu();
     }, []);
@@ -16,7 +20,7 @@ const Profile: React.FC = () => {
         <>
             <Header />
             <main>
-                <p>Welcome {sessionStorage.getItem("loggedInUser")}!</p>
+                <p>Welcome {util.getLoggedInCustomer().username}!</p>
             </main>
         </>
     );

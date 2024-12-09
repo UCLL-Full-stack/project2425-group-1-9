@@ -1,11 +1,14 @@
 export type Customer = {
+  token?: string;
   id?: number;
   password?: string;
   securityQuestion?: string;
   username: string;
   firstName?: string;
+  fullname?: string;
   lastName?: string;
   phone?: number;
+  role?: string;
 }
 
 export type Cart = {

@@ -1,24 +1,35 @@
 import Header from "@/components/header";
 import Head from "next/head";
-import styles from "../styles/home.module.css";
+import styles from "../styles/Home.module.css";
 import Product from "@/components/product";
 import { useState, useEffect } from "react";
 import ProductService from "@/services/ProductService";
 import CustomerService from "@/services/CustomerService";
-import { CartItem } from "@/types";
+import { CartItem, Customer } from "@/types";
 import useSWR, { mutate } from "swr";
 import useInterval from "use-interval";
+import util from "@/util/util";
+
 
 const Home: React.FC = () => {
   // const [products, setProducts] = useState<Product[]>([]);
   // const [cartItems, setCartItems] = useState<CartItem[]>([]); // Cart items required only to get the quantity of the product.
   // const [getCustomerUsername(), setCustomerUsername] = useState(sessionStorage.getItem("loggedInUser") || "guest");
-  const getCustomerUsername = () => sessionStorage.getItem("loggedInUser") || "guest";
+  // const getLoggedInCustomer = (): Customer => {
+  //   let loggedInCustomer: Customer | string | null = sessionStorage.getItem('loggedInCustomer');
+  //   if (loggedInCustomer) {
+  //     loggedInCustomer = JSON.parse(loggedInCustomer) as Customer;
+  //   } else {
+  //     loggedInCustomer = { username: 'guest', role: 'guest' } as Customer; 
+  //   }
+
+  //   return loggedInCustomer;
+  // }
 
   const getProductsAndCartItems = async () => {
     const responses = await Promise.all([
       ProductService.getAllProducts(),
-      CustomerService.getCartItemsByCustomerUsername(getCustomerUsername()),
+      CustomerService.getCartItemsByCustomerUsername(util.getLoggedInCustomer().username), // Q& Hydration failed. Look at util/
     ]);
     const [productsResponse, cartItemsResponse] = responses;
     const products = await productsResponse.json();
@@ -39,7 +50,7 @@ const Home: React.FC = () => {
 
   useInterval(() => {
     mutate("productsAndCartItems", getProductsAndCartItems())
-    console.log(getCustomerUsername());
+    // console.log(getCustomerUsername());
   }, 5000);
 
   // const getProducts = async () => {
@@ -62,7 +73,7 @@ const Home: React.FC = () => {
   };
 
   const addToCart = async (productName: string) => {
-    await CustomerService.createOrUpdateCartItem(getCustomerUsername(), productName, "increase");
+    await CustomerService.createOrUpdateCartItem(util.getLoggedInCustomer().username, productName, "increase");
     mutate("productsAndCartItems", getProductsAndCartItems());
     // await getCartItemsByCustomerUsername(getCustomerUsername());
     // await getProducts();
@@ -90,6 +101,8 @@ const Home: React.FC = () => {
         <>
           {error && <p>Error: {error}</p>}
           {isLoading && <p>Loading...</p>}
+
+          {util.getLoggedInCustomer().username === 'guest' && <p>Log-in to shop!</p>}
 
           <section className={styles.products}>
             {// products &&

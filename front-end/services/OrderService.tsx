@@ -1,4 +1,5 @@
-import { Orderr } from "@/types";
+import { Customer, Orderr } from "@/types";
+import util from "@/util/util";
 
 const placeOrder = async (order: Orderr) => {
     return await fetch(
@@ -7,18 +8,14 @@ const placeOrder = async (order: Orderr) => {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json',
-                Accept: 'application/json'
+                Accept: 'application/json',
+                Authorization: `Bearer ${util.getLoggedInCustomer().token}`
             },
             body: JSON.stringify(order)
         }
     );
 };
 
-const OrderService = {
-    placeOrder
-}
-
-export default OrderService;
 
 
 const createOrUpdateCartItem = async (customerUsername: string, productName: string, change?: string) => {
@@ -28,8 +25,15 @@ const createOrUpdateCartItem = async (customerUsername: string, productName: str
             method: "PUT",
             headers: {
                 'Content-Type': 'application/json',
-                Accept: 'application/json'
+                Accept: 'application/json',
+                Authorization: `Bearer ${util.getLoggedInCustomer().token}`
             }
         }
     );
 };
+
+const OrderService = {
+    placeOrder
+}
+
+export default OrderService;

@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import type { CartItem, Product } from '../types';
+import util from '@/util/util';
 
 
 type Props = {
@@ -11,7 +12,11 @@ type Props = {
 const Product: React.FC<Props> = ({ products, cartItems, addToCart }: Props) => {
 
     const getQuantity = (productName: string) => {
-        return cartItems.find((cartItem) => cartItem.product.name === productName)?.quantity || 0;
+        // console.log("Cart items", cartItems);
+        if (util.getLoggedInCustomer().username !== 'guest') {
+            return cartItems.find((cartItem) => cartItem.product.name === productName)?.quantity || 0;
+        }
+        return null;
     };
 
     return (
@@ -27,10 +32,10 @@ const Product: React.FC<Props> = ({ products, cartItems, addToCart }: Props) => 
                     <div>
                         <p>{product.name}</p>
                         <p>{product.price} $ / {product.unit}</p>
-                        {sessionStorage.getItem("loggedInUser") && <button onClick={() => addToCart(product.name)}>Add to cart</button>}
+                        {util.getLoggedInCustomer().username !== 'guest' && <button onClick={() => addToCart(product.name)}>Add to cart</button>}
                         <p>Stock: {product.stock}</p>
                         {/* Quantity Increases without accessing actual value in the database. */}
-                        {sessionStorage.getItem("loggedInUser") && <p>Quantity: {getQuantity(product.name)}</p>}
+                        {util.getLoggedInCustomer().username !== 'guest' && <p>Quantity: {getQuantity(product.name)}</p>}
                     </div>
                 </article>
             ))}

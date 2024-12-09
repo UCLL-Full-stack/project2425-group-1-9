@@ -1,7 +1,5 @@
 import Header from "@/components/header";
-import Product from "@/components/product";
-import ProductService from "@/services/ProductService";
-import styles from "../../styles/home.module.css";
+import styles from "@/styles/Home.module.css";
 import { useState, useEffect } from "react";
 // import CartService from "@/services/CartService";
 import CartItem from "@/components/cartItem";
@@ -9,9 +7,11 @@ import CustomerService from "@/services/CustomerService";
 import useSWR, { mutate } from "swr";
 import useInterval from "use-interval";
 import { useRouter } from "next/router";
+import util from "@/util/util";
+
 
 const Cart: React.FC = () => {
-    const getCustomerUsername = () => sessionStorage.getItem("loggedInUser") || "guest";
+    // const getCustomerUsername = () => sessionStorage.getItem("loggedInUser") || "guest";
 
     const router = useRouter();
     // const [cartItems, setCartItems] = useState<CartItem[]>([]);
@@ -25,8 +25,8 @@ const Cart: React.FC = () => {
 
     const getCartItemsAndTotalCartPrice = async () => {
         const responses = Promise.all([
-            CustomerService.getCartItemsByCustomerUsername(getCustomerUsername()),
-            CustomerService.getTotalCartPriceByCustomerUsername(getCustomerUsername())
+            CustomerService.getCartItemsByCustomerUsername(util.getLoggedInCustomer().username),
+            CustomerService.getTotalCartPriceByCustomerUsername(util.getLoggedInCustomer().username)
         ]);
 
         const [cartItemsResponse, totalCartPriceResponse] = await responses;
@@ -54,21 +54,21 @@ const Cart: React.FC = () => {
 
     const clearCart = async () => {
         // setCartItems([]);
-        await CustomerService.clearCart(getCustomerUsername()); // TODO: should not be hardcoded.
+        await CustomerService.clearCart(util.getLoggedInCustomer().username); // TODO: should not be hardcoded.
         mutate("getCartItemsAndTotalCartPrice", getCartItemsAndTotalCartPrice()); // Q&A Is it okay to do mutate here? Or should I make a useState and change it to trigger render? A: Fake it or just keep pulling. In a real life application they will fake it.
-        // await getCartItemsByCustomerUsername(getCustomerUsername()); // TODO: Cart id should not be hardcoded!
+        // await getCartItemsByCustomerUsername(util.getLoggedInCustomer().username); // TODO: Cart id should not be hardcoded!
     };
 
     const deleteCartItem = async (cartItem: CartItem) => {
-        await CustomerService.deleteCartItem(getCustomerUsername(), cartItem.product.name);
+        await CustomerService.deleteCartItem(util.getLoggedInCustomer().username, cartItem.product.name);
         mutate("getCartItemsAndTotalCartPrice", getCartItemsAndTotalCartPrice());
-        // await getCartItemsByCustomerUsername(getCustomerUsername());
+        // await getCartItemsByCustomerUsername(util.getLoggedInCustomer().username);
     }
 
     const changeQuantity = async (cartItem: CartItem, change: string) => {
         await CustomerService.createOrUpdateCartItem(cartItem.cart.customer.username, cartItem.product.name, change);
         mutate("getCartItemsAndTotalCartPrice", getCartItemsAndTotalCartPrice());
-        // await getCartItemsByCustomerUsername(getCustomerUsername()); // TODO: Cart id should not be hardcoded!
+        // await getCartItemsByCustomerUsername(util.getLoggedInCustomer().username); // TODO: Cart id should not be hardcoded!
     };
 
     // const getTotalCartPrice = (): number => {
@@ -83,12 +83,11 @@ const Cart: React.FC = () => {
     // Highlight current tab in header.
     const highlightCurrentTabInMenu = () => {
         const cartTabElement = document.querySelector("header nav a:nth-child(2)");
-        console.log(cartTabElement);
         if (cartTabElement) cartTabElement.setAttribute("style", "background-color: green;");
     };
 
     useEffect(() => {
-    //   getCartItemsByCustomerUsername(getCustomerUsername()); // TODO: Cart id should not be hardcoded!
+    //   getCartItemsByCustomerUsername(util.getLoggedInCustomer().username); // TODO: Cart id should not be hardcoded!
       highlightCurrentTabInMenu();
 
     }, []);
@@ -98,7 +97,7 @@ const Cart: React.FC = () => {
             <Header />
             <main className={styles.main}>
                 <>
-                    {error && <p>Error: {error}</p>}
+                    {/* {error && <p>Error: {error}</p>} */}
                     {isLoading && <p>Loading...</p>}
 
                     <button onClick={clearCart} >Clear Cart</button>

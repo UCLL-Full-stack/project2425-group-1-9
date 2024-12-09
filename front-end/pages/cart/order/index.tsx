@@ -2,13 +2,15 @@ import Header from "@/components/header";
 import CustomerService from "@/services/CustomerService";
 import OrderService from "@/services/OrderService";
 import { Customer, Orderr } from "@/types";
+import util from "@/util/util";
+
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import useSWR, { mutate } from "swr";
 import useInterval from "use-interval";
 
 const Order: React.FC = () => {
-    const getCustomerUsername = () => sessionStorage.getItem("loggedInUser") || "guest";
+    // const getCustomerUsername = () => sessionStorage.getItem("loggedInUser") || "guest";
 
     const [firstName, setFirstName] = useState("Matej");
     const [firstNameError, setFirstNameError] = useState("");
@@ -25,7 +27,7 @@ const Order: React.FC = () => {
 
     const getTotalCartPrice = async () => {
         const responses = Promise.all([
-            CustomerService.getTotalCartPriceByCustomerUsername(getCustomerUsername())
+            CustomerService.getTotalCartPriceByCustomerUsername(util.getLoggedInCustomer().username)
         ]);
 
         const [totalCartPriceResponse] = await responses;
@@ -89,7 +91,7 @@ const Order: React.FC = () => {
 
         // const date: Date = new Date(Date.now());
         const date: Date = new Date("2024-01-19 14:00:12");
-        const customer: Customer = { username: getCustomerUsername() };
+        const customer: Customer = { username: util.getLoggedInCustomer().username };
         const order: Orderr = { date, customer };
         const response = await OrderService.placeOrder(order);
         const { message } = await response.json();

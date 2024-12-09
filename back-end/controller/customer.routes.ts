@@ -448,6 +448,12 @@ customerRouter.post('/signup', async (req: Request, res: Response, next: NextFun
  *                  application/json:
  *                      schema:
  *                          $ref: '#/components/schemas/AuthenticationResponse'
+ *          401:
+ *              description: Error indicating wrong password.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          string: Wrong credentials.
  */
 customerRouter.post('/login', async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -460,3 +466,6 @@ customerRouter.post('/login', async (req: Request, res: Response, next: NextFunc
 });
 
 export { customerRouter };
+
+// Q& Do we need to have functionality to register sb in the system via front-end?
+// Q& • OK There is at least 1 functional form with validation, error handling and integration with the back-end. • There is at least 1 login form with validation and error handling. 

@@ -4,10 +4,11 @@ import { Customer } from "../model/customer";
 import customerDb from "../repository/customer.db";
 import { AuthenticationResponse, CustomerInput } from "../types";
 import { generateJwtToken } from "../util/jwt";
+import { UnauthorizedError } from 'express-jwt';
 
 const getCustomerByUsername = async (username: string): Promise<Customer> => {
     const customer = await customerDb.getCustomerByUsername(username);
-    if (!customer) throw new Error("Customer does not exist.");
+    if (!customer) throw new UnauthorizedError('invalid_token', {message: 'Customer does not exist.'});
     return customer;
 };
 
@@ -16,7 +17,7 @@ const authenticate = async ({ username, password }: CustomerInput): Promise<Auth
 
     const isValidPassword = await bcrypt.compare(password, customer.password); // Q& 
     // const isValidPassword = true;
-    if (!isValidPassword) throw new Error("Incorrect password.");
+    if (!isValidPassword) throw new UnauthorizedError('invalid_token', {message: 'Incorrect password'});
 
     return {
         token: generateJwtToken({ username, role: customer.role }),
