@@ -1,20 +1,6 @@
 import { Customer } from "@/types";
 import util from "@/util/util";
 
-// // Q& How would I make this an util method. If I put it into util, it says: sessionStorage is undefined.
-// const getLoggedInCustomer = (): Customer => {
-//     let loggedInCustomer: Customer | string | null = sessionStorage.getItem('loggedInCustomer');
-//     if (loggedInCustomer) {
-//       loggedInCustomer = JSON.parse(loggedInCustomer) as Customer;
-//     } else {
-//       loggedInCustomer = { username: 'guest', role: 'guest' } as Customer; 
-//     }
-
-//     return loggedInCustomer;
-// }
-
-
-
 const clearCart = async (username: string) => {
     
     return await fetch(

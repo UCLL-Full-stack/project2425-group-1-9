@@ -13,6 +13,12 @@ const getProductByName = async (name: string): Promise<Product> => {
     return product;
 }
 
+// TODO test.
+const getProductsByNameContainingAndCaseInsensitive = async (name: string): Promise<Product[]> => {
+    const products: Product[] = await productDb.getProductsByNameContainingAndCaseInsensitive(name);
+    return products;
+};
+
 const getProductsByCartId = async (cartId: number): Promise<Product[]> => {
     if (!cartId) throw new Error("Cart ID is required.");
 
@@ -35,5 +41,6 @@ const getProductsByCartId = async (cartId: number): Promise<Product[]> => {
 export default {
     getAllProducts,
     getProductByName,
-    getProductsByCartId
+    getProductsByCartId,
+    getProductsByNameContainingAndCaseInsensitive
 };

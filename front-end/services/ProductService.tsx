@@ -9,6 +9,7 @@ const getAllProducts = async () => {
         }
     );
 };
+
 const getProductByName = async(name: string )=>{
     return await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/products/${name}`,
@@ -19,10 +20,24 @@ const getProductByName = async(name: string )=>{
             }
         }
     );
+};
+
+const searchProducts = async(name: string )=>{
+    return await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/products/search/${name}`,
+        {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }
+    );
 }
+
 const ProductService = {
     getAllProducts,
-    getProductByName
+    getProductByName,
+    searchProducts
 };
 
 export default ProductService;

@@ -20,7 +20,7 @@ app.use(bodyParser.json());
 
 app.use(
     expressjwt({
-        // secret: process.env.JWT_SECRET, // Q& This is shown in the video, but does not work.
+        // secret: process.env.JWT_SECRET, // Q&A This is shown in the video, but does not work.
         secret: `${process.env.JWT_SECRET}`,
         algorithms: ['HS256']
     }).unless({

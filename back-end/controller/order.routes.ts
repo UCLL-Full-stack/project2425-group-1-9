@@ -51,11 +51,11 @@ const orderRouter = express.Router();
  */
 orderRouter.post('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        // AUTHENTICATE. Q& What happens here? User input: JWT (contains username and role) and username. Backend takes the given username and corresponding password in the database, generates another token and sees if the tokens match?
+        // AUTHENTICATE. Q&A What happens here? User input: JWT (contains username and role) and username. Backend takes the given username and corresponding password in the database, generates another token and sees if the tokens match?
         const request = req as Request & { auth: { username: string; role: Role } };
         const { username, role } = request.auth;
 
-        // Add authentication info to the request body. Q& Is this the correct way? Authorization.pptx slide 4.
+        // Add authentication info to the request body. Q&A Is this the correct way? Authorization.pptx slide 4. A: Yes, or you can add another parameter to the createOrder.
         const order = <OrderInput>req.body;
         if (order.customer) {
             order.customer.username = username;

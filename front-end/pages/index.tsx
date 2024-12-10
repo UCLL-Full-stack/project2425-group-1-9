@@ -12,28 +12,26 @@ import util from "@/util/util";
 
 
 const Home: React.FC = () => {
-  // const [products, setProducts] = useState<Product[]>([]);
-  // const [cartItems, setCartItems] = useState<CartItem[]>([]); // Cart items required only to get the quantity of the product.
-  // const [getCustomerUsername(), setCustomerUsername] = useState(sessionStorage.getItem("loggedInUser") || "guest");
-  // const getLoggedInCustomer = (): Customer => {
-  //   let loggedInCustomer: Customer | string | null = sessionStorage.getItem('loggedInCustomer');
-  //   if (loggedInCustomer) {
-  //     loggedInCustomer = JSON.parse(loggedInCustomer) as Customer;
-  //   } else {
-  //     loggedInCustomer = { username: 'guest', role: 'guest' } as Customer; 
-  //   }
+  const [query, setQuery] = useState("");
+  // const [queryResults, setQueryResults] = useState<Manual[]>([]);
+  const [statusMessage, setStatusMessage] = useState("");
 
-  //   return loggedInCustomer;
-  // }
+  // https://swr.vercel.app/docs/conditional-fetching
 
   const getProductsAndCartItems = async () => {
     const responses = await Promise.all([
       ProductService.getAllProducts(),
+      ProductService.searchProducts(query),
       CustomerService.getCartItemsByCustomerUsername(util.getLoggedInCustomer().username), // Q& Hydration failed. Look at util/
     ]);
-    const [productsResponse, cartItemsResponse] = responses;
-    const products = await productsResponse.json();
+    const [productsResponse, productsSearchResponse, cartItemsResponse] = responses;
+    let products = await productsResponse.json();
+    const productsSearched = await productsSearchResponse.json();
     const cartItems = await cartItemsResponse.json();
+
+    if (query) {
+      products = productsSearched;
+    } 
 
     products.sort((a: Product, b: Product) => a.name < b.name ? -1 : 1) // Sort products based on descending name.
 
@@ -53,39 +51,23 @@ const Home: React.FC = () => {
     // console.log(getCustomerUsername());
   }, 5000);
 
-  // const getProducts = async () => {
-  //   const response = await ProductService.getAllProducts();
-  //   const productss = await response.json();
-  //   productss.sort((a: Product, b: Product) => a.name < b.name ? -1 : 1) // Sort products based on descending name.
-  //   setProducts(productss);
-  // };
-
-  // const getCartItemsByCustomerUsername = async (getCustomerUsername(): string) => {
-  //     const response = await CustomerService.getCartItemsByCustomerUsername(getCustomerUsername());
-  //     const cartItemss: CartItem[] = await response.json();
-  //     setCartItems(cartItemss);
-  // };
-
-  // // Highlight current tab in header.
-  // const highlightCurrentTabInMenu = () => {
-  //   const cartTabElement = document.querySelector("header nav a:nth-child(1)");
-  //   if (cartTabElement) cartTabElement.setAttribute("style", "background-color: green;");
-  // };
-
   const addToCart = async (productName: string) => {
     await CustomerService.createOrUpdateCartItem(util.getLoggedInCustomer().username, productName, "increase");
     mutate("productsAndCartItems", getProductsAndCartItems());
-    // await getCartItemsByCustomerUsername(getCustomerUsername());
-    // await getProducts();
   }
 
-  // useEffect(() => {
-  //   // getProducts();
-  //   // getCartItemsByCustomerUsername(getCustomerUsername());
-  //   // highlightCurrentTabInMenu();
-  // }, []);
+  // Search form.
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    // Prevent page reload.
+    event.preventDefault();
+    // Clear status messages to prevent piling them up.
+    setStatusMessage("");
 
+    console.log();
+    mutate("productsAndCartItems", getProductsAndCartItems())
 
+    setStatusMessage(`Query: ${query}`);
+  };
 
   return (
     <>
@@ -97,8 +79,32 @@ const Home: React.FC = () => {
       </Head>
       <Header highlightedTitle="Home"/>
       <main className={styles.main}>
+      <div className="">
+        <form 
+          className=""
+          onSubmit={(event) => handleSubmit(event)}>
+
+          <label 
+            className=""
+            htmlFor="queryInput">Search: </label>
+
+          <input
+              className=""
+              type="text"
+              id="queryInput" 
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+          />
+
+          <button type="submit">Search</button>
+
+        </form>
+        
+        {statusMessage && 
+        <p className="">{statusMessage}</p>}
+      </div>
+
         {/* Q&A Why fragments here? In the video, he also does it.  A: That's for fun. */}
-        <>
           {error && <p>Error: {error}</p>}
           {isLoading && <p>Loading...</p>}
 
@@ -112,11 +118,10 @@ const Home: React.FC = () => {
                   addToCart={addToCart}
                   cartItems={data.cartItems}/>)}
           </section>
-        </>
-
       </main>
     </>
   );
 };
 
 export default Home;
+

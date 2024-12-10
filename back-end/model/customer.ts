@@ -46,7 +46,7 @@ export class Customer {
         if (!customer.role?.trim()) throw new Error("Role is required.");
     }
 
-    // Q& Are equal methods required in the models?
+    // Q&A Are equal methods required in the models? A: Yes.
     
     static from({
         id,

@@ -10,7 +10,7 @@ export class Cart {
     active: boolean;
     customer: Customer;
 
-    // Q& Is it not better to use setters immediately in the constructor?
+    // Q&A Is it not better to use setters immediately in the constructor? A: yes.
     //I also thought of the same thing. I thing we could
     //do we need any extra logic for setId methods in the classes?
 

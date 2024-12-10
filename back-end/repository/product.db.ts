@@ -26,6 +26,24 @@ const getProductByName = async (name: string): Promise<Product | null> => {
     }
 };
 
+const getProductsByNameContainingAndCaseInsensitive = async (name: string): Promise<Product[]> => {
+    try {
+        const productPrisma = await database.product.findMany({
+            where: {
+                name: {
+                    contains: name,
+                    mode: 'insensitive'
+                }
+            }
+        });
+        return productPrisma.map((productPrisma) => Product.from(productPrisma));
+
+    } catch (error) {
+        console.log(error);
+        throw new Error('Database error. See server logs for details.');
+    }
+};
+
 const updateProductStockByName = async (name: string, stock: number): Promise<String | null> => {
     try {
             await database.product.update({
@@ -47,5 +65,6 @@ const updateProductStockByName = async (name: string, stock: number): Promise<St
 export default {
     getAllProducts,
     getProductByName,
-    updateProductStockByName
+    updateProductStockByName,
+    getProductsByNameContainingAndCaseInsensitive
 };

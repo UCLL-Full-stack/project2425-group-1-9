@@ -161,7 +161,7 @@ const customerRouter = express.Router();
  */
 customerRouter.delete('/:username/cart/:productName', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        // AUTHENTICATION. Q& Because I get username from the authentication token, is the username request parameter redundant?
+        // AUTHENTICATION. Q&A Because I get username from the authentication token, is the username request parameter redundant? A: Yes.
         const request = req as Request & { auth: { username: string; role: Role } };
         const { username: customerUsername, role } = request.auth;
 
@@ -467,5 +467,5 @@ customerRouter.post('/login', async (req: Request, res: Response, next: NextFunc
 
 export { customerRouter };
 
-// Q& Do we need to have functionality to register sb in the system via front-end?
-// Q& • OK There is at least 1 functional form with validation, error handling and integration with the back-end. • There is at least 1 login form with validation and error handling. 
+// Q&A Do we need to have functionality to register sb in the system via front-end? A: yes.
+// Q&A • OK There is at least 1 functional form with validation, error handling and integration with the back-end. • There is at least 1 login form with validation and error handling.  A: You need two forms.

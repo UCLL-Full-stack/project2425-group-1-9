@@ -15,8 +15,7 @@ const getCustomerByUsername = async (username: string): Promise<Customer> => {
 const authenticate = async ({ username, password }: CustomerInput): Promise<AuthenticationResponse> => {
     const customer = await getCustomerByUsername(username);
 
-    const isValidPassword = await bcrypt.compare(password, customer.password); // Q& 
-    // const isValidPassword = true;
+    const isValidPassword = await bcrypt.compare(password, customer.password);
     if (!isValidPassword) throw new UnauthorizedError('invalid_token', {message: 'Incorrect password'});
 
     return {
@@ -42,8 +41,8 @@ const createCustomer = async ({
 
     // TODO add phone field validation.
 
-    const hashedPassword = await bcrypt.hash(password, 12); // Q& 
-    // const hashedPassword = "123";
+    const hashedPassword = await bcrypt.hash(password, 12);
+    
     const customer = new Customer({ 
         password: hashedPassword,
         securityQuestion,

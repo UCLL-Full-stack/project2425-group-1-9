@@ -51,6 +51,36 @@ productRouter.get('/', async (req: Request, res: Response, next: NextFunction) =
 
 /**
  * @swagger
+ * /products/search/{name}:
+ *   get:
+ *     summary: Get a list of all products by name containing and case insensitive.
+ *     parameters:
+ *          - in: path
+ *            name: name
+ *            schema:
+ *              type: string
+ *              required: true
+ *              description: The name of the product.
+ *              example: se
+ *     responses:
+ *          200:
+ *              description: A list of all products, which names give a match.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/Product'
+ */
+productRouter.get('/search/:name', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const products: Product[] = await productService.getProductsByNameContainingAndCaseInsensitive(String(req.params.name));
+        res.status(200).json(products);
+    } catch (error) {
+        next(error);
+    }
+});
+
+/**
+ * @swagger
  * /products/{name}:
  *   get:
  *     summary: Get a product by its name.
