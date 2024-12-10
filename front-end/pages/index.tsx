@@ -16,44 +16,61 @@ const Home: React.FC = () => {
   // const [queryResults, setQueryResults] = useState<Manual[]>([]);
   const [statusMessage, setStatusMessage] = useState("");
 
-  // https://swr.vercel.app/docs/conditional-fetching
 
-  const getProductsAndCartItems = async () => {
-    const responses = await Promise.all([
-      ProductService.getAllProducts(),
-      ProductService.searchProducts(query),
-      CustomerService.getCartItemsByCustomerUsername(util.getLoggedInCustomer().username), // Q& Hydration failed. Look at util/
-    ]);
-    const [productsResponse, productsSearchResponse, cartItemsResponse] = responses;
-    let products = await productsResponse.json();
-    const productsSearched = await productsSearchResponse.json();
-    const cartItems = await cartItemsResponse.json();
-
-    if (query) {
-      products = productsSearched;
-    } 
-
-    products.sort((a: Product, b: Product) => a.name < b.name ? -1 : 1) // Sort products based on descending name.
-
-    return {
-      products,
-      cartItems
-    };
+  // SWR FETCHERS. -----------------------------
+  const fetcherCartItems = async () => {
+    const response = await CustomerService.getCartItemsByCustomerUsername(util.getLoggedInCustomer().username);
+    const result = await response.json();
+    return {result};
   };
 
-  const { data, isLoading, error } = useSWR(
-    "productsAndCartItems",
-    getProductsAndCartItems
+  const fetcherAllProducts = async () => {
+    const response = await ProductService.getAllProducts();
+    const result = await response.json()
+    result.sort((a: Product, b: Product) => a.name < b.name ? -1 : 1) // Sort products based on descending name.
+    return {result};
+  };
+
+  const fetcherSearchedProducts = async () => {
+    const response = await ProductService.searchProducts(query);
+    const result = await response.json()
+    result.sort((a: Product, b: Product) => a.name < b.name ? -1 : 1) // Sort products based on descending name.
+    return {result};
+  };
+
+  const { data: dataCartItems } = useSWR(
+    // https://swr.vercel.app/docs/conditional-fetching
+    util.getLoggedInCustomer().username !== "guest" ? "cartItems" : null,
+    fetcherCartItems
   );
 
-  useInterval(() => {
-    mutate("productsAndCartItems", getProductsAndCartItems())
-    // console.log(getCustomerUsername());
-  }, 5000);
+  const { data: dataProducts, isLoading, error } = useSWR(
+    !query ? "products" : null,
+    fetcherAllProducts
+  );
+
+  const { data: dataSearchedProducts } = useSWR(
+    query ? "searchedProducts" : null,
+    fetcherSearchedProducts
+  );
+
+  const pooling = () => {
+    mutate("products", fetcherAllProducts())
+
+    if (util.getLoggedInCustomer().username !== "guest") {
+      mutate("cartItems", fetcherCartItems())
+    }
+
+    if (query) {
+      mutate("searchedProducts", fetcherSearchedProducts())
+    }
+  };
+
+  useInterval(pooling, 5000);
 
   const addToCart = async (productName: string) => {
     await CustomerService.createOrUpdateCartItem(util.getLoggedInCustomer().username, productName, "increase");
-    mutate("productsAndCartItems", getProductsAndCartItems());
+    pooling();
   }
 
   // Search form.
@@ -61,12 +78,12 @@ const Home: React.FC = () => {
     // Prevent page reload.
     event.preventDefault();
     // Clear status messages to prevent piling them up.
-    setStatusMessage("");
+    if (!query) {
+      setStatusMessage("Search string required.");
+      return
+    }
 
-    console.log();
-    mutate("productsAndCartItems", getProductsAndCartItems())
-
-    setStatusMessage(`Query: ${query}`);
+    mutate("searchedProducts", fetcherSearchedProducts())
   };
 
   return (
@@ -97,6 +114,7 @@ const Home: React.FC = () => {
           />
 
           <button type="submit">Search</button>
+          <button type="button" onClick={() => setQuery("")}>Clear Search</button>
 
         </form>
         
@@ -112,11 +130,11 @@ const Home: React.FC = () => {
 
           <section className={styles.products}>
             {// products &&
-              data &&
+              (dataProducts || dataSearchedProducts) &&
               (<Product 
-                  products={data.products}
+                  products={!query ? dataProducts?.result : dataSearchedProducts?.result}
                   addToCart={addToCart}
-                  cartItems={data.cartItems}/>)}
+                  cartItems={dataCartItems ? dataCartItems.result : []}/>)}
           </section>
       </main>
     </>
