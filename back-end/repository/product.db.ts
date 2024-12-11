@@ -1,7 +1,7 @@
 import { Product } from "../model/product";
 import database from "./database";
 
-const getAllProducts = async (deleted: boolean): Promise<Product[]> => {
+const getAllProductsByDeleted = async (deleted: boolean): Promise<Product[]> => {
     try {
         const productPrisma = await database.product.findMany({
             where: {
@@ -68,7 +68,7 @@ const updateProductStockByName = async (name: string, stock: number): Promise<St
 };
 
 export default {
-    getAllProducts,
+    getAllProductsByDeleted,
     getProductByName,
     updateProductStockByName,
     getProductsByNameContainingAndCaseInsensitive

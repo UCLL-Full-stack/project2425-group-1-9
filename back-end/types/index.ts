@@ -31,10 +31,16 @@ type AuthenticationResponse = {
 
 type Role = 'admin' | 'customer' | 'guest';
 
+type Auth = {
+    username: string;
+    role: Role;
+};
+
 export {
     OrderInput,
     CustomerInput,
     CartInput,
     AuthenticationResponse,
-    Role
+    Role,
+    Auth
 }

@@ -2,11 +2,19 @@ import { CartContainsProduct } from "../model/cartContainsProduct";
 import { Product } from "../model/product";
 import cartContainsProductDb from "../repository/cartContainsProduct.db";
 import productDb from "../repository/product.db";
+import { Auth } from "../types";
 
 
 // TODO tests.
-const getAllProducts = async (deleted: boolean): Promise<Product[]> => {
-    return await productDb.getAllProducts(deleted);
+const getAllProducts = async (auth: Auth): Promise<Product[]> => {
+    const deletedProducts: Product[] = await productDb.getAllProductsByDeleted(true);
+    const notDeletedProducts: Product[] = await productDb.getAllProductsByDeleted(false);
+
+    if (auth.role === 'admin') {
+        return [...notDeletedProducts, ...deletedProducts];
+    } else {
+        return [...notDeletedProducts];
+    }
 }
 
 const getProductByName = async (name: string): Promise<Product> => {

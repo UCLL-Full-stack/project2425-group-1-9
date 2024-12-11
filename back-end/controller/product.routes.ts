@@ -1,6 +1,11 @@
 /**
  * @swagger
  *   components:
+ *    securitySchemes:
+ *     bearerAuth:
+ *      type: http
+ *      scheme: bearer
+ *      bearerFormat: JWT
  *    schemas:
  *      Product:
  *          type: object
@@ -30,22 +35,17 @@
 import express, { NextFunction, Request, Response } from 'express';
 import { Product } from '../model/product';
 import productService from '../service/product.service';
+import { Auth, Role } from '../types';
 
 const productRouter = express.Router();
 
 /**
  * @swagger
- * /products/{deleted}:
+ * /products:
  *   get:
+ *     security:
+ *      - bearerAuth: []
  *     summary: Get a list of all products, either deleted or not.
- *     parameters:
- *          - in: path
- *            name: deleted
- *            schema:
- *              type: boolean
- *              required: false
- *              description: Status of a product, indicating whether it has been deleted or not.
- *              example: false
  *     responses:
  *          200:
  *              description: A list of all products matching the deleted parameter.
@@ -54,8 +54,11 @@ const productRouter = express.Router();
  *                      schema:
  *                          $ref: '#/components/schemas/Product'
  */
-productRouter.get('/:deleted', async (req: Request, res: Response, next: NextFunction) => {
+productRouter.get('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
+        // AUTHENTICATION. Q& I get no 401 error if not logged in.
+        const request = req as Request & { auth: { username: string; role: Role } };
+
         let deleted: boolean;
         if (String(req.params.deleted) === "true") {
             deleted = true;
@@ -63,9 +66,8 @@ productRouter.get('/:deleted', async (req: Request, res: Response, next: NextFun
             deleted = false;
         }
 
+        const products: Product[] = await productService.getAllProducts(request.auth);
 
-        const products: Product[] = await productService.getAllProducts(deleted);
-        // console.log(Boolean(req.params.deleted));
         res.status(200).json(products);
     } catch (error) {
         next(error);

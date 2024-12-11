@@ -52,6 +52,18 @@ const main = async () => {
         }
     });
 
+    const admin = await prisma.customer.create({
+        data: {
+            password: await bcrypt.hash("admin", 12),
+            securityQuestion: "What is the name of the best friend from childhood?", // TODO: We also need security answer. It may also be a list.
+            username: "admin",
+            firstName: "admin",
+            lastName: "admin",
+            phone: 999999,
+            role: "admin"
+        }
+    });
+
     // CART DATA ----------------------------------------
     const cartGuest = await prisma.cart.create({
         data: {
