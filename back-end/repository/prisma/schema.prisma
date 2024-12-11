@@ -24,7 +24,7 @@ model Customer {
     username            String    @unique
     firstName           String
     lastName            String
-    phone               Int       @unique
+    phone               Int
     role                String
     cart                Cart[]
     order               Order[]

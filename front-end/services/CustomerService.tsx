@@ -87,13 +87,28 @@ const loginCustomer = async (customer: Customer) => {
     );
 };
 
+const registerCustomer = async (customer: Customer) => {
+    return await fetch(
+        process.env.NEXT_PUBLIC_API_URL + `/customers/register`,
+        {
+            method:"POST",
+            headers:{
+                'Content-Type': 'application/json',
+                Accept: 'application/json'
+            },
+            body: JSON.stringify(customer),
+        }
+    );
+};
+
 const CustomerService = {
     clearCart,
     createOrUpdateCartItem,
     getCartItemsByCustomerUsername,
     deleteCartItem,
     getTotalCartPriceByCustomerUsername,
-    loginCustomer
+    loginCustomer,
+    registerCustomer
 }
 
 export default CustomerService;

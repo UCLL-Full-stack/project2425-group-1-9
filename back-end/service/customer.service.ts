@@ -5,6 +5,8 @@ import customerDb from "../repository/customer.db";
 import { AuthenticationResponse, CustomerInput } from "../types";
 import { generateJwtToken } from "../util/jwt";
 import { UnauthorizedError } from 'express-jwt';
+import { create } from 'domain';
+import cartDb from '../repository/cart.db';
 
 const getCustomerByUsername = async (username: string): Promise<Customer> => {
     const customer = await customerDb.getCustomerByUsername(username);
@@ -36,13 +38,14 @@ const createCustomer = async ({
     phone,
     role
 }: CustomerInput):  Promise<Customer> => {
+    // GET
     const existingCustomer = await customerDb.getCustomerByUsername(username); // TODO he uses types. { username }
     if (existingCustomer) throw new Error("Customer is already registered.");
 
     // TODO add phone field validation.
 
+    // CONNECT
     const hashedPassword = await bcrypt.hash(password, 12);
-    
     const customer = new Customer({ 
         password: hashedPassword,
         securityQuestion,
@@ -53,7 +56,12 @@ const createCustomer = async ({
         role
      });
 
-     return await customerDb.createCustomer(customer);
+
+    // SAVE
+    const createdCustomer: Customer = await customerDb.createCustomer(customer);
+    await cartDb.createActiveCartByCustomerId(createdCustomer.getId());
+
+    return createdCustomer;
 
 };
 

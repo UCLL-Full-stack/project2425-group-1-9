@@ -399,10 +399,8 @@ customerRouter.get("/:username/cart/totalPrice", async (req: Request, res: Respo
 
 /**
  * @swagger
- * /customers/signup:
+ * /customers/register:
  *  post:
- *      security:
- *      - bearerAuth: []
  *      summary: Create a customer.
  *      requestBody:
  *          required: true
@@ -418,7 +416,7 @@ customerRouter.get("/:username/cart/totalPrice", async (req: Request, res: Respo
  *                      schema:
  *                          $ref: '#/components/schemas/Customer'
  */
-customerRouter.post('/signup', async (req: Request, res: Response, next: NextFunction) => {
+customerRouter.post('/register', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const customerInput = <CustomerInput>req.body;
         const customer = await customerService.createCustomer(customerInput);
@@ -432,8 +430,6 @@ customerRouter.post('/signup', async (req: Request, res: Response, next: NextFun
  * @swagger
  * /customers/login:
  *  post:
- *      security:
- *      - bearerAuth: []
  *      summary: Login using username and password. Returns an object with JWT token and user name when successful.
  *      requestBody:
  *          required: true
