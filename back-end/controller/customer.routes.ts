@@ -469,3 +469,4 @@ export { customerRouter };
 
 // Q&A Do we need to have functionality to register sb in the system via front-end? A: yes.
 // Q&A • OK There is at least 1 functional form with validation, error handling and integration with the back-end. • There is at least 1 login form with validation and error handling.  A: You need two forms.
+// TODO always return the object. It is a contract.

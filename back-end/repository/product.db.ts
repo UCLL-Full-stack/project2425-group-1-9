@@ -1,9 +1,14 @@
 import { Product } from "../model/product";
 import database from "./database";
 
-const getAllProducts = async (): Promise<Product[]> => {
+const getAllProducts = async (deleted: boolean): Promise<Product[]> => {
     try {
-        const productPrisma = await database.product.findMany();
+        const productPrisma = await database.product.findMany({
+            where: {
+                deleted: deleted
+            }
+        });
+
         return productPrisma.map((productPrisma) => Product.from(productPrisma));
     } catch (error) {
         console.log(error);

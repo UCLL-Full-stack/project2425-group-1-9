@@ -45,6 +45,7 @@ model Product {
     stock               Int
     description         String
     imagePath           String
+    deleted             Boolean   @default(false)
     CartContainsProduct CartContainsProduct[]
 }
 

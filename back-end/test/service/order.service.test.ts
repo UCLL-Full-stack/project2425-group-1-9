@@ -65,7 +65,8 @@ const products: Product[] = [
         unit: "piece",
         stock: 16,
         description: "A computer mouse (plural mice, also mouses)[nb 1] is a hand-held pointing device that detects two-dimensional motion relative to a surface. This motion is typically translated into the motion of the pointer (called a cursor) on a display, which allows a smooth control of the graphical user interface of a computer.",
-        imagePath: resourceImagePath + "mouse.png"
+        imagePath: resourceImagePath + "mouse.png",
+        deleted: false
     }),
     new Product({
         name: "Bananas",
@@ -73,7 +74,8 @@ const products: Product[] = [
         unit: "bunch",
         stock: 22,
         description: "A banana is an elongated, edible fruit -- botanically a berry[1] -- produced by several kinds of large herbaceous flowering plants in the genus Musa. In some countries, cooking bananas are called plantains, distinguishing them from dessert bananas. The fruit is variable in size, color and firmness, but is usually elongated and curved, with soft flesh rich in, starch covered with a peel, which may have a variety of colors when ripe. It grows upward in clusters near the top of the plant. Almost all modern edible seedless (parthenocarp) cultivated bananas come from two wild species -- Musa acuminata and Musa balbisiana, or hybrids of them.",
-        imagePath: resourceImagePath + "bananas.png"
+        imagePath: resourceImagePath + "bananas.png",
+        deleted: false
     })
 ];
 // const cartContainsProduct: CartContainsProduct = new CartContainsProduct({

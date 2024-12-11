@@ -3,8 +3,10 @@ import { Product } from "../model/product";
 import cartContainsProductDb from "../repository/cartContainsProduct.db";
 import productDb from "../repository/product.db";
 
-const getAllProducts = async (): Promise<Product[]> => {
-    return await productDb.getAllProducts();
+
+// TODO tests.
+const getAllProducts = async (deleted: boolean): Promise<Product[]> => {
+    return await productDb.getAllProducts(deleted);
 }
 
 const getProductByName = async (name: string): Promise<Product> => {

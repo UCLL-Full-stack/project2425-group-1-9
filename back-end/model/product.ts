@@ -10,8 +10,9 @@ export class Product {
     stock: number;
     readonly description: string;
     readonly imagePath: string;
+    readonly deleted: boolean;
 
-    constructor(product: { name: string, price: number, unit: string, stock: number, description: string, imagePath: string }) {
+    constructor(product: { name: string, price: number, unit: string, stock: number, description: string, imagePath: string, deleted: boolean }) {
         this.validate(product);
 
         this.name = product.name;
@@ -20,6 +21,7 @@ export class Product {
         this.stock = product.stock;
         this.description = product.description;
         this.imagePath = product.imagePath;
+        this.deleted = product.deleted;
     }
 
     validate(product: { name: string, price: number, unit: string, stock: number, description: string, imagePath: string }) {
@@ -38,7 +40,8 @@ export class Product {
             unit,
             stock,
             description,
-            imagePath
+            imagePath,
+            deleted
         }: ProductPrisma) {
         return new Product({ 
             name,
@@ -47,6 +50,7 @@ export class Product {
             stock,
             description,
             imagePath,
+            deleted
             // cartContainsProduct: CartContainsProduct.from(cartContainsProduct)
          });
     };
@@ -79,13 +83,18 @@ export class Product {
         return this.imagePath
     }
 
+    getDeleted(): boolean {
+        return this.deleted
+    }
+
     equal(newProduct: Product) {
         return (
             newProduct.name === this.name &&
             newProduct.price === this.price &&
             newProduct.unit === this.unit && // the equals method just checks if the data types of each attribute is the same as defined in the constructor            newProduct.stock === this.stock&&
             newProduct.description === this.description &&
-            newProduct.imagePath === this.imagePath
+            newProduct.imagePath === this.imagePath &&
+            newProduct.deleted === this.deleted
         )
     }
 }

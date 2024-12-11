@@ -9,7 +9,8 @@ const products: Product[] = [
         unit: "piece",
         stock: 25,
         description: "Rye bread is a type of bread made with various proportions of flour from rye grain. It can be light or dark in color, depending on the type of flour used and the addition of coloring agents, and is typically denser than bread made from wheat flour. Compared to white bread, it is higher in fiber, darker in color, and stronger in flavor. The world's largest exporter of rye bread is Poland.",
-        imagePath: "bread.png"
+        imagePath: "bread.png",
+        deleted: false
     }),
     new Product({
         name: "Mayonnaise",
@@ -17,7 +18,8 @@ const products: Product[] = [
         unit: "piece",
         stock: 15,
         description: "Mayonnaise is an emulsion of oil, egg yolk, and an acid, either vinegar or lemon juice;[4] there are many variants using additional flavorings. The color varies from near-white to pale yellow, and its texture from a light cream to a thick gel.",
-        imagePath: "mayonnaise.png"
+        imagePath: "mayonnaise.png",
+        deleted: false
     })
 ];
 

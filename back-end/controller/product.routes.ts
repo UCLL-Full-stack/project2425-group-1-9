@@ -20,6 +20,12 @@
  *            description:
  *              type: string
  *              description: Product's description.
+ *            imagePath:
+ *              type: string
+ *              description: Product's image path.
+ *            deleted:
+ *              type: boolean
+ *              description: Product's state, deleted or not.
  */
 import express, { NextFunction, Request, Response } from 'express';
 import { Product } from '../model/product';
@@ -29,20 +35,37 @@ const productRouter = express.Router();
 
 /**
  * @swagger
- * /products:
+ * /products/{deleted}:
  *   get:
- *     summary: Get a list of all products.
+ *     summary: Get a list of all products, either deleted or not.
+ *     parameters:
+ *          - in: path
+ *            name: deleted
+ *            schema:
+ *              type: boolean
+ *              required: false
+ *              description: Status of a product, indicating whether it has been deleted or not.
+ *              example: false
  *     responses:
  *          200:
- *              description: A list of all products.
+ *              description: A list of all products matching the deleted parameter.
  *              content:
  *                  application/json:
  *                      schema:
  *                          $ref: '#/components/schemas/Product'
  */
-productRouter.get('/', async (req: Request, res: Response, next: NextFunction) => {
+productRouter.get('/:deleted', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const products: Product[] = await productService.getAllProducts();
+        let deleted: boolean;
+        if (String(req.params.deleted) === "true") {
+            deleted = true;
+        } else {
+            deleted = false;
+        }
+
+
+        const products: Product[] = await productService.getAllProducts(deleted);
+        // console.log(Boolean(req.params.deleted));
         res.status(200).json(products);
     } catch (error) {
         next(error);
