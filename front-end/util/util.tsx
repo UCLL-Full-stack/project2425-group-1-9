@@ -6,7 +6,7 @@ const getLoggedInCustomer = (): Customer => {
     if (loggedInCustomer) {
       loggedInCustomer = JSON.parse(loggedInCustomer) as Customer;
     } else {
-      loggedInCustomer = { username: 'guest', role: 'guest' } as Customer; 
+      loggedInCustomer = { username: 'guest', role: 'guest'} as Customer; 
     }
   
     return loggedInCustomer;

@@ -25,6 +25,7 @@ export type Product = {
   stock: number;
   description: string;
   imagePath: string;
+  deleted: boolean;
 };
 
 export type CartItem = {

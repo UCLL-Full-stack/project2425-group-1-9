@@ -13,7 +13,7 @@ type HeaderProps = {
 // const Product: React.FC<Props> = ({ products, cartItems, addToCart }: Props) => {
 
 const Header: React.FC<HeaderProps> = ({ highlightedTitle }) => {
-  const [loggedInUser, setLoggedInUser] = useState<String>('guest');
+  const [loggedInUser, setLoggedInUser] = useState<string>('guest');
 
 //   const getLoggedInCustomer = (): Customer => {
 //     let loggedInCustomer: Customer | string | null = sessionStorage.getItem('loggedInCustomer');
@@ -46,7 +46,7 @@ const Header: React.FC<HeaderProps> = ({ highlightedTitle }) => {
           href="/">Home
         </Link>
 
-        {loggedInUser !== 'guest' && 
+        {(!['guest', 'admin'].includes(loggedInUser)) && 
           <Link 
             className={highlightedTitle === "Cart" ? "bg-[#008000]" : ""}
             href="/cart" >Cart

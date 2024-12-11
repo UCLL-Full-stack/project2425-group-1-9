@@ -25,14 +25,26 @@ const Home: React.FC = () => {
   };
 
   const fetcherAllProducts = async () => {
-    const response = await ProductService.getAllProducts({deleted: false});
+    // Because guest cannot use the secure path. But products have to be under secure path because I change functionality based on the token, which is a requirement.
+    if (['guest'].includes(util.getLoggedInCustomer().username)) {
+      return await fetcherSearchedProducts("*");
+    };
+
+    const response = await ProductService.getAllProducts();
     const result = await response.json()
     result.sort((a: Product, b: Product) => a.name < b.name ? -1 : 1) // Sort products based on descending name.
     return {result};
   };
 
-  const fetcherSearchedProducts = async () => {
-    const response = await ProductService.searchProducts(query);
+  // Look away, shady things are going on here.
+  const fetcherSearchedProducts = async (x?: string) => {
+    let response;
+    if (x === "*") {
+      response = await ProductService.searchProducts(x);
+    } else {
+      response = await ProductService.searchProducts(query);
+    }
+
     const result = await response.json()
     result.sort((a: Product, b: Product) => a.name < b.name ? -1 : 1) // Sort products based on descending name.
     return {result};
@@ -40,7 +52,8 @@ const Home: React.FC = () => {
 
   const { data: dataCartItems } = useSWR(
     // https://swr.vercel.app/docs/conditional-fetching
-    util.getLoggedInCustomer().username !== "guest" ? "cartItems" : null,
+    // util.getLoggedInCustomer().username !== "guest" ? "cartItems" : null,
+    (!['guest', 'admin'].includes(util.getLoggedInCustomer().username)) ? "cartItems" : null,
     fetcherCartItems
   );
 
@@ -57,7 +70,7 @@ const Home: React.FC = () => {
   const pooling = () => {
     mutate("products", fetcherAllProducts())
 
-    if (util.getLoggedInCustomer().username !== "guest") {
+    if (!['guest', 'admin'].includes(util.getLoggedInCustomer().username)) {
       mutate("cartItems", fetcherCartItems())
     }
 
@@ -66,7 +79,7 @@ const Home: React.FC = () => {
     }
   };
 
-  useInterval(pooling, 5000);
+  // useInterval(pooling, 5000);
 
   const addToCart = async (productName: string) => {
     await CustomerService.createOrUpdateCartItem(util.getLoggedInCustomer().username, productName, "increase");
@@ -77,7 +90,10 @@ const Home: React.FC = () => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     // Prevent page reload.
     event.preventDefault();
-    // Clear status messages to prevent piling them up.
+
+    // Clear status messages to prevent piling them up
+    setStatusMessage("");
+    
     if (!query) {
       setStatusMessage("Search string required.");
       return
@@ -114,7 +130,9 @@ const Home: React.FC = () => {
           />
 
           <button type="submit">Search</button>
-          <button type="button" onClick={() => setQuery("")}>Clear Search</button>
+          <button type="button" onClick={() => {
+            setQuery("")
+            setStatusMessage("")}}>Clear Search</button>
 
         </form>
         
@@ -126,7 +144,8 @@ const Home: React.FC = () => {
           {error && <p>Error: {error}</p>}
           {isLoading && <p>Loading...</p>}
 
-          {util.getLoggedInCustomer().username === 'guest' && <p>Log-in to shop!</p>}
+          {['guest', 'admin'].includes(util.getLoggedInCustomer().username) && <p>Log-in to shop!</p>}
+          {['admin'].includes(util.getLoggedInCustomer().username) && <p>Removed products are also shown!</p>}
 
           <section className={styles.products}>
             {// products &&

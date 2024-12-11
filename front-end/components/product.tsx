@@ -38,10 +38,11 @@ const Product: React.FC<Props> = ({ products, cartItems, addToCart }: Props) => 
                     <div>
                         <p>{product.name}</p>
                         <p>{product.price} $ / {product.unit}</p>
-                        {util.getLoggedInCustomer().username !== 'guest' && <button onClick={() => addToCart(product.name)}>Add to cart</button>}
+                        {!(['guest', 'admin'].includes(util.getLoggedInCustomer().username)) && <button onClick={() => addToCart(product.name)}>Add to cart</button>}
                         <p>Stock: {product.stock}</p>
                         {/* Quantity Increases without accessing actual value in the database. */}
-                        {util.getLoggedInCustomer().username !== 'guest' && <p>Quantity: {getQuantity(product.name)}</p>}
+                        {!(['guest', 'admin'].includes(util.getLoggedInCustomer().username)) && <p>Quantity: {getQuantity(product.name)}</p>}
+                        {product.deleted && <p className='text-red-500 font-bold'>Item removed</p>}
                     </div>
                 </article>
             ))}

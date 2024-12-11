@@ -84,7 +84,7 @@ productRouter.get('/', async (req: Request, res: Response, next: NextFunction) =
  *            name: name
  *            schema:
  *              type: string
- *              required: true
+ *              required: false
  *              description: The name of the product.
  *              example: se
  *     responses:

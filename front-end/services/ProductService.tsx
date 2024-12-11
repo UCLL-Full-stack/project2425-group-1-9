@@ -1,10 +1,13 @@
-const getAllProducts = async ({ deleted }: { deleted: boolean }) => {
+import util from "@/util/util";
+
+const getAllProducts = async () => {
     return await fetch(
-        process.env.NEXT_PUBLIC_API_URL + `/products/${deleted}`,
+        process.env.NEXT_PUBLIC_API_URL + `/products`,
         {
             method: "GET",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${util.getLoggedInCustomer().token}`
             }
         }
     );
