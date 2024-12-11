@@ -8,7 +8,7 @@ import customerDb from "../../repository/customer.db";
 import orderDb from "../../repository/order.db";
 import cartService from "../../service/cart.service";
 import orderService from "../../service/order.service";
-import { CartInput, CustomerInput } from "../../types";
+import { Auth, CartInput, CustomerInput } from "../../types";
 
 
 // GIVEN -----------------------------------
@@ -33,6 +33,7 @@ const customer: Customer = new Customer({
     phone: 333444555666,
     role: "customer"
 });
+const auth: Auth = { username: customer.getUsername(), role: customer.getRole() };
 
 // const customerWithoutCart: Customer = new Customer({
 //     id: 2,
@@ -85,7 +86,8 @@ const products: Product[] = [
 // });
 
 const date = new Date("2024");
-const orderInput = { cart: cartInput, date, customer: customerInput };
+const orderInput = { auth, cart: cartInput, date };
+const orderInput2 = { cart: cartInput, date, customer };
 
 // SETUP -----------------------------------
 
@@ -133,13 +135,13 @@ test("Given date and customer username in OrderInput; When calling createOrder; 
     expect(mock_cartDb_getActiveCartByCustomerId).toHaveBeenCalledWith(customer.getId());
 
     expect(mock_cartService_getTotalCartPriceByCustomerUsername).toHaveBeenCalledTimes(1);
-    expect(mock_cartService_getTotalCartPriceByCustomerUsername).toHaveBeenCalledWith(cart.getCustomer().getUsername())
+    expect(mock_cartService_getTotalCartPriceByCustomerUsername).toHaveBeenCalledWith(auth)
 
     expect(mock_cartService_createNewActiveCartAndDeactivateTheCurrentOne).toHaveBeenCalledTimes(1);
     expect(mock_cartService_createNewActiveCartAndDeactivateTheCurrentOne).toHaveBeenCalledWith(cart);
 
     expect(mock_orderDb_createOrder).toHaveBeenCalledTimes(1);
-    expect(mock_orderDb_createOrder).toHaveBeenCalledWith(orderInput);
+    expect(mock_orderDb_createOrder).toHaveBeenCalledWith(orderInput2);
 
 });
 

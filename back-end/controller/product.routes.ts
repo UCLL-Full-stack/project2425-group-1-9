@@ -45,10 +45,10 @@ const productRouter = express.Router();
  *   get:
  *     security:
  *      - bearerAuth: []
- *     summary: Get a list of all products, either deleted or not.
+ *     summary: Get a list of all products.
  *     responses:
  *          200:
- *              description: A list of all products matching the deleted parameter.
+ *              description: A list of all products.
  *              content:
  *                  application/json:
  *                      schema:
@@ -56,18 +56,8 @@ const productRouter = express.Router();
  */
 productRouter.get('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        // AUTHENTICATION. Q& I get no 401 error if not logged in.
-        const request = req as Request & { auth: { username: string; role: Role } };
-
-        let deleted: boolean;
-        if (String(req.params.deleted) === "true") {
-            deleted = true;
-        } else {
-            deleted = false;
-        }
-
+        const request = req as Request & { auth: Auth };
         const products: Product[] = await productService.getAllProducts(request.auth);
-
         res.status(200).json(products);
     } catch (error) {
         next(error);

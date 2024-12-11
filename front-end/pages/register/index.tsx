@@ -1,6 +1,7 @@
 import Header from "@/components/header";
 import CustomerService from "@/services/CustomerService";
 import { StatusMessage } from "@/types";
+import util from "@/util/util";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import useInterval from "use-interval";
@@ -20,6 +21,7 @@ const Login: React.FC = () => {
     const [phone, setPhone] = useState<number>(123456789);
     const [phoneError, setPhoneError] = useState("");
     const [statusMessages, setStatusMessages] = useState<StatusMessage[]>([]);
+    
     const router = useRouter();
 
     const clearErrors  = () => {
@@ -115,106 +117,115 @@ const Login: React.FC = () => {
         <>
             <Header highlightedTitle="Login"/>
             <main>
-                {statusMessages && (
-                    <section>
-                        <ul>
-                            {statusMessages.map(({ message, type}, index) => (
-                                <li 
-                                    key={index}
-                                    // className={classNames({
-                                    //     "text-red-800": type === "error",
-                                    //     "text-green-800": type === "success",
-                                    // })}
-                                >
-                                    {message}
-                                </li>
-                            ))}
-                        </ul>
-                    </section>
-                )}
 
-                <p>Registration Form</p>
+                {util.getLoggedInCustomer().username !== 'guest' && <p className="text-red-500 font-bold">You are not authorized to access this resource.</p>}
 
-                <form onSubmit={(event) => handleSubmit(event)}>
+                {util.getLoggedInCustomer().username === 'guest' &&
 
+                    <>
 
-                    <div>
-                        <label htmlFor="nameInput">Username: </label>
-                        <input 
-                            type="text"
-                            id="nameInput" 
-                            value={username}
-                            onChange={(event) => setUsername(event.target.value)}
-                            />
-                        {usernameError && <p>Error: {usernameError}</p>}
-                    </div>
+                        {statusMessages && (
+                            <section>
+                                <ul>
+                                    {statusMessages.map(({ message, type}, index) => (
+                                        <li 
+                                            key={index}
+                                            // className={classNames({
+                                            //     "text-red-800": type === "error",
+                                            //     "text-green-800": type === "success",
+                                            // })}
+                                        >
+                                            {message}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </section>
+                        )}
+
+                        <p>Registration Form</p>
+
+                        <form onSubmit={(event) => handleSubmit(event)}>
 
 
-                    <div>
-                        <label htmlFor="passwordInput">Password: </label>
-                        <input 
-                            type={unhidePassword ? "text" : "password"}
-                            id="passwordInput" 
-                            value={password}
-                            onChange={(event) => setPassword(event.target.value)}
-                            />
-                        {passwordError && <p>Error: {passwordError}</p>}
-                        <button type="button" onClick={() => setUnhidePassword(!unhidePassword)}>Just show that password</button>
-                    </div>
+                            <div>
+                                <label htmlFor="nameInput">Username: </label>
+                                <input 
+                                    type="text"
+                                    id="nameInput" 
+                                    value={username}
+                                    onChange={(event) => setUsername(event.target.value)}
+                                    />
+                                {usernameError && <p>Error: {usernameError}</p>}
+                            </div>
 
 
-                    <div>
-                        <label htmlFor="securityQuestionInput">Security Question: </label>
-                        <input 
-                            type="text"
-                            id="securityQuestionInput" 
-                            value={securityQuestion}
-                            onChange={(event) => setSecurityQuestion(event.target.value)}
-                            />
-                        {securityQuestionError && <p>Error: {securityQuestionError}</p>}
-                    </div>
+                            <div>
+                                <label htmlFor="passwordInput">Password: </label>
+                                <input 
+                                    type={unhidePassword ? "text" : "password"}
+                                    id="passwordInput" 
+                                    value={password}
+                                    onChange={(event) => setPassword(event.target.value)}
+                                    />
+                                {passwordError && <p>Error: {passwordError}</p>}
+                                <button type="button" onClick={() => setUnhidePassword(!unhidePassword)}>Just show that password</button>
+                            </div>
 
 
-                    <div>
-                        <label htmlFor="firstNameInput">First name: </label>
-                        <input 
-                            type="text"
-                            id="firstNameInput" 
-                            value={firstName}
-                            onChange={(event) => setFirstName(event.target.value)}
-                            />
-                        {firstNameError && <p>Error: {firstNameError}</p>}
-                    </div>
+                            <div>
+                                <label htmlFor="securityQuestionInput">Security Question: </label>
+                                <input 
+                                    type="text"
+                                    id="securityQuestionInput" 
+                                    value={securityQuestion}
+                                    onChange={(event) => setSecurityQuestion(event.target.value)}
+                                    />
+                                {securityQuestionError && <p>Error: {securityQuestionError}</p>}
+                            </div>
 
 
-                    <div>
-                        <label htmlFor="lastNameInput">Last name: </label>
-                        <input 
-                            type="lastName"
-                            id="lastNameInput" 
-                            value={lastName}
-                            onChange={(event) => setLastName(event.target.value)}
-                            />
-                        {lastNameError && <p>Error: {lastNameError}</p>}
-                    </div>
+                            <div>
+                                <label htmlFor="firstNameInput">First name: </label>
+                                <input 
+                                    type="text"
+                                    id="firstNameInput" 
+                                    value={firstName}
+                                    onChange={(event) => setFirstName(event.target.value)}
+                                    />
+                                {firstNameError && <p>Error: {firstNameError}</p>}
+                            </div>
 
 
-                    <div>
-                        <label htmlFor="phoneInput">Phone: </label>
-                        <input 
-                            type="phone"
-                            id="phoneInput" 
-                            value={phone}
-                            onChange={(event) => setPhone(Number(event.target.value))}
-                            />
-                        {phoneError && <p>Error: {phoneError}</p>}
-                    </div>
+                            <div>
+                                <label htmlFor="lastNameInput">Last name: </label>
+                                <input 
+                                    type="lastName"
+                                    id="lastNameInput" 
+                                    value={lastName}
+                                    onChange={(event) => setLastName(event.target.value)}
+                                    />
+                                {lastNameError && <p>Error: {lastNameError}</p>}
+                            </div>
 
 
-                    <div>
-                        <input type="submit" value="Register!" />
-                    </div>
-                </form>
+                            <div>
+                                <label htmlFor="phoneInput">Phone: </label>
+                                <input 
+                                    type="phone"
+                                    id="phoneInput" 
+                                    value={phone}
+                                    onChange={(event) => setPhone(Number(event.target.value))}
+                                    />
+                                {phoneError && <p>Error: {phoneError}</p>}
+                            </div>
+
+
+                            <div>
+                                <input type="submit" value="Register!" />
+                            </div>
+                        </form>
+                    </>
+                }   
             </main>
         </>
     );

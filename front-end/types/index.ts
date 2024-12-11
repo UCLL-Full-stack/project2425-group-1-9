@@ -41,7 +41,6 @@ export type StatusMessage = {
 
 export type Orderr = {
   date: Date;
-  customer: Customer;
 };
 
 export type HighlightedTitle = "Home" | "Profile" | "Login" | "Cart" | "Logout";

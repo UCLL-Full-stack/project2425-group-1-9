@@ -7,11 +7,18 @@ import cartDb from "../repository/cart.db";
 import cartContainsProductDb from "../repository/cartContainsProduct.db";
 import customerDb from "../repository/customer.db";
 import productDb from "../repository/product.db";
+import { Auth } from "../types";
 
 
-const getCartItemsByCustomerUsername = async (customerUsername: string): Promise<Array<CartContainsProduct>> => {
-    if (!customerUsername) throw new Error("Customer's username is required." + customerUsername);
-    const customer: Customer | null = await customerDb.getCustomerByUsername(customerUsername);
+const getCartItemsByCustomerUsername = async (auth: Auth): Promise<Array<CartContainsProduct>> => {
+
+    // AUTHORIZATION
+    const { username, role } = auth;
+    if (!['customer'].includes(role)) throw new UnauthorizedError('credentials_required', { message: 'You are not authorized to access this resource.', }); 
+
+    
+    if (!username) throw new Error("Customer's username is required." + username);
+    const customer: Customer | null = await customerDb.getCustomerByUsername(username);
     if (!customer) throw new Error("Customer does not exist"); // TODO add a test.
 
     const cart: Cart | null = await cartDb.getActiveCartByCustomerId(customer.getId());
@@ -33,9 +40,16 @@ const getCartItemsByCustomerUsername = async (customerUsername: string): Promise
 //     }
 // };
 
-const createOrUpdateCartItem = async (customerUsername: string, productName: string, change?: string): Promise<string> => {
-    if (!customerUsername) throw new Error("Customer's username is required.");
-    const customer: Customer | null = await customerDb.getCustomerByUsername(customerUsername);
+const createOrUpdateCartItem = async (auth: Auth, productName: string, change?: string): Promise<string> => {
+
+    // AUTHORIZATION
+    const { username, role } = auth;
+    if (!['customer'].includes(role)) throw new UnauthorizedError('credentials_required', { message: 'You are not authorized to access this resource.', }); 
+
+
+    // GET
+    if (!username) throw new Error("Customer's username is required.");
+    const customer: Customer | null = await customerDb.getCustomerByUsername(username);
     if (!customer) throw new Error("Customer does not exist.");
 
     const cart: Cart | null = await cartDb.getActiveCartByCustomerId(customer.getId());
@@ -46,6 +60,7 @@ const createOrUpdateCartItem = async (customerUsername: string, productName: str
     if (!product) throw new Error("Product does not exist.");
 
     let cartItem: CartContainsProduct | null = await cartContainsProductDb.getCartItemByCartIdAndProductName(cart.getId(), product.getName());
+
 
     // CONNECT & SAVE
     // Create or Update
@@ -69,10 +84,15 @@ const createOrUpdateCartItem = async (customerUsername: string, productName: str
 
 }
 
-const deleteCartItemsByCustomerUsername = async (customerUsername: string): Promise<string> => {
+const deleteCartItemsByCustomerUsername = async (auth: Auth): Promise<string> => {
+
+    // AUTHORIZATION
+    const { username, role } = auth;
+    if (!['customer'].includes(role)) throw new UnauthorizedError('credentials_required', { message: 'You are not authorized to access this resource.', }); 
+
     // GET
-    if (!customerUsername) throw new Error("Customer's username is required.");
-    const customer: Customer | null = await customerDb.getCustomerByUsername(customerUsername);
+    if (!username) throw new Error("Customer's username is required.");
+    const customer: Customer | null = await customerDb.getCustomerByUsername(username);
     if (!customer) throw new Error("Customer does not exist.");
 
     const cart: Cart | null = await cartDb.getActiveCartByCustomerId(customer.getId());
@@ -84,10 +104,16 @@ const deleteCartItemsByCustomerUsername = async (customerUsername: string): Prom
 };
 
 // TODO total cart price is not updated.
-const deleteCartItemByCustomerUsernameAndProductName = async (customerUsername: string, productName: string): Promise<string> => {
+// TODO test authorization.
+const deleteCartItemByCustomerUsernameAndProductName = async (auth: Auth, productName: string): Promise<string> => {
+    
+    // AUTHORIZATION
+    const { username, role } = auth;
+    if (!['customer'].includes(role)) throw new UnauthorizedError('credentials_required', { message: 'You are not authorized to access this resource.', }); 
+
     // GET
-    if (!customerUsername) throw new Error("Customer's username is required.");
-    const customer: Customer | null = await customerDb.getCustomerByUsername(customerUsername);
+    if (!username) throw new Error("Customer's username is required.");
+    const customer: Customer | null = await customerDb.getCustomerByUsername(username);
     if (!customer) throw new Error("Customer does not exist.");
 
     const cart: Cart | null = await cartDb.getActiveCartByCustomerId(customer.getId());

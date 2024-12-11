@@ -18,9 +18,9 @@ const placeOrder = async (order: Orderr) => {
 
 
 
-const createOrUpdateCartItem = async (customerUsername: string, productName: string, change?: string) => {
+const createOrUpdateCartItem = async (productName: string, change?: string) => {
     return await fetch(
-        process.env.NEXT_PUBLIC_API_URL + `/customers/${customerUsername}/cart/${productName}?change=${change}`,
+        process.env.NEXT_PUBLIC_API_URL + `/customers/cart/${productName}?change=${change}`,
         {
             method: "PUT",
             headers: {

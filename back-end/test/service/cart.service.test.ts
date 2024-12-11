@@ -5,6 +5,7 @@ import { Product } from "../../model/product";
 import cartDb from "../../repository/cart.db";
 import cartService from "../../service/cart.service";
 import cartItemService from "../../service/cartItem.service";
+import { Auth } from "../../types";
 
 const customer: Customer = new Customer({
     id: 1,
@@ -16,6 +17,7 @@ const customer: Customer = new Customer({
     phone: 333444555666,
     role: "customer"
 })
+const auth: Auth = { username: customer.getUsername(), role: customer.getRole() };
 
 const cart: Cart = new Cart({
     id: 3,
@@ -96,13 +98,13 @@ test("Given customer's username; When calling getTotalCartPriceByCustomerUsernam
     cartItemService.getCartItemsByCustomerUsername = mock_cartItemService_getCartItemsByCustomerUsername.mockReturnValue(cartItems);
 
     // WHEN
-    const result = await cartService.getTotalCartPriceByCustomerUsername(customer.getUsername());
+    const result = await cartService.getTotalCartPriceByCustomerUsername(auth);
 
     // THEN
     expect(result).toEqual(totalPrice);
 
     expect(mock_cartItemService_getCartItemsByCustomerUsername).toHaveBeenCalledTimes(1);
-    expect(mock_cartItemService_getCartItemsByCustomerUsername).toHaveBeenCalledWith(customer.getUsername());
+    expect(mock_cartItemService_getCartItemsByCustomerUsername).toHaveBeenCalledWith(auth);
 });
 
 test("Given active cart; When calling createNewActiveCartAndDeactivateTheCurrentOne; Then active cart is deactivated and customer receives a new empty cart.", async () => {
@@ -120,7 +122,7 @@ test("Given active cart; When calling createNewActiveCartAndDeactivateTheCurrent
     expect(result).toEqual(undefined);
 
     expect(mock_cartItemService_getCartItemsByCustomerUsername).toHaveBeenCalledTimes(1);
-    expect(mock_cartItemService_getCartItemsByCustomerUsername).toHaveBeenCalledWith(customer.getUsername());
+    expect(mock_cartItemService_getCartItemsByCustomerUsername).toHaveBeenCalledWith(auth);
 
     expect(mock_cartDb_updateCart).toHaveBeenCalledTimes(1);
     expect(mock_cartDb_updateCart).toHaveBeenCalledWith(updatedCart);

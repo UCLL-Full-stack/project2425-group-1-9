@@ -1,10 +1,10 @@
 import { Customer } from "@/types";
 import util from "@/util/util";
 
-const clearCart = async (username: string) => {
+const clearCart = async () => {
     
     return await fetch(
-        process.env.NEXT_PUBLIC_API_URL + `/customers/${username}/cart`,
+        process.env.NEXT_PUBLIC_API_URL + `/customers/cart`,
         {
             method: "DELETE",
             headers: {
@@ -16,9 +16,9 @@ const clearCart = async (username: string) => {
     );
 };
 
-const deleteCartItem = async (username: string, productName: string) => {
+const deleteCartItem = async (productName: string) => {
     return await fetch(
-        process.env.NEXT_PUBLIC_API_URL + `/customers/${username}/cart/${productName}`,
+        process.env.NEXT_PUBLIC_API_URL + `/customers/cart/${productName}`,
         {
             method: "DELETE",
             headers: {
@@ -30,9 +30,9 @@ const deleteCartItem = async (username: string, productName: string) => {
     );
 };
 
-const createOrUpdateCartItem = async (username: string, productName: string, change?: string) => {
+const createOrUpdateCartItem = async (productName: string, change?: string) => {
     return await fetch(
-        process.env.NEXT_PUBLIC_API_URL + `/customers/${username}/cart/${productName}?change=${change}`,
+        process.env.NEXT_PUBLIC_API_URL + `/customers/cart/${productName}?change=${change}`,
         {
             method: "PUT",
             headers: {
@@ -45,9 +45,9 @@ const createOrUpdateCartItem = async (username: string, productName: string, cha
 };
 
 
-const getCartItemsByCustomerUsername = async (username: string) => {
+const getCartItemsByCustomerUsername = async () => {
     return await fetch(
-        process.env.NEXT_PUBLIC_API_URL + `/customers/${username}/cart`,
+        process.env.NEXT_PUBLIC_API_URL + `/customers/cart`,
         {
             method:"GET",
             headers:{
@@ -59,9 +59,9 @@ const getCartItemsByCustomerUsername = async (username: string) => {
     );
 }
 
-const getTotalCartPriceByCustomerUsername = async (username: string) => {
+const getTotalCartPriceByCustomerUsername = async () => {
     return await fetch(
-        process.env.NEXT_PUBLIC_API_URL + `/customers/${username}/cart/totalPrice`,
+        process.env.NEXT_PUBLIC_API_URL + `/customers/cart/totalPrice`,
         {
             method:"GET",
             headers:{

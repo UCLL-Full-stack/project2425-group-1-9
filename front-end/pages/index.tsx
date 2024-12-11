@@ -19,7 +19,7 @@ const Home: React.FC = () => {
 
   // SWR FETCHERS. -----------------------------
   const fetcherCartItems = async () => {
-    const response = await CustomerService.getCartItemsByCustomerUsername(util.getLoggedInCustomer().username);
+    const response = await CustomerService.getCartItemsByCustomerUsername();
     const result = await response.json();
     return {result};
   };
@@ -82,7 +82,7 @@ const Home: React.FC = () => {
   // useInterval(pooling, 5000);
 
   const addToCart = async (productName: string) => {
-    await CustomerService.createOrUpdateCartItem(util.getLoggedInCustomer().username, productName, "increase");
+    await CustomerService.createOrUpdateCartItem(productName, "increase");
     pooling();
   }
 
@@ -145,7 +145,7 @@ const Home: React.FC = () => {
           {isLoading && <p>Loading...</p>}
 
           {['guest', 'admin'].includes(util.getLoggedInCustomer().username) && <p>Log-in to shop!</p>}
-          {['admin'].includes(util.getLoggedInCustomer().username) && <p>Removed products are also shown!</p>}
+          {['admin'].includes(util.getLoggedInCustomer().username) && <p>Removed products are also shown for the admin.</p>}
 
           <section className={styles.products}>
             {// products &&

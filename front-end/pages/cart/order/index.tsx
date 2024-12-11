@@ -10,6 +10,8 @@ import useSWR, { mutate } from "swr";
 import useInterval from "use-interval";
 
 const Order: React.FC = () => {
+    const [error, setError] = useState<string>("");
+
     // const getCustomerUsername = () => sessionStorage.getItem("loggedInUser") || "guest";
 
     const [firstName, setFirstName] = useState("Matej");
@@ -27,10 +29,20 @@ const Order: React.FC = () => {
 
     const getTotalCartPrice = async () => {
         const responses = Promise.all([
-            CustomerService.getTotalCartPriceByCustomerUsername(util.getLoggedInCustomer().username)
+            CustomerService.getTotalCartPriceByCustomerUsername()
         ]);
 
         const [totalCartPriceResponse] = await responses;
+
+        if (!totalCartPriceResponse.ok) {
+            if (totalCartPriceResponse.status === 401) {
+                setError("You are not authorized to access this resource.");
+            } else {
+                setError(totalCartPriceResponse.statusText);
+            };
+
+            return;
+        }
 
         const totalCartPrice = await totalCartPriceResponse.json();
 
@@ -39,7 +51,7 @@ const Order: React.FC = () => {
         };
     };
 
-    const { data, isLoading, error } = useSWR(
+    const { data, isLoading } = useSWR(
         "getTotalCartPrice",
         getTotalCartPrice
     );
@@ -91,8 +103,7 @@ const Order: React.FC = () => {
 
         // const date: Date = new Date(Date.now());
         const date: Date = new Date("2024-01-19 14:00:12");
-        const customer: Customer = { username: util.getLoggedInCustomer().username };
-        const order: Orderr = { date, customer };
+        const order: Orderr = { date };
         const response = await OrderService.placeOrder(order);
         const { message } = await response.json();
         setStatusMessage(message);
@@ -101,49 +112,43 @@ const Order: React.FC = () => {
 
     };
 
-    // // Highlight current tab in header.
-    // const highlightCurrentTabInMenu = () => {
-    //     const cartTabElement = document.querySelector("header nav a:nth-child(2)");
-    //     if (cartTabElement) cartTabElement.setAttribute("style", "background-color: green;");
-    // };
-
-    // useEffect(() => {
-    //     // highlightCurrentTabInMenu();
-    // }, []);
-
     return (
         <>
             <Header highlightedTitle="Cart"/>
 
             <main>
-                <form onSubmit={(e) => handleSubmit(e)}>
-                    <div>
-                        <label htmlFor="firstNameInput">First name:</label>
-                        <input type="text" id="firstNameInput" value={firstName} onChange={(e) => setFirstName(e.target.value)}/>
-                        {firstNameError && <p>{firstNameError}</p>}
-                    </div>
+                {error && <p className="text-red-500 font-bold">{error}</p>}
 
-                    <div>
-                        <label htmlFor="lastNameInput">Last name:</label>
-                        <input type="text" id="lastNameInput" value={lastName} onChange={(e) => setLastName(e.target.value)}/>
-                        {lastNameError && <p>{lastNameError}</p>}
-                    </div>
+                {!error &&                    
+                    <form onSubmit={(e) => handleSubmit(e)}>
+                        {/* <div>
+                            <label htmlFor="firstNameInput">First name:</label>
+                            <input type="text" id="firstNameInput" value={firstName} onChange={(e) => setFirstName(e.target.value)}/>
+                            {firstNameError && <p>{firstNameError}</p>}
+                        </div>
 
-                    <div>
-                        <label htmlFor="phoneNameInput">Phone:</label>
-                        <input type="text" id="phoneNameInput" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="00 32 285 56 12 64"/>
-                        {phoneError && <p>{phoneError}</p>}
-                    </div>
+                        <div>
+                            <label htmlFor="lastNameInput">Last name:</label>
+                            <input type="text" id="lastNameInput" value={lastName} onChange={(e) => setLastName(e.target.value)}/>
+                            {lastNameError && <p>{lastNameError}</p>}
+                        </div>
 
-                    <div>
-                        {data && <p>Total price: {data.totalCartPrice}</p>}
-                    </div>
+                        <div>
+                            <label htmlFor="phoneNameInput">Phone:</label>
+                            <input type="text" id="phoneNameInput" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="00 32 285 56 12 64"/>
+                            {phoneError && <p>{phoneError}</p>}
+                        </div> */}
 
-                    <div>
-                        <input type="submit" value="Place order"/>
-                        {statusMessage && <p>{statusMessage}</p>}
-                    </div>
-                </form>
+                        <div>
+                            {data && <p>Total price: {data.totalCartPrice}</p>}
+                        </div>
+
+                        <div>
+                            <input type="submit" value="Place order"/>
+                            {statusMessage && <p>{statusMessage}</p>}
+                        </div>
+                    </form>
+                }
             </main>
         </>
     );

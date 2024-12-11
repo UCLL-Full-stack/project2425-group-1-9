@@ -100,4 +100,8 @@ export class Customer {
     getPhone(): number {
         return this.phone;
     }
+
+    getRole(): Role {
+        return this.role;
+    }
 }

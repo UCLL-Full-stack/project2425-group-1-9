@@ -17,9 +17,9 @@ type CustomerInput = {
 };
 
 type OrderInput= {
+    auth: Auth;
     cart?: CartInput;
     date?: Date;
-    customer?: CustomerInput;
 };
 
 type AuthenticationResponse = {

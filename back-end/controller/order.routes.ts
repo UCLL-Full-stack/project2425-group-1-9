@@ -12,13 +12,7 @@
  *          properties:
  *              date:
  *                  type: string
- *                  format: date-time
- *              customer:
- *                  type: object
- *                  properties:
- *                      username:
- *                          type: string   
- *                          example: Matej333         
+ *                  format: date-time      
  */
 
 import express, { NextFunction, Request, Response } from 'express';
@@ -53,15 +47,11 @@ orderRouter.post('/', async (req: Request, res: Response, next: NextFunction) =>
     try {
         // AUTHENTICATE. Q&A What happens here? User input: JWT (contains username and role) and username. Backend takes the given username and corresponding password in the database, generates another token and sees if the tokens match?
         const request = req as Request & { auth: { username: string; role: Role } };
-        const { username, role } = request.auth;
 
         // Add authentication info to the request body. Q&A Is this the correct way? Authorization.pptx slide 4. A: Yes, or you can add another parameter to the createOrder.
         const order = <OrderInput>req.body;
-        if (order.customer) {
-            order.customer.username = username;
-        }
+        order.auth = request.auth;
 
-        // Delegate the request.
         const result = await orderService.createOrder(order);
 
         res.status(200).json({ message: result });

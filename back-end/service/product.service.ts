@@ -1,3 +1,4 @@
+import { UnauthorizedError } from "express-jwt";
 import { CartContainsProduct } from "../model/cartContainsProduct";
 import { Product } from "../model/product";
 import cartContainsProductDb from "../repository/cartContainsProduct.db";
@@ -7,6 +8,11 @@ import { Auth } from "../types";
 
 // TODO tests.
 const getAllProducts = async (auth: Auth): Promise<Product[]> => {
+
+    // AUTHORIZATION
+    const { username, role } = auth;
+    if (!['customer', 'guest', 'admin'].includes(role)) throw new UnauthorizedError('credentials_required', { message: 'You are not authorized to access this resource.', }); 
+
     const deletedProducts: Product[] = await productDb.getAllProductsByDeleted(true);
     const notDeletedProducts: Product[] = await productDb.getAllProductsByDeleted(false);
 

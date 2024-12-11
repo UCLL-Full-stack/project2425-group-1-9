@@ -8,6 +8,7 @@ import customerDb from "../../repository/customer.db";
 import productDb from "../../repository/product.db";
 import cartItemService from "../../service/cartItem.service";
 import productService from "../../service/product.service";
+import { Auth } from "../../types";
 
 
 // GIVEN -----------------------------------
@@ -21,6 +22,10 @@ const customer: Customer = new Customer({
     phone: 333444555666,
     role: "customer"
 })
+
+const auth: Auth = { username: customer.getUsername(), role: customer.getRole()};
+const invalid_auth = { username: "", role: auth.role };
+
 
 // const customerWithoutCart: Customer = new Customer({
 //     id: 2,
@@ -207,7 +212,7 @@ test("Given customer's username; When calling getCartItemsByCustomerUsername; Th
 
 
     // WHEN
-    const result: CartContainsProduct[] = await cartItemService.getCartItemsByCustomerUsername(customer.getUsername());
+    const result: CartContainsProduct[] = await cartItemService.getCartItemsByCustomerUsername(auth);
 
 
     // THEN
@@ -227,7 +232,7 @@ test("Given no customer's username; When calling getCartItemsByCustomerId; Then 
     // Variables at the top of the file.
 
     // WHEN
-    const getCartItemsByCustomerId = () => cartItemService.getCartItemsByCustomerUsername("");
+    const getCartItemsByCustomerId = () => cartItemService.getCartItemsByCustomerUsername(invalid_auth);
 
     // THEN
     expect(getCartItemsByCustomerId).rejects.toThrow("Customer's username is required.");
@@ -240,7 +245,7 @@ test('Given customer without a cart; When calling getCartItemsByCustomerId; Then
     cartDb.getActiveCartByCustomerId = mockCartDb_getActiveCartByCustomerId.mockReturnValue(null);
 
     // WHEN
-    const getCartItemsByCustomerId = () => cartItemService.getCartItemsByCustomerUsername(customer.getUsername());
+    const getCartItemsByCustomerId = () => cartItemService.getCartItemsByCustomerUsername(auth);
 
     // THEN
     expect(getCartItemsByCustomerId).rejects.toThrow("Cart does not exist.");
@@ -259,7 +264,7 @@ test("Given customer's username and product name that refer to and existing cart
 
 
     // WHEN
-    const result: string = await cartItemService.createOrUpdateCartItem(customer.getUsername(), productName);
+    const result: string = await cartItemService.createOrUpdateCartItem(auth, productName);
 
 
     // THEN
@@ -295,7 +300,7 @@ test("Given customer's username and product name that DO NOT REFER to and existi
 
 
     // WHEN
-    const result: string = await cartItemService.createOrUpdateCartItem(customer.getUsername(), productName);
+    const result: string = await cartItemService.createOrUpdateCartItem(auth, productName);
 
 
     // THEN
@@ -336,7 +341,7 @@ test("Given customer's username and product name that DO REFER to and existing c
     cartContainsProductDb.updateCartItem = mockCartContainsProductDb_updateCartItem.mockReturnValue("Cart item updated successfully.");
 
     // WHEN
-    const result: string = await cartItemService.createOrUpdateCartItem(customer.getUsername(), productName, change);
+    const result: string = await cartItemService.createOrUpdateCartItem(auth, productName, change);
 
 
     // THEN
@@ -382,7 +387,7 @@ test("Given customer's username and product name that DO REFER to and existing c
     cartContainsProductDb.updateCartItem = mockCartContainsProductDb_updateCartItem.mockReturnValue("Cart item updated successfully.");
 
     // WHEN
-    const result: string = await cartItemService.createOrUpdateCartItem(customer.getUsername(), productName);
+    const result: string = await cartItemService.createOrUpdateCartItem(auth, productName);
 
 
     // THEN
@@ -413,7 +418,7 @@ test("Given no customer's username; When calling createOrUpdateCartItem; Then er
     // Variables at the top of the file.
 
     // WHEN
-    const createOrUpdateCartItem = () => cartItemService.createOrUpdateCartItem("", productName);
+    const createOrUpdateCartItem = () => cartItemService.createOrUpdateCartItem(invalid_auth, productName);
 
     // THEN
     expect(createOrUpdateCartItem).rejects.toThrow("Customer's username is required.");
@@ -426,7 +431,7 @@ test('Given customer with ID does not exist in the database; When calling create
     customerDb.getCustomerByUsername = mockCustomerDb_getCustomerByUsername.mockReturnValue(null);
 
     // WHEN
-    const createOrUpdateCartItem = () => cartItemService.createOrUpdateCartItem(customer.getUsername(), productName);
+    const createOrUpdateCartItem = () => cartItemService.createOrUpdateCartItem(auth, productName);
 
     // THEN
     expect(createOrUpdateCartItem).rejects.toThrow("Customer does not exist.");
@@ -440,7 +445,7 @@ test('Given customer without a cart; When calling createOrUpdateCartItem; Then e
 
 
     // WHEN
-    const createOrUpdateCartItem = () => cartItemService.createOrUpdateCartItem(customer.getUsername(), productName);
+    const createOrUpdateCartItem = () => cartItemService.createOrUpdateCartItem(auth, productName);
 
     // THEN
     expect(createOrUpdateCartItem).rejects.toThrow("Cart does not exist.");
@@ -456,7 +461,7 @@ test('Given no product name; When calling createOrUpdateCartItem; Then error is 
 
 
     // WHEN
-    const createOrUpdateCartItem = () => cartItemService.createOrUpdateCartItem(customer.getUsername(), "");
+    const createOrUpdateCartItem = () => cartItemService.createOrUpdateCartItem(auth, "");
 
     // THEN
     expect(createOrUpdateCartItem).rejects.toThrow("Product name is required.");
@@ -472,7 +477,7 @@ test('Given product does not exist in the database; When calling createOrUpdateC
     productDb.getProductByName = mockProductDb_getProductByName.mockReturnValue(null);
 
     // WHEN
-    const createOrUpdateCartItem = () => cartItemService.createOrUpdateCartItem(customer.getUsername(), productName);
+    const createOrUpdateCartItem = () => cartItemService.createOrUpdateCartItem(auth, productName);
 
     // THEN
     expect(createOrUpdateCartItem).rejects.toThrow("Product does not exist.");
@@ -484,7 +489,7 @@ test("Given no customer's username; When calling deleteCartItemsByCustomerUserna
     // Variables at the top of the file.
 
     // WHEN
-    const deleteCartItemsByCustomerUsername = () => cartItemService.deleteCartItemsByCustomerUsername("");
+    const deleteCartItemsByCustomerUsername = () => cartItemService.deleteCartItemsByCustomerUsername(invalid_auth);
 
     // THEN
     expect(deleteCartItemsByCustomerUsername).rejects.toThrow("Customer's username is required.");
@@ -497,7 +502,7 @@ test('Given customer does not exist in the database; When calling deleteCartItem
     customerDb.getCustomerByUsername = mockCustomerDb_getCustomerByUsername.mockReturnValue(null);
 
     // WHEN
-    const deleteCartItemsByCustomerUsername = () => cartItemService.deleteCartItemsByCustomerUsername(customer.getUsername());
+    const deleteCartItemsByCustomerUsername = () => cartItemService.deleteCartItemsByCustomerUsername(auth);
 
     // THEN
     expect(deleteCartItemsByCustomerUsername).rejects.toThrow("Customer does not exist.");
@@ -511,7 +516,7 @@ test('Given a customer without a cart; When calling deleteCartItemsByCustomerUse
     cartDb.getActiveCartByCustomerId = mockCartDb_getActiveCartByCustomerId.mockReturnValue(null);
 
     // WHEN
-    const deleteCartItemsByCustomerUsername = () => cartItemService.deleteCartItemsByCustomerUsername(customer.getUsername());
+    const deleteCartItemsByCustomerUsername = () => cartItemService.deleteCartItemsByCustomerUsername(auth);
 
     // THEN
     expect(deleteCartItemsByCustomerUsername).rejects.toThrow("Cart does not exist.");
@@ -528,7 +533,7 @@ test("Given customer's username and product name; When calling deleteCartItemsBy
     cartContainsProductDb.deleteCartItemByCartIdAndProductName = mockCartContainsProductDb_deleteCartItemByCartIdAndProductName.mockReturnValue("Cart item deleted successfully.");
 
     // WHEN
-    const result: String = await cartItemService.deleteCartItemByCustomerUsernameAndProductName(customer.getUsername(), products[1].getName());
+    const result: String = await cartItemService.deleteCartItemByCustomerUsernameAndProductName(auth, products[1].getName());
 
     // THEN
     expect(result).toEqual("Cart item deleted successfully.");
@@ -556,7 +561,7 @@ test("Given no customer's username; When calling deleteCartItemByCustomerUsernam
     // Variables at the top of the file.
 
     // WHEN
-    const deleteCartItemByCustomerUsernameAndProductName = () => cartItemService.deleteCartItemByCustomerUsernameAndProductName("", productName);
+    const deleteCartItemByCustomerUsernameAndProductName = () => cartItemService.deleteCartItemByCustomerUsernameAndProductName(invalid_auth, productName);
 
     // THEN
     expect(deleteCartItemByCustomerUsernameAndProductName).rejects.toThrow("Customer's username is required.");
@@ -569,7 +574,7 @@ test('Given customer with ID does not exist in the database; When calling delete
     customerDb.getCustomerByUsername = mockCustomerDb_getCustomerByUsername.mockReturnValue(null);
 
     // WHEN
-    const deleteCartItemByCustomerUsernameAndProductName = () => cartItemService.deleteCartItemByCustomerUsernameAndProductName(customer.getUsername(), productName);
+    const deleteCartItemByCustomerUsernameAndProductName = () => cartItemService.deleteCartItemByCustomerUsernameAndProductName(auth, productName);
 
     // THEN
     expect(deleteCartItemByCustomerUsernameAndProductName).rejects.toThrow("Customer does not exist.");
@@ -583,7 +588,7 @@ test('Given customer without a cart; When calling deleteCartItemByCustomerUserna
 
 
     // WHEN
-    const deleteCartItemByCustomerUsernameAndProductName = () => cartItemService.deleteCartItemByCustomerUsernameAndProductName(customer.getUsername(), productName);
+    const deleteCartItemByCustomerUsernameAndProductName = () => cartItemService.deleteCartItemByCustomerUsernameAndProductName(auth, productName);
 
     // THEN
     expect(deleteCartItemByCustomerUsernameAndProductName).rejects.toThrow("Cart does not exist.");
@@ -599,7 +604,7 @@ test('Given no product name; When calling deleteCartItemByCustomerUsernameAndPro
 
 
     // WHEN
-    const deleteCartItemByCustomerUsernameAndProductName = () => cartItemService.deleteCartItemByCustomerUsernameAndProductName(customer.getUsername(), "");
+    const deleteCartItemByCustomerUsernameAndProductName = () => cartItemService.deleteCartItemByCustomerUsernameAndProductName(auth, "");
 
     // THEN
     expect(deleteCartItemByCustomerUsernameAndProductName).rejects.toThrow("Product name is required.");
@@ -615,7 +620,7 @@ test('Given product does not exist in the database; When calling deleteCartItemB
     productDb.getProductByName = mockProductDb_getProductByName.mockReturnValue(null);
 
     // WHEN
-    const deleteCartItemByCustomerUsernameAndProductName = () => cartItemService.deleteCartItemByCustomerUsernameAndProductName(customer.getUsername(), productName);
+    const deleteCartItemByCustomerUsernameAndProductName = () => cartItemService.deleteCartItemByCustomerUsernameAndProductName(auth, productName);
 
     // THEN
     expect(deleteCartItemByCustomerUsernameAndProductName).rejects.toThrow("Product does not exist.");
@@ -632,7 +637,7 @@ test('Given cart item does not exist in the database; When calling deleteCartIte
     cartContainsProductDb.getCartItemByCartIdAndProductName = mockCartContainsProductDb_getCartItemByCartIdAndProductName.mockReturnValue(null);
 
     // WHEN
-    const deleteCartItemByCustomerUsernameAndProductName = () => cartItemService.deleteCartItemByCustomerUsernameAndProductName(customer.getUsername(), productName);
+    const deleteCartItemByCustomerUsernameAndProductName = () => cartItemService.deleteCartItemByCustomerUsernameAndProductName(auth, productName);
 
     // THEN
     expect(deleteCartItemByCustomerUsernameAndProductName).rejects.toThrow("Item not in cart.");
