@@ -1,6 +1,6 @@
-const getAllProducts = async () => {
+const getAllProducts = async ({ deleted }: { deleted: boolean }) => {
     return await fetch(
-        process.env.NEXT_PUBLIC_API_URL + "/products",
+        process.env.NEXT_PUBLIC_API_URL + `/products/${deleted}`,
         {
             method: "GET",
             headers: {

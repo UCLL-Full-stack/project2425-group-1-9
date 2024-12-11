@@ -25,7 +25,7 @@ const Home: React.FC = () => {
   };
 
   const fetcherAllProducts = async () => {
-    const response = await ProductService.getAllProducts();
+    const response = await ProductService.getAllProducts({deleted: false});
     const result = await response.json()
     result.sort((a: Product, b: Product) => a.name < b.name ? -1 : 1) // Sort products based on descending name.
     return {result};
