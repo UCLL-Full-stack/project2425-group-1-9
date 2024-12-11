@@ -23,24 +23,25 @@ const products: Product[] = [
     })
 ];
 
-let mockProductDbGetAllProducts: jest.Mock;
+let mockProductDbGetAllProductsByDeleted: jest.Mock;
 let mockProductDbGetProductByName: jest.Mock;
 
 beforeEach(() => {
-    mockProductDbGetAllProducts = jest.fn();
+    mockProductDbGetAllProductsByDeleted = jest.fn();
     mockProductDbGetProductByName = jest.fn();
 });
 
 test('Given there are products; When getting all products; Then all products are returned.', async () => {
     // GIVEN
-    productDb.getAllProducts = mockProductDbGetAllProducts.mockReturnValue(products);
+    productDb.getAllProductsByDeleted = mockProductDbGetAllProductsByDeleted.mockReturnValue(products);
 
     // WHEN
-    const receivedProducts: Product[] = await productService.getAllProducts();
+    const receivedProducts: Product[] = await productService.getAllProducts({ username: 'guest', role: 'guest'});
 
     // THEN
-    expect(mockProductDbGetAllProducts).toHaveBeenCalledTimes(1);
-    expect(mockProductDbGetAllProducts).toHaveBeenCalledWith();
+    expect(mockProductDbGetAllProductsByDeleted).toHaveBeenCalledTimes(2);
+    expect(mockProductDbGetAllProductsByDeleted).toHaveBeenCalledWith(true);
+    expect(mockProductDbGetAllProductsByDeleted).toHaveBeenCalledWith(false);
     expect(receivedProducts).toEqual(products);
 });
 
