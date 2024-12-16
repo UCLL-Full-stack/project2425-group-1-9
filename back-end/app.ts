@@ -8,9 +8,20 @@ import express, { Request, Response, NextFunction } from 'express';
 import { customerRouter } from './controller/customer.routes';
 import { orderRouter } from './controller/order.routes';
 import { expressjwt } from 'express-jwt';
+import helmet from 'helmet';
 // import { cartRouter } from './controller/cart.routes';
 
 const app = express();
+app.use(helmet());
+// app.use(
+//     helmet.contentSecurityPolicy({
+//         directives: {
+//             // Allow connections to own server and the external API.
+//             connectSrc: ['self', 'https://api.ucll.be']
+//         }
+//     })
+// );
+
 dotenv.config();
 const port = process.env.APP_PORT || 3000;
 
