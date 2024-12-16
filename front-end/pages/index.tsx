@@ -9,9 +9,13 @@ import { CartItem, Customer } from "@/types";
 import useSWR, { mutate } from "swr";
 import useInterval from "use-interval";
 import util from "@/util/util";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 
 const Home: React.FC = () => {
+  const { t } = useTranslation();
+
   const [query, setQuery] = useState("");
   // const [queryResults, setQueryResults] = useState<Manual[]>([]);
   const [statusMessage, setStatusMessage] = useState("");
@@ -158,6 +162,17 @@ const Home: React.FC = () => {
       </main>
     </>
   );
+};
+
+// Q& Type?
+export const getServerSideProps = async (context) => {
+  const { locale } = context;
+
+  return {
+      props: {
+          ...(await serverSideTranslations(locale ?? "en", ["common"])),
+      },
+  };
 };
 
 export default Home;

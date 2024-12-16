@@ -4,7 +4,7 @@ import styles from "../styles/header.module.css";
 import { useEffect, useState } from "react";
 import { Customer, HighlightedTitle } from "@/types";
 import util from "@/util/util";
-
+import Language from "./Language";
 
 type HeaderProps = {
   highlightedTitle: HighlightedTitle;
@@ -13,6 +13,7 @@ type HeaderProps = {
 // const Product: React.FC<Props> = ({ products, cartItems, addToCart }: Props) => {
 
 const Header: React.FC<HeaderProps> = ({ highlightedTitle }) => {
+
   const [loggedInUser, setLoggedInUser] = useState<string>('guest');
 
 //   const getLoggedInCustomer = (): Customer => {
@@ -73,7 +74,10 @@ const Header: React.FC<HeaderProps> = ({ highlightedTitle }) => {
           className={highlightedTitle === "cart" ? "text-black" : ""}>
           test
         </p> */}
+
+        <Language />
       </nav>
+
     </header>
   );
 };

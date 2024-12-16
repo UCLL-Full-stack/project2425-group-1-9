@@ -6,7 +6,12 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import useInterval from "use-interval";
 
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+
 const Login: React.FC = () => {
+    const { t } = useTranslation();
+
     const [username, setUsername] = useState("Matej333");
     const [usernameError, setUsernameError] = useState("");
     const [password, setPassword] = useState("m@t3j-v3s3l");
@@ -147,6 +152,17 @@ const Login: React.FC = () => {
             </main>
         </>
     );
+};
+
+
+export const getServerSideProps = async (context) => {
+  const { locale } = context;
+
+  return {
+      props: {
+          ...(await serverSideTranslations(locale ?? "en", ["common"])),
+      },
+  };
 };
 
 export default Login;

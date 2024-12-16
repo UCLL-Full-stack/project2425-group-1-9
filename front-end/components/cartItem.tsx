@@ -8,6 +8,7 @@ type Props = {
     deleteCartItem: (cartItem: CartItem) => void;
 };
 
+// TODO rename components.
 const CartItem: React.FC<Props> = ({ cartItems, changeQuantity, deleteCartItem }: Props) => { 
 
     return (
