@@ -1,11 +1,11 @@
 import Header from "@/components/header";
 import CustomerService from "@/services/CustomerService";
 import OrderService from "@/services/OrderService";
-import { Customer, Orderr } from "@/types";
-import util from "@/util/util";
+import { Orderr } from "@/types";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import useSWR, { mutate } from "swr";
 import useInterval from "use-interval";
 
@@ -153,6 +153,17 @@ const Order: React.FC = () => {
             </main>
         </>
     );
+};
+
+// Q& Type?
+export const getServerSideProps = async (context) => {
+  const { locale } = context;
+
+  return {
+      props: {
+          ...(await serverSideTranslations(locale ?? "en", ["common"])),
+      },
+  };
 };
 
 export default Order;

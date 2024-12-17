@@ -1,10 +1,10 @@
 import Header from "@/components/header";
-import { Customer } from "@/types";
 import util from "@/util/util";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { useEffect } from "react";
 
 const Profile: React.FC = () => {
+
     return (
         <>
         <Header highlightedTitle="Profile"/>
@@ -25,6 +25,17 @@ const Profile: React.FC = () => {
         </main>  
     </>
     );
+};
+
+// Q& Type?
+export const getServerSideProps = async (context) => {
+  const { locale } = context;
+
+  return {
+      props: {
+          ...(await serverSideTranslations(locale ?? "en", ["common"])),
+      },
+  };
 };
 
 export default Profile;

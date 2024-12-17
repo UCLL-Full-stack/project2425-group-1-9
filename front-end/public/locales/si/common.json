@@ -1,7 +1,25 @@
 {
-    "header": {
-        "nav": {
-            "language": "Jezik"
-        }
-    }
+    "header.nav.language": "Jezik",
+    "header.nav.home": "Domov",
+    "header.nav.cart": "Nakupovalni voziček",
+    "header.nav.profile": "Račun",
+    "header.nav.login": "Vpis",
+    "header.nav.logout": "Izpis",
+
+    "login.valid.usernameError": "Uporabniško ime je obvezno.",
+    "login.valid.passwordError": "Geslo je obvezno.",
+
+    "login.handleSubmit.redirecting": "Preusmerjanje...",
+    "login.handleSubmit.customerDoesNotExist": "Uporabniško ime ne obstaja.",
+    "login.handleSubmit.incorrectPassword": "Napakčno geslo.",
+    "login.handleSubmit.otherError": "Zgodila se je napaka. Prosimo poskusite kasneje.",
+    
+    "login.main.notLoggedInYet": "Niste registrirani? ",
+    "login.main.register": "Registrirajte se",
+    "login.main.form.label.username": "Uporabniško ime: ",
+    "login.main.form.label.usernameError": "Napaka: ",
+    "login.main.form.label.password": "Geslo: ",
+    "login.main.form.passwordError": "Napaka: ",
+    "login.main.form.button.showPassword": "Samo pokaži to geslo",
+    "login.main.form.submit": "Prijavi me!"
 }

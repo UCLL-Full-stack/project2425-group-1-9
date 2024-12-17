@@ -2,9 +2,9 @@ import Header from "@/components/header";
 import CustomerService from "@/services/CustomerService";
 import { StatusMessage } from "@/types";
 import util from "@/util/util";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import useInterval from "use-interval";
+import { useState } from "react";
 
 const Login: React.FC = () => {
     const [username, setUsername] = useState("Matej444");
@@ -39,11 +39,13 @@ const Login: React.FC = () => {
 
         if (!username || username.trim() === "") {
             setUsernameError("Username is required.");
+            // setUsernameError(t('login.valid.usernameError'));
             result = false;
         }
 
         if (!password || password.trim() === "") {
             setPasswordError("Password is required.");
+            // setPasswordError(t('login.valid.passwordError'));
             result = false;
         }
 
@@ -53,17 +55,20 @@ const Login: React.FC = () => {
         }
 
         if (!firstName || firstName.trim() === "") {
-            setPasswordError("First name is required.");
+            setFirstNameError("First name is required.");
+            // setFirstNameError(t('login.valid.firstNameError'));
             result = false;
         }
 
         if (!lastName || lastName.trim() === "") {
-            setPasswordError("Last name is required.");
+            setLastNameError("Last name is required.");
+            // setLastNameError(t('login.valid.lastNameError'));
             result = false;
         }
 
         if (!phone) {
-            setPasswordError("Phone is required.");
+            setPhoneError("Phone is required.");
+            // setPhoneError(t('login.valid.phoneError'));
             result = false;
         }
 
@@ -84,6 +89,7 @@ const Login: React.FC = () => {
 
         if (response.status === 200) {
             setStatusMessages([{message: `Registered successfully. Redirecting to login page...`, type: "success"}]);
+            // setStatusMessages([{message: t('login.handleSubmit.success'), type: "success"}]);
 
 
             setTimeout(() => {
@@ -93,7 +99,7 @@ const Login: React.FC = () => {
 
         else if (response.status === 401) {
             const { status, message } = await response.json();
-            setStatusMessages([{ message, type: 'error' }]);
+            setStatusMessages([{ message, type: 'error' }]); // TODO translation.
         }
 
         else {
@@ -102,16 +108,6 @@ const Login: React.FC = () => {
         }
     };
 
-    // // Highlight current tab in header.
-    // const highlightCurrentTabInMenu = () => {
-    //     const cartTabElement = document.querySelector("header nav a:nth-child(2)");
-    //     if (cartTabElement) cartTabElement.setAttribute("style", "background-color: green;");
-    // };
-
-    // useEffect(() => {
-    //     highlightCurrentTabInMenu();
-    // }, []);
-
 
     return (
         <>
@@ -119,6 +115,7 @@ const Login: React.FC = () => {
             <main>
 
                 {util.getLoggedInCustomer().username !== 'guest' && <p className="text-red-500 font-bold">You are not authorized to access this resource.</p>}
+                {/* {util.getLoggedInCustomer().username !== 'guest' && <p className="text-red-500 font-bold">{t('login.main.unauthorized')}</p>} */}
 
                 {util.getLoggedInCustomer().username === 'guest' &&
 
@@ -149,6 +146,7 @@ const Login: React.FC = () => {
 
                             <div>
                                 <label htmlFor="nameInput">Username: </label>
+                                {/* <label htmlFor="nameInput">{t('login.main.form.div.label.nameInput')}</label> */}
                                 <input 
                                     type="text"
                                     id="nameInput" 
@@ -161,6 +159,7 @@ const Login: React.FC = () => {
 
                             <div>
                                 <label htmlFor="passwordInput">Password: </label>
+                                {/* <label htmlFor="passwordInput">{t('login.main.form.div.label.passwordInput')}</label> */}
                                 <input 
                                     type={unhidePassword ? "text" : "password"}
                                     id="passwordInput" 
@@ -174,6 +173,7 @@ const Login: React.FC = () => {
 
                             <div>
                                 <label htmlFor="securityQuestionInput">Security Question: </label>
+                                {/* <label htmlFor="securityQuestionInput">{t('login.main.form.div.label.securityQuestionInput')}</label> */}
                                 <input 
                                     type="text"
                                     id="securityQuestionInput" 
@@ -186,6 +186,7 @@ const Login: React.FC = () => {
 
                             <div>
                                 <label htmlFor="firstNameInput">First name: </label>
+                                {/* <label htmlFor="firstNameInput">{t('login.main.form.div.label.firstNameInput')}</label> */}
                                 <input 
                                     type="text"
                                     id="firstNameInput" 
@@ -198,6 +199,7 @@ const Login: React.FC = () => {
 
                             <div>
                                 <label htmlFor="lastNameInput">Last name: </label>
+                                {/* <label htmlFor="lastNameInput">{t('login.main.form.div.label.lastNameInput')}</label> */}
                                 <input 
                                     type="lastName"
                                     id="lastNameInput" 
@@ -210,6 +212,7 @@ const Login: React.FC = () => {
 
                             <div>
                                 <label htmlFor="phoneInput">Phone: </label>
+                                {/* <label htmlFor="phoneInput">{t('login.main.form.div.label.phoneInput')}</label> */}
                                 <input 
                                     type="phone"
                                     id="phoneInput" 
@@ -229,6 +232,17 @@ const Login: React.FC = () => {
             </main>
         </>
     );
+};
+
+// Q& Type?
+export const getServerSideProps = async (context) => {
+  const { locale } = context;
+
+  return {
+      props: {
+          ...(await serverSideTranslations(locale ?? "en", ["common"])),
+      },
+  };
 };
 
 export default Login;

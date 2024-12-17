@@ -1,13 +1,13 @@
 import Header from "@/components/header";
 import styles from "@/styles/Home.module.css";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 // import CartService from "@/services/CartService";
 import CartItem from "@/components/cartItem";
 import CustomerService from "@/services/CustomerService";
 import useSWR, { mutate } from "swr";
 import useInterval from "use-interval";
 import { useRouter } from "next/router";
-import util from "@/util/util";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 
 const Cart: React.FC = () => { 
@@ -105,6 +105,17 @@ const Cart: React.FC = () => {
         </>
     );
 
+};
+
+// Q& Type?
+export const getServerSideProps = async (context) => {
+  const { locale } = context;
+
+  return {
+      props: {
+          ...(await serverSideTranslations(locale ?? "en", ["common"])),
+      },
+  };
 };
 
 export default Cart;

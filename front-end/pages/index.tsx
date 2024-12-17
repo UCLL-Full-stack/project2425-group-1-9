@@ -2,20 +2,15 @@ import Header from "@/components/header";
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
 import Product from "@/components/product";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import ProductService from "@/services/ProductService";
 import CustomerService from "@/services/CustomerService";
-import { CartItem, Customer } from "@/types";
 import useSWR, { mutate } from "swr";
-import useInterval from "use-interval";
 import util from "@/util/util";
-import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 
 const Home: React.FC = () => {
-  const { t } = useTranslation();
-
   const [query, setQuery] = useState("");
   // const [queryResults, setQueryResults] = useState<Manual[]>([]);
   const [statusMessage, setStatusMessage] = useState("");
@@ -124,6 +119,7 @@ const Home: React.FC = () => {
           <label 
             className=""
             htmlFor="queryInput">Search: </label>
+            {/* htmlFor="queryInput">{t('home.main.div.form.label')}: </label> */}
 
           <input
               className=""
@@ -134,9 +130,11 @@ const Home: React.FC = () => {
           />
 
           <button type="submit">Search</button>
+          {/* <button type="submit">{t('home.main.div.form.submit.button')}</button> */}
           <button type="button" onClick={() => {
             setQuery("")
             setStatusMessage("")}}>Clear Search</button>
+            {/* setStatusMessage("")}}>{t('home.main.div.form.status.button')}</button> */}
 
         </form>
         
@@ -146,10 +144,14 @@ const Home: React.FC = () => {
 
         {/* Q&A Why fragments here? In the video, he also does it.  A: That's for fun. */}
           {error && <p>Error: {error}</p>}
+          {/* {error && <p>{t('home.main.error')}: {error}</p>} */}
           {isLoading && <p>Loading...</p>}
+          {/* {isLoading && <p>{t('home.main.loading')}...</p>} */}
 
           {['guest', 'admin'].includes(util.getLoggedInCustomer().username) && <p>Log-in to shop!</p>}
+          {/* {['guest', 'admin'].includes(util.getLoggedInCustomer().username) && <p>{t('home.main.log-in-to-shop')}</p>} */}
           {['admin'].includes(util.getLoggedInCustomer().username) && <p>Removed products are also shown for the admin.</p>}
+          {/* {['admin'].includes(util.getLoggedInCustomer().username) && <p>{t('home.main.removed-products-for-admin')}</p>} */}
 
           <section className={styles.products}>
             {// products &&

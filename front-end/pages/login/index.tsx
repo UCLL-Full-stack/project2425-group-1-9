@@ -30,12 +30,14 @@ const Login: React.FC = () => {
         let result = true;
 
         if (!username || username.trim() === "") {
-            setUsernameError("Username is required.");
+            // setUsernameError("Username is required.");
+            setUsernameError(t('login.valid.usernameError'));
             result = false;
         }
 
         if (!password || password.trim() === "") {
-            setPasswordError("Password is required.");
+            // setPasswordError("Password is required.");
+            setPasswordError(t('login.valid.passwordError'));
             result = false;
         }
 
@@ -55,7 +57,8 @@ const Login: React.FC = () => {
         const response = await CustomerService.loginCustomer(customer);
 
         if (response.status === 200) {
-            setStatusMessages([{message: `Redirecting...`, type: "success"}]);
+            // setStatusMessages([{message: `Redirecting...`, type: "success"}]);
+            setStatusMessages([{message: t('login.handleSubmit.redirecting'), type: "success"}]);
 
             const customer = await response.json();
             sessionStorage.setItem(
@@ -75,29 +78,24 @@ const Login: React.FC = () => {
 
         else if (response.status === 401) {
             const { status, message } = await response.json();
-            setStatusMessages([{ message, type: 'error' }]);
+            
+            if (message === "Customer does not exist.") {
+                setStatusMessages([{ message: t('login.handleSubmit.customerDoesNotExist'), type: 'error' }]);
+            } else if (message === "Incorrect password.") {
+                setStatusMessages([{ message: t('login.handleSubmit.incorrectPassword'), type: 'error' }]);
+            }
         }
 
         else {
             setStatusMessages([
                 {
-                    message: 'An error has occurred. Please try again later.',
+                    // message: 'An error has occurred. Please try again later.',
+                    message: t('login.handleSubmit.otherError'),
                     type: 'error'
                 }
             ]);            
         }
     };
-
-    // // Highlight current tab in header.
-    // const highlightCurrentTabInMenu = () => {
-    //     const cartTabElement = document.querySelector("header nav a:nth-child(2)");
-    //     if (cartTabElement) cartTabElement.setAttribute("style", "background-color: green;");
-    // };
-
-    // useEffect(() => {
-    //     highlightCurrentTabInMenu();
-    // }, []);
-
 
     return (
         <>
@@ -121,32 +119,38 @@ const Login: React.FC = () => {
                     </section>
                 )}
 
-                <p>Not logged in yet? <Link href={"/register"} className="underline text-blue-500">Register</Link></p>
+                {/* <p>Not logged in yet? <Link href={"/register"} className="underline text-blue-500">Register</Link></p> */}
+                <p>{t('login.main.notLoggedInYet')} <Link href={"/register"} className="underline text-blue-500">{t('login.main.register')}</Link></p>
 
                 <form onSubmit={(event) => handleSubmit(event)}>
                     <div>
-                        <label htmlFor="nameInput">Username: </label>
+                        {/* <label htmlFor="nameInput">Username: </label> */}
+                        <label htmlFor="nameInput">{t('login.main.form.label.username')}</label>
                         <input 
                             type="text"
                             id="nameInput" 
                             value={username}
                             onChange={(event) => setUsername(event.target.value)}
                             />
-                        {usernameError && <p>Error: {usernameError}</p>}
+                        {usernameError && <p>{t('login.main.form.label.usernameError')} {usernameError}</p>}
                     </div>
                     <div>
-                        <label htmlFor="passwordInput">Password: </label>
+                        {/* <label htmlFor="passwordInput">Password: </label> */}
+                        <label htmlFor="passwordInput">{t('login.main.form.label.password')}</label>
                         <input 
                             type={unhidePassword ? "text" : "password"}
                             id="passwordInput" 
                             value={password}
                             onChange={(event) => setPassword(event.target.value)}
                             />
-                        {passwordError && <p>Error: {passwordError}</p>}
-                        <button type="button" onClick={() => setUnhidePassword(!unhidePassword)}>Just show that password</button>
+                        {/* {passwordError && <p>Error: {passwordError}</p>} */}
+                        {passwordError && <p>{t('login.main.form.passwordError')} {passwordError}</p>}
+                        {/* <button type="button" onClick={() => setUnhidePassword(!unhidePassword)}>Just show that password</button> */}
+                        <button type="button" onClick={() => setUnhidePassword(!unhidePassword)}>{t('login.main.form.button.showPassword')}</button>
                     </div>
                     <div>
-                        <input type="submit" value="Login!" />
+                        {/* <input type="submit" value="Login!" /> */}
+                        <input type="submit" value={t('login.main.form.submit')} />
                     </div>
                 </form>
             </main>
