@@ -68,7 +68,9 @@ const Login: React.FC = () => {
 
         if (!phone) {
             setPhoneError("Phone is required.");
-            // setPhoneError(t('login.valid.phoneError'));
+            result = false;
+        } else if (phone.toString().length > 10) {
+            setPhoneError("Phone number is too long.");
             result = false;
         }
 
