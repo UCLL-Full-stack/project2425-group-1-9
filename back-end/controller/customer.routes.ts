@@ -208,7 +208,7 @@ customerRouter.delete('/cart', async (req: Request, res: Response, next: NextFun
  *              type: string
  *              required: false
  *              description: Specify whether to 'increase' or 'decrease' the cart item.
- *              example: decrease
+ *              example: increase
  *     responses:
  *       200:
  *         description: Message indicating success.
