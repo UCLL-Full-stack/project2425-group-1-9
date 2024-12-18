@@ -1,4 +1,4 @@
-import Header from "@/components/header";
+import Header from "@/components/Header";
 import CustomerService from "@/services/CustomerService";
 import OrderService from "@/services/OrderService";
 import { Orderr } from "@/types";

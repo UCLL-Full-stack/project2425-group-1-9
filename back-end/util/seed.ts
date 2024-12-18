@@ -18,9 +18,9 @@ const main = async () => {
     // CUSTOMER DATA ----------------------------------------
     const matej = await prisma.customer.create({
         data: {
-            password: await bcrypt.hash("m@t3j-v3s3l", 12),
+            password: await bcrypt.hash("matej", 12),
             securityQuestion: "What is the name of the best friend from childhood?", // TODO: We also need security answer. It may also be a list.
-            username: "Matej333",
+            username: "matej",
             firstName: "Matej",
             lastName: "Vesel",
             phone: 123456,
@@ -30,9 +30,9 @@ const main = async () => {
 
     const roland = await prisma.customer.create({
         data: {
-            password: await bcrypt.hash("r0l@nd-d1m3-", 12),
+            password: await bcrypt.hash("roland", 12),
             securityQuestion: "What is the name of the best friend from childhood?", // TODO: We also need security answer. It may also be a list.
-            username: "Roland333",
+            username: "roland",
             firstName: "Roland",
             lastName: "Ndime Sone",
             phone: 1234567,

@@ -1,4 +1,4 @@
-import Header from "@/components/header";
+import Header from "@/components/Header";
 import CustomerService from "@/services/CustomerService";
 import { StatusMessage } from "@/types";
 import Link from "next/link";

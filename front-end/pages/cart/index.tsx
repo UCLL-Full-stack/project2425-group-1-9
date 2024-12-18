@@ -1,8 +1,8 @@
-import Header from "@/components/header";
+import Header from "@/components/Header";
 import styles from "@/styles/Home.module.css";
 import { useState } from "react";
 // import CartService from "@/services/CartService";
-import CartItem from "@/components/cartItem";
+import CartItem from "@/components/CartItem";
 import CustomerService from "@/services/CustomerService";
 import useSWR, { mutate } from "swr";
 import useInterval from "use-interval";

@@ -1,7 +1,7 @@
-import Header from "@/components/header";
+import Header from "@/components/Header";
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
-import Product from "@/components/product";
+import Product from "@/components/Product";
 import { useState } from "react";
 import ProductService from "@/services/ProductService";
 import CustomerService from "@/services/CustomerService";
@@ -111,6 +111,38 @@ const Home: React.FC = () => {
       </Head>
       <Header highlightedTitle="Home"/>
       <main className={styles.main}>
+        <table>
+            <thead>
+                <tr>
+                    <th>username</th>
+                    <th>password</th>
+                    <th>role</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>matej</td>
+                    <td>matej</td>
+                    <td>customer</td>
+                </tr>
+                <tr>
+                    <td>roland</td>
+                    <td>roland</td>
+                    <td>customer</td>
+                </tr>
+                <tr>
+                    <td>guest</td>
+                    <td>guest</td>
+                    <td>guest</td>
+                </tr>
+                <tr>
+                    <td>admin</td>
+                    <td>admin</td>
+                    <td>admin</td>
+                </tr>
+            </tbody>
+        </table>
+
       <div className="">
         <form 
           className=""

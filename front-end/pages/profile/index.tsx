@@ -1,4 +1,4 @@
-import Header from "@/components/header";
+import Header from "@/components/Header";
 import util from "@/util/util";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
