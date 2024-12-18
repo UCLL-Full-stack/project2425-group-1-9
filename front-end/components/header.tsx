@@ -13,20 +13,32 @@ type HeaderProps = {
 const Header: React.FC<HeaderProps> = ({ highlightedTitle }) => {
 
   const [loggedInUser, setLoggedInUser] = useState<string>('guest');
+  const [quote, setQuote] = useState<string>('');
 
   useEffect(() => {
     // console.log(loggedInUser);
     setLoggedInUser(util.getLoggedInCustomer().username);
+    setQuote(sessionStorage.getItem('quote') || '');
   }, []);
+
+  useEffect(() => {
+
+  }, [quote]);
 
   const logout = () => {
     sessionStorage.removeItem("loggedInCustomer");
     setLoggedInUser('guest');
   };
 
+  const getQuote = (): string => {
+    return sessionStorage.getItem('quote') || '';
+  };
+
   const { t } = useTranslation();
 
   return (
+    <>
+  
     <header className="text-white bg-[green] flex">
       <p className="flex-[0.6] text-center">VESO</p>
       <nav className="bg-[red] flex flex-[2] justify-around flex-wrap">
@@ -67,6 +79,9 @@ const Header: React.FC<HeaderProps> = ({ highlightedTitle }) => {
       </nav>
 
     </header>
+
+      <p className="text-center mt-2 "><em>{quote}</em></p>
+    </>
   );
 };
 

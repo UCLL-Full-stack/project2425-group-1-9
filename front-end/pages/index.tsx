@@ -121,13 +121,14 @@ const Home: React.FC = () => {
             </thead>
             <tbody>
                 <tr>
-                    <td>matej</td>
-                    <td>matej</td>
+                    <td>Matej333</td>
+                    <td>m@t3j-v3s3l
+                    </td>
                     <td>customer</td>
                 </tr>
                 <tr>
-                    <td>roland</td>
-                    <td>roland</td>
+                    <td>Roland333</td>
+                    <td>r0l@nd-d1m3-</td>
                     <td>customer</td>
                 </tr>
                 <tr>

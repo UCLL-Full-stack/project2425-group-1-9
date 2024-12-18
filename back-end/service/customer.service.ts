@@ -42,8 +42,6 @@ const createCustomer = async ({
     const existingCustomer = await customerDb.getCustomerByUsername(username); // TODO he uses types. { username }
     if (existingCustomer) throw new Error("Customer is already registered.");
 
-    // TODO add phone field validation.
-
     // CONNECT
     const hashedPassword = await bcrypt.hash(password, 12);
     const customer = new Customer({ 

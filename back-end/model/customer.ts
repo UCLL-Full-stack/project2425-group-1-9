@@ -73,6 +73,19 @@ export class Customer {
         });
     };
 
+    equal(newCustomer: Customer) {
+        return (
+            newCustomer.id === this.id &&
+            // newCustomer.password === this.password &&
+            newCustomer.securityQuestion === this.securityQuestion &&
+            newCustomer.username === this.username &&
+            newCustomer.firstName === this.firstName &&
+            newCustomer.lastName === this.lastName &&
+            newCustomer.phone === this.phone &&
+            newCustomer.role === this.role
+        );
+    }
+
     getId(): number {
         return this.id || 1;
     }

@@ -48,28 +48,6 @@ jest.mock('next-i18next', () => ({
     }
 }));
 
-// const guest: Customer = { token: "token", fullname: "admin", username: "admin", role: "admin" };
-
-// token: "token",
-// fullname: "admin",
-// username: "admin",
-// role: "admin"
-
-
-// test('Given a guest that is not logged in; When he wants to see header ; Then the header is rendered with appropriate links.', async () => {
-//     // WHEN
-//     render(<Header highlightedTitle={'Home'} />);
-
-//     // THEN
-//     expect(screen.getByText('VESO'));
-//     expect(screen.getByText('Home'));
-//     expect(screen.getByText('Login'));
-
-//     expect(screen.getByText('Language'));
-//     expect(screen.getByText('English'));
-//     expect(screen.getByText('Slovenian'));
-// });
-
 afterEach(() => {
   sessionStorage.clear();
 });
