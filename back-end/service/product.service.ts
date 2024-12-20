@@ -29,7 +29,6 @@ const getProductByName = async (name: string): Promise<Product> => {
     return product;
 }
 
-// TODO test.
 const getProductsByNameContainingAndCaseInsensitive = async (name: string): Promise<Product[]> => {
     if (name === '*') return await productDb.getAllProductsByDeleted(false);
 

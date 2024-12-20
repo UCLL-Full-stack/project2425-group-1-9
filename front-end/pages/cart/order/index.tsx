@@ -106,8 +106,11 @@ const Order: React.FC = () => {
         const date: Date = new Date("2024-01-19 14:00:12");
         const order: Orderr = { date };
         const response = await OrderService.placeOrder(order);
-        const { message } = await response.json();
-        setStatusMessage(message);
+        if (response.status === 200) setStatusMessage("Order placed successfully.");
+        if (response.status !== 200) {
+            const { message } = await response.json();
+            setStatusMessage(message);
+        }
         
         mutate("getTotalCartPrice", getTotalCartPrice());
 
