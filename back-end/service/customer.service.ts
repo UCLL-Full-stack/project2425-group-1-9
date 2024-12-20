@@ -18,7 +18,7 @@ const authenticate = async ({ username, password }: CustomerInput): Promise<Auth
     const customer = await getCustomerByUsername(username);
 
     const isValidPassword = await bcrypt.compare(password, customer.password);
-    if (!isValidPassword) throw new UnauthorizedError('invalid_token', {message: 'Incorrect password'});
+    if (!isValidPassword) throw new UnauthorizedError('invalid_token', {message: 'Incorrect password.'});
 
     return {
         token: generateJwtToken({ username, role: customer.role }),
