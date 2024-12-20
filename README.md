@@ -2,4 +2,8 @@
 # VESO
 Veso is an application that aims to facilitate grocery shopping for customers. It eliminates the disadvantage of crowded supermarkets — A customer can place an order from the comfort of his/her home.
 
+## Starting the Application
+Front-End: npm install; npm start
+Back-End: npm install; npx prisma migrate dev; npm start
+
 ### Sone Roland Ndime / Matej Vesel
