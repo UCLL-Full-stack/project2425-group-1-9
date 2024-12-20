@@ -13,14 +13,14 @@ import helmet from 'helmet';
 
 const app = express();
 app.use(helmet());
-app.use(
-    helmet.contentSecurityPolicy({
-        directives: {
-            // Allow connections to own server and the external API.
-            connectSrc: [`'self'`, 'https://zenquotes.io/api/today']
-        }
-    })
-);
+// app.use(
+//     helmet.contentSecurityPolicy({
+//         directives: {
+//             // Allow connections to own server and the external API.
+//             connectSrc: [`'self'`, 'https://zenquotes.io/api/today']
+//         }
+//     })
+// );
 
 dotenv.config();
 const port = process.env.APP_PORT || 3000;
