@@ -7,18 +7,57 @@
  *      scheme: bearer
  *      bearerFormat: JWT
  *    schemas:
+ *      Product:
+ *          type: object
+ *          properties:
+ *              name:
+ *                  type: string
+ *                  example: Bananas
+ *              price:
+ *                  type: number
+ *                  example: 5
+ *              unit:
+ *                  type: string
+ *                  example: bunch
+ *              stock:
+ *                  type: number
+ *                  example: 10
+ *              description:
+ *                  type: string
+ *                  example: Banana is a fruit.
+ *              imagePath:
+ *                  type: string
+ *              deleted:
+ *                  type: boolean
+ *                  description: Indicator whether a product should not be displayed in the Front-End.
+ *                  example: false
+ *      Cart:
+ *          type: object
+ *          properties:
+ *              id:
+ *                  type: number
+ *                  format: int64
+ *                  example: 1
+ *              totalPrice:
+ *                  type: number
+ *                  format: int64
+ *                  example: 50
+ *              active:
+ *                  type: boolean
+ *                  example: true
+ *              customer:
+ *                  $ref: '#/components/schemas/Customer'
  *      CartContainsProduct:
  *          type: object
  *          properties:
- *            productName:
- *              type: string
- *              description: Product's name.
+ *            cart:
+ *              $ref: '#/components/schemas/Cart'
+ *            product:
+ *              $ref: '#/components/schemas/Product'
  *            quantity:
  *              type: number
  *              format: int64
- *            cartId:
- *              type: number
- *              format: int64
+ *              example: 5
  *      OrderInput:
  *          type: object
  *          properties:
@@ -107,10 +146,14 @@
  *              fullname:
  *                  type: string
  *                  description: Customer's fullname.
- *              
- *              
- *          
- *              
+ *      BatchPayload:
+ *          type: object
+ *          properties:
+ *              count:
+ *                  type: number
+ *                  format: int64
+ *                  example: 5
+ *                  description: Number of items deleted from cart.
  */
 
 
@@ -119,7 +162,7 @@ import { expressjwt, Request as JWTRequest } from "express-jwt";
 import { CartContainsProduct } from '../model/cartContainsProduct';
 import cartItemService from '../service/cartItem.service';
 import cartService from '../service/cart.service';
-import { Auth, CustomerInput, Role } from '../types';
+import { Auth, BatchPayload, ChangeQuantity, CustomerInput, Role } from '../types';
 import customerService from '../service/customer.service';
 
 const customerRouter = express.Router();
@@ -141,18 +184,18 @@ const customerRouter = express.Router();
  *              example: Bananas
  *     responses:
  *       200:
- *         description: Message indicating success.
+ *         description: A CartContainsProduct object.
  *         content:
  *           application/json:
  *             schema:
- *               type: string
+ *               $ref: '#/components/schemas/CartContainsProduct'
  */
 customerRouter.delete('/cart/:productName', async (req: Request, res: Response, next: NextFunction) => {
     try {
         // Q&A Because I get username from the authentication token, is the username request parameter redundant? A: Yes.
         const request = req as Request & { auth: Auth };
         const productName: string = String(req.params.productName);
-        const result: string = await cartItemService.deleteCartItemByCustomerUsernameAndProductName(request.auth, productName);
+        const result: CartContainsProduct = await cartItemService.deleteCartItemByCustomerUsernameAndProductName(request.auth, productName);
         res.json(result);
         // res.status(200).json(result);   // DOES NOT WORK!!!!!!!! Q&
     } catch (error) {
@@ -169,17 +212,16 @@ customerRouter.delete('/cart/:productName', async (req: Request, res: Response, 
  *     summary: Delete all items (products) from a cart.
  *     responses:
  *       200:
- *         description: Message indicating success.
+ *         description: Number of deleted cart items.
  *         content:
  *           application/json:
  *             schema:
- *               type: string
- *               example: Cart items deleted successfully.
+ *              $ref: '#/components/schemas/BatchPayload'
  */
 customerRouter.delete('/cart', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const request = req as Request & { auth: Auth };
-        const result: string = await cartItemService.deleteCartItemsByCustomerUsername(request.auth);
+        const result: BatchPayload = await cartItemService.deleteCartItemsByCustomerUsername(request.auth);
         res.json(result);
         // res.status(200).json(result);   // DOES NOT WORK!!!!!!!! Q&
     } catch (error) {
@@ -206,24 +248,24 @@ customerRouter.delete('/cart', async (req: Request, res: Response, next: NextFun
  *            name: change
  *            schema:
  *              type: string
+ *              enum: [increase, decrease]
  *              required: false
  *              description: Specify whether to 'increase' or 'decrease' the cart item.
  *              example: increase
  *     responses:
  *       200:
- *         description: Message indicating success.
+ *         description: Updated cart item (CartContainsProduct object).
  *         content:
  *           application/json:
  *             schema:
- *               type: string
- *               example: Product deleted successfully.
+ *                  $ref: '#/components/schemas/CartContainsProduct'
  */
 customerRouter.put('/cart/:productName', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const request = req as Request & { auth: { username: string; role: Role } };
 
         const productName: string = String(req.params.productName);
-        const change: string = String(req.query.change) || "increase";
+        const change: string = String(req.query.change) as ChangeQuantity || "increase";
 
         const result = await cartItemService.createOrUpdateCartItem(request.auth, productName, change);
         res.status(200).json(result);
@@ -232,7 +274,6 @@ customerRouter.put('/cart/:productName', async (req: Request, res: Response, nex
     }
 })
 // https://www.baeldung.com/rest-http-put-vs-post
-
 
 
 

@@ -260,15 +260,15 @@ test("Given customer's username and product name that refer to and existing cart
     cartDb.getActiveCartByCustomerId = mockCartDb_getActiveCartByCustomerId.mockReturnValue(cart);
     productDb.getProductByName = mockProductDb_getProductByName.mockReturnValue(products[1])
     cartContainsProductDb.getCartItemByCartIdAndProductName = mockCartContainsProductDb_getCartItemByCartIdAndProductName.mockReturnValue(cartContainsProduct);
-    cartContainsProductDb.updateCartItem = mockCartContainsProductDb_updateCartItem.mockReturnValue("Cart item updated successfully.");
+    cartContainsProductDb.updateCartItem = mockCartContainsProductDb_updateCartItem.mockReturnValue(cartContainsProduct);
 
 
     // WHEN
-    const result: string = await cartItemService.createOrUpdateCartItem(auth, productName);
+    const result: CartContainsProduct | null = await cartItemService.createOrUpdateCartItem(auth, productName);
 
 
     // THEN
-    expect(result).toEqual("Cart item updated successfully.");
+    expect(result).toEqual(cartContainsProduct);
 
     expect(mockCustomerDb_getCustomerByUsername).toHaveBeenCalledTimes(1);
     expect(mockCustomerDb_getCustomerByUsername).toHaveBeenCalledWith(customer.getUsername());
@@ -296,15 +296,15 @@ test("Given customer's username and product name that DO NOT REFER to and existi
     cartDb.getActiveCartByCustomerId = mockCartDb_getActiveCartByCustomerId.mockReturnValue(cart);
     productDb.getProductByName = mockProductDb_getProductByName.mockReturnValue(products[1])
     cartContainsProductDb.getCartItemByCartIdAndProductName = mockCartContainsProductDb_getCartItemByCartIdAndProductName.mockReturnValue(null);
-    cartContainsProductDb.createOrUpdateCartItem = mockCartContainsProductDb_createOrUpdateCartItem.mockReturnValue("Cart item added successfully.")
+    cartContainsProductDb.createOrUpdateCartItem = mockCartContainsProductDb_createOrUpdateCartItem.mockReturnValue(cartContainsProduct)
 
 
     // WHEN
-    const result: string = await cartItemService.createOrUpdateCartItem(auth, productName);
+    const result: CartContainsProduct | null = await cartItemService.createOrUpdateCartItem(auth, productName);
 
 
     // THEN
-    expect(result).toEqual("Cart item added successfully.");
+    expect(result).toEqual(cartContainsProduct);
 
     expect(mockCustomerDb_getCustomerByUsername).toHaveBeenCalledTimes(1);
     expect(mockCustomerDb_getCustomerByUsername).toHaveBeenCalledWith(customer.getUsername());
@@ -338,14 +338,14 @@ test("Given customer's username and product name that DO REFER to and existing c
     productDb.getProductByName = mockProductDb_getProductByName.mockReturnValue(productBefore)
     cartContainsProductDb.getCartItemByCartIdAndProductName = mockCartContainsProductDb_getCartItemByCartIdAndProductName.mockReturnValue(cartItemBefore);
     productDb.updateProductStockByName = mockProductDb_updateProductStockByName.mockReturnValue("Product's stock updated successfully.");
-    cartContainsProductDb.updateCartItem = mockCartContainsProductDb_updateCartItem.mockReturnValue("Cart item updated successfully.");
+    cartContainsProductDb.updateCartItem = mockCartContainsProductDb_updateCartItem.mockReturnValue(cartContainsProduct);
 
     // WHEN
-    const result: string = await cartItemService.createOrUpdateCartItem(auth, productName, change);
+    const result: CartContainsProduct | null = await cartItemService.createOrUpdateCartItem(auth, productName, change);
 
 
     // THEN
-    expect(result).toEqual("Cart item updated successfully.");
+    expect(result).toEqual(cartContainsProduct);
 
     expect(mockCustomerDb_getCustomerByUsername).toHaveBeenCalledTimes(1);
     expect(mockCustomerDb_getCustomerByUsername).toHaveBeenCalledWith(customer.getUsername());
@@ -384,14 +384,14 @@ test("Given customer's username and product name that DO REFER to and existing c
     productDb.getProductByName = mockProductDb_getProductByName.mockReturnValue(productBefore)
     cartContainsProductDb.getCartItemByCartIdAndProductName = mockCartContainsProductDb_getCartItemByCartIdAndProductName.mockReturnValue(cartItemBefore);
     productDb.updateProductStockByName = mockProductDb_updateProductStockByName.mockReturnValue("Product's stock updated successfully.");
-    cartContainsProductDb.updateCartItem = mockCartContainsProductDb_updateCartItem.mockReturnValue("Cart item updated successfully.");
+    cartContainsProductDb.updateCartItem = mockCartContainsProductDb_updateCartItem.mockReturnValue(cartContainsProduct);
 
     // WHEN
-    const result: string = await cartItemService.createOrUpdateCartItem(auth, productName);
+    const result: CartContainsProduct | null = await cartItemService.createOrUpdateCartItem(auth, productName);
 
 
     // THEN
-    expect(result).toEqual("Cart item updated successfully.");
+    expect(result).toEqual(cartContainsProduct);
 
     expect(mockCustomerDb_getCustomerByUsername).toHaveBeenCalledTimes(1);
     expect(mockCustomerDb_getCustomerByUsername).toHaveBeenCalledWith(customer.getUsername());
@@ -530,13 +530,14 @@ test("Given customer's username and product name; When calling deleteCartItemsBy
     cartDb.getActiveCartByCustomerId = mockCartDb_getActiveCartByCustomerId.mockReturnValue(cart);
     productDb.getProductByName = mockProductDb_getProductByName.mockReturnValue(products[1])
     cartContainsProductDb.getCartItemByCartIdAndProductName = mockCartContainsProductDb_getCartItemByCartIdAndProductName.mockReturnValue(cartContainsProduct);
-    cartContainsProductDb.deleteCartItemByCartIdAndProductName = mockCartContainsProductDb_deleteCartItemByCartIdAndProductName.mockReturnValue("Cart item deleted successfully.");
+    cartContainsProductDb.deleteCartItemByCartIdAndProductName = mockCartContainsProductDb_deleteCartItemByCartIdAndProductName.mockReturnValue(cartContainsProduct);
 
     // WHEN
-    const result: String = await cartItemService.deleteCartItemByCustomerUsernameAndProductName(auth, products[1].getName());
+    const result: CartContainsProduct = await cartItemService.deleteCartItemByCustomerUsernameAndProductName(auth, products[1].getName());
 
     // THEN
-    expect(result).toEqual("Cart item deleted successfully.");
+    // expect(result).toEqual("Cart item deleted successfully.");
+    expect(result).toEqual(cartContainsProduct);
 
     expect(mockCustomerDb_getCustomerByUsername).toHaveBeenCalledTimes(1);
     expect(mockCustomerDb_getCustomerByUsername).toHaveBeenCalledWith(customer.getUsername());

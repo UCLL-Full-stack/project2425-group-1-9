@@ -12,7 +12,61 @@
  *          properties:
  *              date:
  *                  type: string
- *                  format: date-time      
+ *                  format: date-time
+ *      Order:
+ *          type: object
+ *          properties:
+ *              cart:
+ *                  $ref: '#/components/schemas/Cart'
+ *              date:
+ *                  type: string
+ *                  format: date-time
+ *              customer:
+ *                  $ref: '#/components/schemas/Customer' 
+ *      Cart:
+ *          type: object
+ *          properties:
+ *              id:
+ *                  type: number
+ *                  format: int64
+ *                  example: 1
+ *              totalPrice:
+ *                  type: number
+ *                  format: int64
+ *                  example: 50
+ *              active:
+ *                  type: boolean
+ *                  example: true
+ *              customer:
+ *                  $ref: '#/components/schemas/Customer'
+ *      Customer:
+ *          type: object
+ *          properties:
+ *              id:
+ *                  type: number
+ *                  format: int64
+ *              password:
+ *                  type: string
+ *                  description: Customer's password.
+ *              securityQuestion:
+ *                  type: string
+ *                  description: Customer's security question.
+ *              username:
+ *                  type: string
+ *                  description: Customer's username.
+ *              firstName:
+ *                  type: string
+ *                  description: Customer's first name.
+ *              lastName:
+ *                  type: string
+ *                  description: Customer's last name.
+ *              phone:
+ *                  type: number
+ *                  format: int64
+*              role:
+ *                  type: string
+ *                  description: Customer's role. Can be either 'customer', 'admin' or 'guest'.
+ *                  example: customer
  */
 
 import express, { NextFunction, Request, Response } from 'express';
@@ -40,8 +94,7 @@ const orderRouter = express.Router();
  *         content:
  *           application/json:
  *             schema:
- *               type: string
- *               example: Order placed successfully.
+ *               $ref: '#/components/schemas/Order'
  */
 orderRouter.post('/', async (req: Request, res: Response, next: NextFunction) => {
     try {

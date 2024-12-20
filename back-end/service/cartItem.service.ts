@@ -7,7 +7,7 @@ import cartDb from "../repository/cart.db";
 import cartContainsProductDb from "../repository/cartContainsProduct.db";
 import customerDb from "../repository/customer.db";
 import productDb from "../repository/product.db";
-import { Auth } from "../types";
+import { Auth, BatchPayload } from "../types";
 
 
 const getCartItemsByCustomerUsername = async (auth: Auth): Promise<Array<CartContainsProduct>> => {
@@ -40,7 +40,7 @@ const getCartItemsByCustomerUsername = async (auth: Auth): Promise<Array<CartCon
 //     }
 // };
 
-const createOrUpdateCartItem = async (auth: Auth, productName: string, change?: string): Promise<string> => {
+const createOrUpdateCartItem = async (auth: Auth, productName: string, change?: string): Promise<CartContainsProduct | null> => {
 
     // AUTHORIZATION
     const { username, role } = auth;
@@ -84,7 +84,7 @@ const createOrUpdateCartItem = async (auth: Auth, productName: string, change?: 
 
 }
 
-const deleteCartItemsByCustomerUsername = async (auth: Auth): Promise<string> => {
+const deleteCartItemsByCustomerUsername = async (auth: Auth): Promise<BatchPayload> => {
 
     // AUTHORIZATION
     const { username, role } = auth;
@@ -105,7 +105,7 @@ const deleteCartItemsByCustomerUsername = async (auth: Auth): Promise<string> =>
 
 // TODO total cart price is not updated.
 // TODO test authorization.
-const deleteCartItemByCustomerUsernameAndProductName = async (auth: Auth, productName: string): Promise<string> => {
+const deleteCartItemByCustomerUsernameAndProductName = async (auth: Auth, productName: string): Promise<CartContainsProduct> => {
     
     // AUTHORIZATION
     const { username, role } = auth;

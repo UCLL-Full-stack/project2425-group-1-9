@@ -36,11 +36,19 @@ type Auth = {
     role: Role;
 };
 
+type BatchPayload = {
+    count: number;
+};
+
+type ChangeQuantity = 'increase' | 'decrease';
+
 export {
     OrderInput,
     CustomerInput,
     CartInput,
     AuthenticationResponse,
     Role,
-    Auth
+    Auth,
+    BatchPayload,
+    ChangeQuantity
 }

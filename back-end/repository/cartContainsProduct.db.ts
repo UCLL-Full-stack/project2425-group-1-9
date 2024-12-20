@@ -1,4 +1,5 @@
 import { CartContainsProduct } from "../model/cartContainsProduct";
+import { BatchPayload } from "../types";
 import database from "./database";
 
 const getAllCartItemsByCartId = async (cartId: number): Promise<CartContainsProduct[]> => {
@@ -40,9 +41,9 @@ const getCartItemByCartIdAndProductName = async (cartId: number, productName: st
     }
 };
 
-const createOrUpdateCartItem = async ({ cart, product, quantity }: CartContainsProduct): Promise<string> => {
+const createOrUpdateCartItem = async ({ cart, product, quantity }: CartContainsProduct): Promise<CartContainsProduct | null> => {
     try {
-        await database.cartContainsProduct.create({ 
+        const result = await database.cartContainsProduct.create({ 
             data: {
                 cart: {
                     connect: { id: cart.getId() }
@@ -57,7 +58,7 @@ const createOrUpdateCartItem = async ({ cart, product, quantity }: CartContainsP
                 product: true
             }
          });
-        return "Cart item added successfully."
+         return result ? CartContainsProduct.from(result) : null;
 
     } catch (error) {
         console.log(error);
@@ -65,9 +66,9 @@ const createOrUpdateCartItem = async ({ cart, product, quantity }: CartContainsP
     }
 };
 
-const updateCartItem = async ({ cart, product, quantity }: CartContainsProduct): Promise<string> => {
+const updateCartItem = async ({ cart, product, quantity }: CartContainsProduct): Promise<CartContainsProduct | null> => {
     try {
-        await database.cartContainsProduct.update({
+        const result = await database.cartContainsProduct.update({
             where: {
                 cartId_productName: { // Compound primary key.
                     cartId: cart.getId(),
@@ -82,7 +83,7 @@ const updateCartItem = async ({ cart, product, quantity }: CartContainsProduct):
                 product: true
             }
          });
-        return "Cart item updated successfully."
+         return result ? CartContainsProduct.from(result) : null;
 
     } catch (error) {
         console.log(error);
@@ -100,9 +101,13 @@ const updateCartItem = async ({ cart, product, quantity }: CartContainsProduct):
 //     return null
 // };
 
-const deleteCartItemByCartIdAndProductName = async (cartId: number, productName: string) => {
+const deleteCartItemByCartIdAndProductName = async (cartId: number, productName: string): Promise<CartContainsProduct> => {
     try {
-        await database.cartContainsProduct.delete({
+        const cartItemPrisma = await database.cartContainsProduct.delete({
+            include: { 
+                cart: { include: { customer: true } }, 
+                product: true
+            },
             where: {
                 cartId_productName: {
                     cartId: cartId,
@@ -110,21 +115,23 @@ const deleteCartItemByCartIdAndProductName = async (cartId: number, productName:
                 }
             }
         });
-        return "Deleted successfully.";
+        // return cartItemsPrisma.map((cartItemPrisma) => CartContainsProduct.from(cartItemPrisma));
+        // return "Deleted successfully.";
+        return CartContainsProduct.from(cartItemPrisma);
     } catch (error) {
         console.log(error);
         throw new Error('Database error. See server logs for details.');  
     }
 }
 
-const deleteCartItemsByCartId = async (cartId: number): Promise<string> => {
+const deleteCartItemsByCartId = async (cartId: number): Promise<BatchPayload> => {
     try {
-        await database.cartContainsProduct.deleteMany({
+        const result: BatchPayload = await database.cartContainsProduct.deleteMany({
             where: {
                 cartId: cartId
             }
         });
-        return "Cart items deleted successfully."
+        return result;
 
     } catch (error) {
         console.log(error);

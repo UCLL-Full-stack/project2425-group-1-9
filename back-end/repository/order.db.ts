@@ -1,9 +1,13 @@
 import { Order } from "../model/order";
 import database from "./database";
 
-const createOrder = async ({cart, date, customer}: Order): Promise<string> => {
+const createOrder = async ({cart, date, customer}: Order): Promise<Order | null> => {
     try {
-        await database.order.create({
+        const result = await database.order.create({
+            include: { 
+                cart: { include: { customer: true } }, 
+                customer: true
+            },
             data: {
                 cart: {
                     connect: { id: cart.getId() }
@@ -14,7 +18,7 @@ const createOrder = async ({cart, date, customer}: Order): Promise<string> => {
                 }
             }
         });
-        return "Order placed successfully."
+        return result ? Order.from(result) : null;
 
     } catch (error) {
         console.log(error);

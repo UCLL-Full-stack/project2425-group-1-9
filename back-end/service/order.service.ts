@@ -8,7 +8,7 @@ import orderDb from "../repository/order.db";
 import { OrderInput } from "../types";
 import cartService from "./cart.service";
 
-const createOrder = async ({auth, date}: OrderInput) => {
+const createOrder = async ({auth, date}: OrderInput): Promise<Order | null> => {
 
     // AUTHORIZATION
     const { username, role } = auth;
